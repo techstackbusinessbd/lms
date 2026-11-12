@@ -41,6 +41,7 @@ function AppContent(): React.JSX.Element {
     'step-7': 'Step 7: Production & Live OEE Counting',
     'step-8': 'Step 8: QC Audit & Lot Handover',
     machines: 'Laser Machines Fleet (M01-M20)',
+    'machine-agents': 'IPC Edge Agents Telemetry',
     users: 'Users & Roles Management (RBAC)',
     settings: 'System Configuration',
   };
