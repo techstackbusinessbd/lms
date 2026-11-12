@@ -1,15 +1,29 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#09090b" />
+    <meta name="theme-color" content="#090a0d" />
     <meta name="description" content="Denim Laser Automation & Control System (20-Machine Flat Conveyor Table)" />
     <title>Denim LACS - Laser Automation & Control</title>
+
+    <!-- পেজ রিলোডে ব্ল্যাক ফ্ল্যাশ (FOUC) সম্পূর্ণ বন্ধ করার জন্য সিঙ্ক প্রি-পেইন্ট স্ক্রিপ্ট -->
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('lacs_theme');
+          var isDark = saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body class="antialiased min-h-screen selection:bg-blue-600 selection:text-white">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

@@ -17,15 +17,28 @@ interface AuthContextType extends AuthState {
 }
 
 const STORAGE_KEY = 'lacs_access_token';
+const USER_STORAGE_KEY = 'lacs_user_profile';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<UserSummary | null>(null);
+  // ক্যাশড ইউজার ডেটা থেকে ইনস্ট্যান্ট হাইড্রেশন (রিলোডে ফুলস্ক্রিন লোডার ফ্ল্যাশ রোধ)
+  const [user, setUser] = useState<UserSummary | null>(() => {
+    try {
+      const cached = localStorage.getItem(USER_STORAGE_KEY);
+      return cached ? JSON.parse(cached) : null;
+    } catch {
+      return null;
+    }
+  });
   const [token, setToken] = useState<string | null>(() => localStorage.getItem(STORAGE_KEY));
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(() => {
+    const storedToken = localStorage.getItem(STORAGE_KEY);
+    const storedUser = localStorage.getItem(USER_STORAGE_KEY);
+    return !!(storedToken && !storedUser);
+  });
 
-  // অ্যাপ লোড হওয়ার সময় টোকেন থাকলে ইউজার প্রোফাইল ভেরিফাই করা
+  // অ্যাপ লোড হওয়ার সময় টোকেন থাকলে ইউজার প্রোফাইল সাইলেন্টলি ভেরিফাই করা (SWR প্যাটার্ন)
   useEffect(() => {
     let isMounted = true;
 
@@ -41,10 +54,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (isMounted) {
           setUser(userData);
           setToken(storedToken);
+          localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userData));
         }
       } catch {
         // টোকেন মেয়াদোত্তীর্ণ বা অবৈধ হলে লোকালস্টোরেজ পরিষ্কার করা
         localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(USER_STORAGE_KEY);
         if (isMounted) {
           setUser(null);
           setToken(null);
@@ -63,12 +78,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = (tokenResponse: TokenResponse) => {
     localStorage.setItem(STORAGE_KEY, tokenResponse.access_token);
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(tokenResponse.user));
     setToken(tokenResponse.access_token);
     setUser(tokenResponse.user);
   };
 
   const logout = () => {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(USER_STORAGE_KEY);
     setToken(null);
     setUser(null);
   };

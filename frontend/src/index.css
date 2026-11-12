@@ -35,7 +35,6 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     letter-spacing: -0.011em;
-    transition: background-color 0.2s ease, color 0.2s ease;
   }
 }
 
