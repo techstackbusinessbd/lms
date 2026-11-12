@@ -27,28 +27,28 @@ export function StatusIndicator({
     { dotColor: string; pingColor: string; label: string; textColor: string }
   > = {
     engraving: {
-      dotColor: 'bg-indigo-500',
-      pingColor: 'bg-indigo-400',
+      dotColor: 'bg-blue-600',
+      pingColor: 'bg-blue-400',
       label: 'Engraving',
-      textColor: 'text-indigo-400',
+      textColor: 'text-blue-500 dark:text-blue-400',
     },
     idle: {
       dotColor: 'bg-emerald-500',
       pingColor: 'bg-emerald-400',
       label: 'Table Ready',
-      textColor: 'text-emerald-400',
+      textColor: 'text-emerald-600 dark:text-emerald-400',
     },
     error: {
       dotColor: 'bg-rose-500',
       pingColor: 'bg-rose-400',
       label: 'Alarm / Error',
-      textColor: 'text-rose-400',
+      textColor: 'text-rose-600 dark:text-rose-400',
     },
     offline: {
-      dotColor: 'bg-slate-500',
-      pingColor: 'bg-slate-400',
+      dotColor: 'bg-zinc-500',
+      pingColor: 'bg-zinc-400',
       label: 'Disconnected',
-      textColor: 'text-slate-400',
+      textColor: 'text-zinc-500 dark:text-zinc-400',
     },
   };
 

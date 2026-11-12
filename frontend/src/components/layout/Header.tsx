@@ -30,11 +30,11 @@ export const Header: React.FC<HeaderProps> = ({
     <header className="h-14 px-6 bg-white dark:bg-[#0f1013] border-b border-slate-200 dark:border-[#1f2127] flex items-center justify-between sticky top-0 z-40 transition-colors">
       {/* ১. বামদিকের পেজ টাইটেল ও সাব-টেলিমিতি */}
       <div className="flex items-center gap-3">
-        <h2 className="text-xs font-bold tracking-wider text-zinc-900 dark:text-zinc-100 uppercase font-mono">
+        <h2 className="text-sm font-bold tracking-wider text-zinc-900 dark:text-zinc-100 uppercase font-mono">
           {pageTitle}
         </h2>
         <span className="text-zinc-300 dark:text-zinc-700 font-mono">/</span>
-        <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-zinc-500 dark:text-zinc-400 font-mono">
+        <div className="hidden sm:flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 font-mono">
           <Activity className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 animate-pulse" />
           <span>20 Flat Conveyor Tables Online</span>
         </div>

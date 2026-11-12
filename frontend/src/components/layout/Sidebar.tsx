@@ -63,7 +63,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate }) => 
           type="button"
           onClick={() => toggleMenu(group.id)}
           className={cn(
-            'w-full h-8 px-2.5 rounded-sm flex items-center justify-between text-xs font-medium transition-all select-none cursor-pointer',
+            'w-full h-8 px-2.5 rounded-sm flex items-center justify-between text-[13px] font-medium transition-all select-none cursor-pointer',
             isChildActive
               ? 'text-zinc-100 bg-[#161820] font-semibold border-l-2 border-blue-500'
               : 'text-zinc-400 hover:text-zinc-100 hover:bg-[#1a1c23]'
@@ -76,7 +76,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate }) => 
 
           <div className="flex items-center gap-1.5 shrink-0">
             {group.badge && (
-              <span className="text-[10px] font-mono font-medium px-1.5 py-0.2 rounded-sm bg-[#1b1d24] text-zinc-400 border border-[#272930]">
+              <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded-sm bg-[#1b1d24] text-zinc-400 border border-[#272930]">
                 {group.badge}
               </span>
             )}
@@ -102,21 +102,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate }) => 
                   type="button"
                   onClick={() => onNavigate(subItem.id)}
                   className={cn(
-                    'w-full h-7 px-2 rounded-sm flex items-center justify-between text-[11px] transition-all select-none cursor-pointer',
+                    'w-full h-7.5 px-2 rounded-sm flex items-center justify-between text-xs transition-all select-none cursor-pointer',
                     isActive
                       ? 'bg-blue-600 text-white font-medium shadow-[0_1px_3px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)]'
                       : 'text-zinc-400 hover:text-zinc-100 hover:bg-[#1a1c23] font-normal'
                   )}
                 >
                   <div className="flex items-center gap-2 truncate">
-                    {SubIcon && <SubIcon className="w-3 h-3 shrink-0" />}
+                    {SubIcon && <SubIcon className="w-3.5 h-3.5 shrink-0" />}
                     <span className="truncate">{subItem.name}</span>
                   </div>
 
                   {subItem.stepNum && (
                     <span
                       className={cn(
-                        'text-[9px] font-mono px-1 rounded-sm border shrink-0',
+                        'text-[10px] font-mono px-1.5 py-0.2 rounded-sm border shrink-0',
                         isActive
                           ? 'border-white/30 bg-white/10 text-white font-semibold'
                           : 'border-[#272930] bg-[#121317] text-zinc-500'

@@ -103,7 +103,7 @@ export const Dashboard: React.FC = () => {
                     <div className="font-medium text-zinc-900 dark:text-zinc-100">
                       {order.buyer}
                     </div>
-                    <div className="text-[11px] text-zinc-400 font-mono">
+                    <div className="text-xs text-zinc-400 font-mono">
                       {order.style}
                     </div>
                   </TableCell>
@@ -115,7 +115,7 @@ export const Dashboard: React.FC = () => {
                   </TableCell>
                   <TableCell>
                     <div className="w-32">
-                      <div className="flex justify-between text-[10px] font-mono text-zinc-500 dark:text-zinc-400 mb-1">
+                      <div className="flex justify-between text-xs font-mono text-zinc-500 dark:text-zinc-400 mb-1">
                         <span>{order.lasered} pcs</span>
                         <span>{progressPct}%</span>
                       </div>

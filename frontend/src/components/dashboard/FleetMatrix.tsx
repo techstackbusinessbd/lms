@@ -112,11 +112,11 @@ export const FleetMatrix: React.FC = () => {
               <p className="text-[10px] text-zinc-400 dark:text-zinc-500 font-mono truncate">
                 {machine.ip}
               </p>
-              <p className="text-[11px] font-semibold text-zinc-900 dark:text-zinc-200 font-mono mt-1">
+              <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-200 font-mono mt-1">
                 {machine.scansToday} pcs
               </p>
               <span
-                className={`inline-block mt-1 text-[9px] uppercase font-mono px-1 py-0.5 rounded-sm border font-medium ${
+                className={`inline-block mt-1 text-[10px] uppercase font-mono px-1.5 py-0.5 rounded-sm border font-semibold ${
                   isEngraving
                     ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
                     : 'bg-zinc-100 dark:bg-[#1a1c22] text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-[#272930]'
