@@ -9,7 +9,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/utils/cn';
 
 export const badgeVariants = cva(
-  'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium border transition-colors select-none',
+  'inline-flex items-center gap-1.5 rounded-sm px-2 py-0.5 text-xs font-medium border transition-colors select-none',
   {
     variants: {
       variant: {
@@ -70,3 +70,4 @@ export function Badge({
     </span>
   );
 }
+

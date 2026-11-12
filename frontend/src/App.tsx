@@ -91,7 +91,7 @@ export default function App(): React.JSX.Element {
       {/* ১. টপ নেভিগেশন বার */}
       <header className="border-b border-slate-800 bg-slate-900/90 backdrop-blur px-6 py-4 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center space-x-3">
-          <div className="h-10 w-10 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+          <div className="h-10 w-10 rounded-sm bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
             <Cpu className="h-6 w-6" />
           </div>
           <div>
@@ -168,27 +168,27 @@ export default function App(): React.JSX.Element {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800">
+              <div className="p-3 rounded-sm bg-slate-950/60 border border-slate-800">
                 <span className="text-xs text-slate-400">Database Engine</span>
                 <p className="text-sm font-semibold text-emerald-400 flex items-center gap-1.5 mt-1">
                   <Server className="h-3.5 w-3.5" />
                   {health?.services.database === 'connected' ? 'PostgreSQL 16 Connected' : 'Checking...'}
                 </p>
               </div>
-              <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800">
+              <div className="p-3 rounded-sm bg-slate-950/60 border border-slate-800">
                 <span className="text-xs text-slate-400">Primary Key</span>
                 <p className="text-sm font-semibold text-indigo-400 flex items-center gap-1.5 mt-1">
                   <CheckCircle2 className="h-3.5 w-3.5" />
                   RFC 9562 UUIDv7
                 </p>
               </div>
-              <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800">
+              <div className="p-3 rounded-sm bg-slate-950/60 border border-slate-800">
                 <span className="text-xs text-slate-400">Touch Target</span>
                 <p className="text-sm font-semibold text-slate-200 mt-1">48px Industrial Touch</p>
               </div>
-              <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800">
-                <span className="text-xs text-slate-400">Network Mode</span>
-                <p className="text-sm font-semibold text-slate-200 mt-1">100% Offline LAN</p>
+              <div className="p-3 rounded-sm bg-slate-950/60 border border-slate-800">
+                <span className="text-xs text-slate-400">Corner Radius</span>
+                <p className="text-sm font-semibold text-slate-200 mt-1">Very Small (2px)</p>
               </div>
             </div>
           </CardContent>
@@ -255,7 +255,7 @@ export default function App(): React.JSX.Element {
             ].map((item) => {
               const IconComp = item.icon;
               return (
-                <div key={item.step} className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <div key={item.step} className="p-4 rounded-sm bg-slate-900 border border-slate-800 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-mono text-indigo-400 font-semibold">{item.step}</span>
                     <Badge variant="default">{item.role}</Badge>

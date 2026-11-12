@@ -29,11 +29,11 @@ export const buttonVariants = cva(
           'text-slate-300 hover:bg-slate-800/80 hover:text-white',
       },
       size: {
-        sm: 'h-9 px-3 text-xs rounded-md',
-        default: 'h-11 px-4 text-sm rounded-lg',
-        lg: 'h-12 px-6 text-base rounded-lg touch-target', // রুল ১৮ মেনে শপ-ফ্লোর ট্যাবলেটের জন্য ৪৮px সাইজ
-        icon: 'h-11 w-11 rounded-lg p-0',
-        'icon-lg': 'h-12 w-12 rounded-lg p-0 touch-target',
+        sm: 'h-9 px-3 text-xs rounded-sm',
+        default: 'h-11 px-4 text-sm rounded-sm',
+        lg: 'h-12 px-6 text-base rounded-sm touch-target', // রুল ১৮ মেনে শপ-ফ্লোর ট্যাবলেটের জন্য ৪৮px সাইজ
+        icon: 'h-11 w-11 rounded-sm p-0',
+        'icon-lg': 'h-12 w-12 rounded-sm p-0 touch-target',
       },
     },
     defaultVariants: {
@@ -89,3 +89,4 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 
 Button.displayName = 'Button';
+

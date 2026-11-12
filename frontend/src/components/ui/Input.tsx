@@ -60,7 +60,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             disabled={disabled}
             aria-invalid={Boolean(error)}
             className={cn(
-              'w-full rounded-lg bg-slate-900 border text-slate-100 placeholder:text-slate-500',
+              'w-full rounded-sm bg-slate-900 border text-slate-100 placeholder:text-slate-500',
               'transition-colors duration-150',
               'focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500',
               'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-slate-950',
@@ -97,3 +97,4 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 
 Input.displayName = 'Input';
+

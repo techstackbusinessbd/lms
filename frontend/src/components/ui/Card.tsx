@@ -14,7 +14,7 @@ export function Card({
   return (
     <div
       className={cn(
-        'rounded-xl border border-slate-800 bg-slate-900 text-slate-100 shadow-sm overflow-hidden',
+        'rounded-sm border border-slate-800 bg-slate-900 text-slate-100 shadow-sm overflow-hidden',
         className
       )}
       {...props}
@@ -78,3 +78,4 @@ export function CardFooter({
     />
   );
 }
+
