@@ -11,7 +11,7 @@ import time
 import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict
-from sqlalchemy import Boolean, DateTime, func
+from sqlalchemy import Boolean, DateTime, func, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -91,7 +91,7 @@ class BaseModel(Base):
     is_deleted: Mapped[bool] = mapped_column(
         Boolean,
         default=False,
-        server_default=func.false(),
+        server_default=text("false"),
         nullable=False,
         index=True,
         doc="সফট ডিলিট স্ট্যাটাস ফ্ল্যাগ",
