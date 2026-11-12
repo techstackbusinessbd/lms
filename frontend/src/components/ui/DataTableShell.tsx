@@ -1,7 +1,7 @@
 /**
  * ডেনিম লেজার অটোমেশন ও কন্ট্রোল সিস্টেম (Denim LACS)
  * ভার্চুয়ালাইজড ডাটা টেবিল ফ্রেম (Master Data Table Shell)
- * লাইট ও ডার্ক মোড সাপোর্ট এবং ভেরি স্মল কর্নার রেডিয়াস
+ * ডিপ চারকোল ও ক্লাসিক ডেনিম ব্লু থিম (#2563eb)
  */
 
 import React from 'react';
@@ -13,7 +13,7 @@ export function Table({
   ...props
 }: React.HTMLAttributes<HTMLTableElement>): React.JSX.Element {
   return (
-    <div className="relative w-full overflow-auto rounded-sm border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-xs">
+    <div className="relative w-full overflow-auto rounded-sm border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-xs">
       <table
         className={cn('w-full caption-bottom text-sm text-left border-collapse', className)}
         {...props}
@@ -28,7 +28,7 @@ export function TableHeader({
 }: React.HTMLAttributes<HTMLTableSectionElement>): React.JSX.Element {
   return (
     <thead
-      className={cn('bg-slate-50 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-10', className)}
+      className={cn('bg-zinc-50 dark:bg-zinc-900/90 border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-10', className)}
       {...props}
     />
   );
@@ -40,7 +40,7 @@ export function TableBody({
 }: React.HTMLAttributes<HTMLTableSectionElement>): React.JSX.Element {
   return (
     <tbody
-      className={cn('divide-y divide-slate-200 dark:divide-slate-800/60', className)}
+      className={cn('divide-y divide-zinc-200 dark:divide-zinc-800/60', className)}
       {...props}
     />
   );
@@ -53,7 +53,7 @@ export function TableRow({
   return (
     <tr
       className={cn(
-        'transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/40 data-[state=selected]:bg-slate-100 dark:data-[state=selected]:bg-slate-800',
+        'transition-colors hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 data-[state=selected]:bg-zinc-100 dark:data-[state=selected]:bg-zinc-800',
         className
       )}
       {...props}
@@ -68,7 +68,7 @@ export function TableHead({
   return (
     <th
       className={cn(
-        'h-11 px-4 text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 select-none',
+        'h-11 px-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 select-none',
         className
       )}
       {...props}
@@ -82,7 +82,7 @@ export function TableCell({
 }: React.TdHTMLAttributes<HTMLTableCellElement>): React.JSX.Element {
   return (
     <td
-      className={cn('px-4 py-3.5 text-sm text-slate-800 dark:text-slate-200 align-middle', className)}
+      className={cn('px-4 py-3.5 text-sm text-zinc-800 dark:text-zinc-200 align-middle', className)}
       {...props}
     />
   );
@@ -105,13 +105,13 @@ export function TableToolbar({
   return (
     <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-3">
       <div className="relative flex-1 max-w-sm">
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none" />
         <input
           type="text"
           value={searchValue}
           onChange={(e) => onSearchChange?.(e.target.value)}
           placeholder={searchPlaceholder}
-          className="w-full h-11 pl-10 pr-4 rounded-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+          className="w-full h-11 pl-10 pr-4 rounded-sm bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-blue-600 transition-colors"
         />
       </div>
 
@@ -134,8 +134,8 @@ export function TableEmptyState({
 }): React.JSX.Element {
   return (
     <div className="py-12 text-center">
-      <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{title}</p>
-      <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{description}</p>
+      <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{title}</p>
+      <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1">{description}</p>
     </div>
   );
 }

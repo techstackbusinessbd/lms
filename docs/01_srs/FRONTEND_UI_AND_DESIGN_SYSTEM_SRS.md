@@ -41,30 +41,30 @@
 
 ## ৩. একীভূত ডিজাইন সিস্টেম গাইডলাইন (Design System Guidelines)
 
-### ৩.১ কালার প্যালেট ও ডুয়াল থিম (Enterprise Slate & Indigo Theme with Dark/Light Support)
+### ৩.১ কালার প্যালেট ও ডুয়াল থিম (Deep Charcoal & Authentic Denim Blue Theme with Dark/Light Support)
 ```css
-/* লাইট মোড টোকেন (Light Mode - Office & Daylight) */
+/* লাইট মোড টোকেন (Light Mode - Clean Crisp Daylight) */
 :root {
-  --bg-primary: #f8fafc;       /* Slate-50 (প্রধান ব্যাকগ্রাউন্ড) */
+  --bg-primary: #f4f4f5;       /* Zinc-100 (প্রধান ব্যাকগ্রাউন্ড) */
   --bg-secondary: #ffffff;     /* White (কার্ড ও টেবিল কন্টেইনার) */
-  --text-primary: #0f172a;     /* Slate-900 (প্রধান টেক্সট) */
-  --text-muted: #64748b;       /* Slate-500 (সেকেন্ডারি টেক্সট) */
-  --border-subtle: #e2e8f0;    /* Slate-200 (বর্ডার ও ডিভাইডার) */
+  --text-primary: #09090b;     /* Zinc-950 (প্রধান টেক্সট) */
+  --text-muted: #71717a;       /* Zinc-500 (সেকেন্ডারি টেক্সট) */
+  --border-subtle: #e4e4e7;    /* Zinc-200 (বর্ডার ও ডিভাইডার) */
   --radius: 0.125rem;          /* 2px - ভেরি স্মল কর্নার রেডিয়াস */
 }
 
-/* ডার্ক মোড টোকেন (Dark Mode - Shop-Floor Industrial) */
+/* ডার্ক মোড টোকেন (Dark Mode - Deep Industrial Charcoal / No Purple) */
 .dark {
-  --bg-primary: #020617;       /* Slate-950 (ডার্ক ব্যাকগ্রাউন্ড) */
-  --bg-secondary: #0f172a;     /* Slate-900 (কার্ড ও টেবিল কন্টেইনার) */
-  --text-primary: #f8fafc;     /* Slate-50 (প্রধান টেক্সট) */
-  --text-muted: #94a3b8;       /* Slate-400 (সেকেন্ডারি টেক্সট) */
-  --border-subtle: #1e293b;    /* Slate-800 (বর্ডার ও ডিভাইডার) */
+  --bg-primary: #09090b;       /* Zinc-950 (ডিপ চারকোল ব্যাকগ্রাউন্ড) */
+  --bg-secondary: #18181b;     /* Zinc-900 (কার্ড ও টেবিল কন্টেইনার) */
+  --text-primary: #fafafa;     /* Zinc-50 (প্রধান টেক্সট) */
+  --text-muted: #a1a1aa;       /* Zinc-400 (সেকেন্ডারি টেক্সট) */
+  --border-subtle: #27272a;    /* Zinc-800 (বর্ডার ও ডিভাইডার) */
   --radius: 0.125rem;          /* 2px - ভেরি স্মল কর্নার রেডিয়াস */
 }
 
-/* ব্র্যান্ড অ্যাকসেন্ট ও স্ট্যাটাস টোকেন (উভয় মোডেই অভিন্ন) */
---brand-primary: #6366f1;    /* Indigo-600 (মূল বাটন ও হাইলাইট) */
+/* অথেনটিক ডেনিম ব্লু ব্র্যান্ড অ্যাকসেন্ট ও স্ট্যাটাস টোকেন (উভয় মোডেই অভিন্ন) */
+--brand-primary: #2563eb;    /* Denim Blue-600 (মূল বাটন ও হাইলাইট - নো পার্পল) */
 --status-success: #10b981;   /* Emerald-500 (Passed, Active, Online) */
 --status-warning: #f59e0b;   /* Amber-500 (Pending, Idle, Shortage) */
 --status-danger: #f43f5e;    /* Rose-500 (Defect, Rejected, Offline) */

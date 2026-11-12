@@ -1,6 +1,6 @@
 /**
  * ডেনিম লেজার অটোমেশন ও কন্ট্রোল সিস্টেম (Denim LACS)
- * মূল অ্যাপ্লিকেশন কম্পোনেন্ট - মাস্টার ইউআই ও ডুয়াল থিম (Light & Dark Mode)
+ * মূল অ্যাপ্লিকেশন কম্পোনেন্ট - ডিপ চারকোল ও ক্লাসিক ডেনিম ব্লু থিম (#2563eb)
  */
 
 import React, { useState, useEffect } from 'react';
@@ -91,19 +91,19 @@ export default function App(): React.JSX.Element {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-200">
+    <div className="min-h-screen bg-zinc-100 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex flex-col font-sans transition-colors duration-150">
       {/* ১. টপ নেভিগেশন বার */}
-      <header className="border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur px-6 py-4 flex items-center justify-between sticky top-0 z-50 transition-colors">
+      <header className="border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-900/95 backdrop-blur px-6 py-4 flex items-center justify-between sticky top-0 z-50 transition-colors">
         <div className="flex items-center space-x-3">
-          <div className="h-10 w-10 rounded-sm bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/20">
+          <div className="h-10 w-10 rounded-sm bg-blue-600 flex items-center justify-center text-white shadow-xs shadow-blue-600/30">
             <Cpu className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-lg font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+            <h1 className="text-lg font-bold tracking-tight text-zinc-900 dark:text-white flex items-center gap-2">
               Denim LACS
               <Badge variant="primary">v1.0.0</Badge>
             </h1>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
               Jeanologia Laser Automation & Control System (20 Flat Tables)
             </p>
           </div>
@@ -127,7 +127,7 @@ export default function App(): React.JSX.Element {
               theme === 'dark' ? (
                 <Sun className="h-3.5 w-3.5 text-amber-400" />
               ) : (
-                <Moon className="h-3.5 w-3.5 text-indigo-600" />
+                <Moon className="h-3.5 w-3.5 text-blue-600" />
               )
             }
             aria-label="Toggle theme"
@@ -156,7 +156,7 @@ export default function App(): React.JSX.Element {
               <div>
                 <CardTitle>Master UI Design System Initialized</CardTitle>
                 <CardDescription>
-                  Atomic components active with Dark & Light theme engine and 2px corner radius.
+                  Deep Zinc/Charcoal palette with Authentic Denim Blue (#2563eb) and 2px corner radius.
                 </CardDescription>
               </div>
               <Modal>
@@ -172,8 +172,8 @@ export default function App(): React.JSX.Element {
                       Master parameters locked for 20 Jeanologia flat conveyor laser tables.
                     </ModalDescription>
                   </ModalHeader>
-                  <div className="space-y-3 py-2 text-xs text-slate-700 dark:text-slate-300">
-                    <p>• <strong>Theme Engine:</strong> Seamless Dark & Light Mode with localStorage persistence</p>
+                  <div className="space-y-3 py-2 text-xs text-zinc-700 dark:text-zinc-300">
+                    <p>• <strong>Theme Palette:</strong> Deep Charcoal & Authentic Denim Blue (#2563eb - Zero Purple)</p>
                     <p>• <strong>Corner Radius:</strong> Very Small (2px - rounded-sm) for industrial machinery UX</p>
                     <p>• <strong>Primary Keys:</strong> RFC 9562 UUIDv7 (Time-sorted 128-bit IDs)</p>
                     <p>• <strong>Database:</strong> PostgreSQL 16 + SQLAlchemy 2.0 AsyncIO</p>
@@ -192,28 +192,28 @@ export default function App(): React.JSX.Element {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="p-3 rounded-sm bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
-                <span className="text-xs text-slate-500 dark:text-slate-400">Database Engine</span>
+              <div className="p-3 rounded-sm bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800">
+                <span className="text-xs text-zinc-500 dark:text-zinc-400">Database Engine</span>
                 <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 mt-1">
                   <Server className="h-3.5 w-3.5" />
                   {health?.services.database === 'connected' ? 'PostgreSQL 16 Connected' : 'Checking...'}
                 </p>
               </div>
-              <div className="p-3 rounded-sm bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
-                <span className="text-xs text-slate-500 dark:text-slate-400">Primary Key</span>
-                <p className="text-sm font-semibold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5 mt-1">
+              <div className="p-3 rounded-sm bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800">
+                <span className="text-xs text-zinc-500 dark:text-zinc-400">Primary Key</span>
+                <p className="text-sm font-semibold text-blue-600 dark:text-blue-400 flex items-center gap-1.5 mt-1">
                   <CheckCircle2 className="h-3.5 w-3.5" />
                   RFC 9562 UUIDv7
                 </p>
               </div>
-              <div className="p-3 rounded-sm bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
-                <span className="text-xs text-slate-500 dark:text-slate-400">Touch Target</span>
-                <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 mt-1">48px Industrial Touch</p>
+              <div className="p-3 rounded-sm bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800">
+                <span className="text-xs text-zinc-500 dark:text-zinc-400">Touch Target</span>
+                <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 mt-1">48px Industrial Touch</p>
               </div>
-              <div className="p-3 rounded-sm bg-slate-100 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
-                <span className="text-xs text-slate-500 dark:text-slate-400">Theme Mode</span>
-                <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 mt-1 capitalize">
-                  {theme} Mode (2px Radius)
+              <div className="p-3 rounded-sm bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800">
+                <span className="text-xs text-zinc-500 dark:text-zinc-400">Industrial Palette</span>
+                <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 mt-1 capitalize">
+                  {theme} Mode • Denim Blue
                 </p>
               </div>
             </div>
@@ -223,7 +223,7 @@ export default function App(): React.JSX.Element {
         {/* ৩. লেজার টেবিল ফ্লীট টেবিল (TanStack Table Shell ডেমো) */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wide">
+            <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wide">
               Laser Table Fleet Readiness (Sample 4 of 20)
             </h3>
             <Badge variant="outline">20 Jeanologia Flat Tables</Badge>
@@ -248,13 +248,13 @@ export default function App(): React.JSX.Element {
             <TableBody>
               {filteredMachines.map((m) => (
                 <TableRow key={m.id}>
-                  <TableCell className="font-mono font-semibold text-indigo-600 dark:text-indigo-400">{m.code}</TableCell>
-                  <TableCell className="font-medium text-slate-900 dark:text-white">{m.name}</TableCell>
-                  <TableCell className="font-mono text-slate-500 dark:text-slate-400">{m.ip_address}</TableCell>
+                  <TableCell className="font-mono font-semibold text-blue-600 dark:text-blue-400">{m.code}</TableCell>
+                  <TableCell className="font-medium text-zinc-900 dark:text-white">{m.name}</TableCell>
+                  <TableCell className="font-mono text-zinc-500 dark:text-zinc-400">{m.ip_address}</TableCell>
                   <TableCell>
                     <StatusIndicator state={m.status} showLabel />
                   </TableCell>
-                  <TableCell className="text-right font-mono font-semibold text-slate-900 dark:text-slate-100">
+                  <TableCell className="text-right font-mono font-semibold text-zinc-900 dark:text-zinc-100">
                     {m.total_scans_today} pcs
                   </TableCell>
                 </TableRow>
@@ -265,7 +265,7 @@ export default function App(): React.JSX.Element {
 
         {/* ৪. ৮টি কাজের ধারাবাহিক ধাপের কার্ড */}
         <div>
-          <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wide mb-3">
+          <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 uppercase tracking-wide mb-3">
             The Locked 8-Step Production Chain
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -281,16 +281,16 @@ export default function App(): React.JSX.Element {
             ].map((item) => {
               const IconComp = item.icon;
               return (
-                <div key={item.step} className="p-4 rounded-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2 shadow-xs transition-colors">
+                <div key={item.step} className="p-4 rounded-sm bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-2 shadow-xs transition-colors">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono text-indigo-600 dark:text-indigo-400 font-semibold">{item.step}</span>
+                    <span className="text-xs font-mono text-blue-600 dark:text-blue-400 font-semibold">{item.step}</span>
                     <Badge variant="default">{item.role}</Badge>
                   </div>
-                  <h4 className="text-sm font-medium text-slate-900 dark:text-white flex items-center gap-2">
-                    <IconComp className="h-4 w-4 text-slate-400" />
+                  <h4 className="text-sm font-medium text-zinc-900 dark:text-white flex items-center gap-2">
+                    <IconComp className="h-4 w-4 text-zinc-400" />
                     {item.name}
                   </h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">{item.desc}</p>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400">{item.desc}</p>
                 </div>
               );
             })}
@@ -298,7 +298,7 @@ export default function App(): React.JSX.Element {
         </div>
       </main>
 
-      <footer className="border-t border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-950 px-6 py-4 text-center text-xs text-slate-500 transition-colors">
+      <footer className="border-t border-zinc-200 dark:border-zinc-900 bg-white dark:bg-zinc-950 px-6 py-4 text-center text-xs text-zinc-500 transition-colors">
         Denim Laser Automation & Control System • 20 Jeanologia Flat Conveyor Tables • 100% Offline-First LAN
       </footer>
     </div>

@@ -1,6 +1,7 @@
 /**
  * ডেনিম লেজার অটোমেশন ও কন্ট্রোল সিস্টেম (Denim LACS)
- * মূল সিএসএস এন্ট্রি পয়েন্ট - Tailwind CSS v4 (Light & Dark Theme Engine)
+ * মূল সিএসএস এন্ট্রি পয়েন্ট - Tailwind CSS v4
+ * ডিপ চারকোল ও ক্লাসিক ডেনিম ব্লু থিম (#2563eb - নো পার্পল ভাইব)
  */
 
 @import "tailwindcss";
@@ -9,21 +10,21 @@
 @variant dark (&:where(.dark, .dark *));
 
 @layer base {
-  /* ১. লাইট মোড ভ্যারিয়েবলস (ডিফল্ট রুট) */
+  /* ১. লাইট মোড ভ্যারিয়েবলস (Zinc-50/100 ও পিওর হোয়াইট) */
   :root {
-    --bg-main: #f8fafc;        /* slate-50 */
-    --text-main: #0f172a;      /* slate-900 */
+    --bg-main: #f4f4f5;        /* zinc-100 */
+    --text-main: #09090b;      /* zinc-950 */
     --card-bg: #ffffff;        /* white */
-    --card-border: #e2e8f0;    /* slate-200 */
+    --card-border: #e4e4e7;    /* zinc-200 */
     --radius: 0.125rem;        /* 2px - ভেরি স্মল কর্নার রেডিয়াস (রুল ১৬) */
   }
 
-  /* ২. ডার্ক মোড ভ্যারিয়েবলস */
+  /* ২. ডার্ক মোড ভ্যারিয়েবলস (ডিপ নিউট্রাল চারকোল/জিঙ্ক - নো পার্পল) */
   .dark {
-    --bg-main: #020617;        /* slate-950 */
-    --text-main: #f8fafc;      /* slate-50 */
-    --card-bg: #0f172a;        /* slate-900 */
-    --card-border: #1e293b;    /* slate-800 */
+    --bg-main: #09090b;        /* zinc-950 */
+    --text-main: #fafafa;      /* zinc-50 */
+    --card-bg: #18181b;        /* zinc-900 */
+    --card-border: #27272a;    /* zinc-800 */
   }
 
   body {
@@ -32,7 +33,7 @@
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: background-color 0.15s ease, color 0.15s ease;
   }
 }
 
@@ -51,9 +52,9 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #94a3b8;
+  background: #d4d4d8;
   border-radius: 2px;
 }
 .dark ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #3f3f46;
 }

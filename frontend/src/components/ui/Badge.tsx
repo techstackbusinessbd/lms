@@ -1,7 +1,7 @@
 /**
  * ডেনিম লেজার অটোমেশন ও কন্ট্রোল সিস্টেম (Denim LACS)
  * স্ট্যাটাস ব্যাজ কম্পোনেন্ট (Master Badge Component)
- * অর্ডার, কিউসি এবং মেশিন স্ট্যাটাস প্রদর্শনের জন্য হাই-ভিজিবিলিটি ব্যাজ
+ * ডিপ চারকোল ও ক্লাসিক ডেনিম ব্লু থিম
  */
 
 import React from 'react';
@@ -14,17 +14,17 @@ export const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-slate-800 text-slate-200 border-slate-700',
+          'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-700',
         primary:
-          'bg-indigo-950/80 text-indigo-300 border-indigo-800',
+          'bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/80',
         success:
-          'bg-emerald-950/80 text-emerald-300 border-emerald-800',
+          'bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/80',
         warning:
-          'bg-amber-950/80 text-amber-300 border-amber-800',
+          'bg-amber-50 dark:bg-amber-950/70 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800/80',
         danger:
-          'bg-rose-950/80 text-rose-300 border-rose-800',
+          'bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/80',
         outline:
-          'bg-transparent text-slate-300 border-slate-700',
+          'bg-transparent text-zinc-700 dark:text-zinc-300 border-zinc-300 dark:border-zinc-700',
       },
     },
     defaultVariants: {
@@ -48,16 +48,16 @@ export function Badge({
 }: BadgeProps): React.JSX.Element {
   // ডট কালার ম্যাপিং
   const dotColorMap: Record<string, string> = {
-    default: 'bg-slate-400',
-    primary: 'bg-indigo-400',
-    success: 'bg-emerald-400',
-    warning: 'bg-amber-400',
-    danger: 'bg-rose-400',
-    outline: 'bg-slate-400',
+    default: 'bg-zinc-400',
+    primary: 'bg-blue-500',
+    success: 'bg-emerald-500',
+    warning: 'bg-amber-500',
+    danger: 'bg-rose-500',
+    outline: 'bg-zinc-400',
   };
 
   const currentVariant = variant || 'default';
-  const dotColor = dotColorMap[currentVariant] || 'bg-slate-400';
+  const dotColor = dotColorMap[currentVariant] || 'bg-zinc-400';
 
   return (
     <span className={cn(badgeVariants({ variant, className }))} {...props}>
@@ -70,4 +70,3 @@ export function Badge({
     </span>
   );
 }
-

@@ -1,7 +1,7 @@
 /**
  * ডেনিম লেজার অটোমেশন ও কন্ট্রোল সিস্টেম (Denim LACS)
  * মূল ইনপুট ফিল্ড কম্পোনেন্ট (Master Input Component)
- * হাই-কনট্রাস্ট এবং কিউআর কোড স্ক্যানার ও টাচ-ফ্রেন্ডলি ইনপুট
+ * ডিপ চারকোল ও ক্লাসিক ডেনিম ব্লু থিম (#2563eb)
  */
 
 import React from 'react';
@@ -40,7 +40,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-xs font-medium text-slate-700 dark:text-slate-300 select-none"
+            className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 select-none"
           >
             {label}
           </label>
@@ -48,7 +48,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
         <div className="relative flex items-center">
           {leftIcon && (
-            <div className="absolute left-3.5 flex items-center pointer-events-none text-slate-400">
+            <div className="absolute left-3.5 flex items-center pointer-events-none text-zinc-400">
               {leftIcon}
             </div>
           )}
@@ -60,33 +60,33 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             disabled={disabled}
             aria-invalid={Boolean(error)}
             className={cn(
-              'w-full rounded-sm bg-white dark:bg-slate-900 border text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500',
+              'w-full rounded-sm bg-white dark:bg-zinc-900 border text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500',
               'transition-colors duration-150',
-              'focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500',
-              'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-950',
+              'focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600',
+              'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-zinc-100 dark:disabled:bg-zinc-950',
               isTouchOptimized ? 'h-12 text-base px-4 touch-target' : 'h-11 text-sm px-3.5',
               leftIcon && 'pl-10',
               rightIcon && 'pr-10',
-              error ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/20' : 'border-slate-300 dark:border-slate-700',
+              error ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/20' : 'border-zinc-300 dark:border-zinc-800',
               className
             )}
             {...props}
           />
 
           {rightIcon && (
-            <div className="absolute right-3.5 flex items-center text-slate-400">
+            <div className="absolute right-3.5 flex items-center text-zinc-400">
               {rightIcon}
             </div>
           )}
         </div>
 
         {error && (
-          <p className="text-xs font-medium text-rose-400 mt-1">
+          <p className="text-xs font-medium text-rose-500 mt-1">
             {error}
           </p>
         )}
         {!error && helperText && (
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
             {helperText}
           </p>
         )}
@@ -96,4 +96,3 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 
 Input.displayName = 'Input';
-
