@@ -18,15 +18,15 @@ export const buttonVariants = cva(
         primary:
           'bg-indigo-600 text-white hover:bg-indigo-500 active:bg-indigo-700 shadow-sm shadow-indigo-600/30',
         secondary:
-          'bg-slate-800 text-slate-100 hover:bg-slate-700 active:bg-slate-800 border border-slate-700',
+          'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-700 active:bg-slate-300 dark:active:bg-slate-800 border border-slate-300 dark:border-slate-700',
         danger:
-          'bg-rose-600 text-white hover:bg-rose-500 active:bg-rose-700 shadow-sm shadow-rose-600/30',
+          'bg-rose-600 text-white hover:bg-rose-500 active:bg-rose-700 shadow-xs shadow-rose-600/30',
         success:
-          'bg-emerald-600 text-white hover:bg-emerald-500 active:bg-emerald-700 shadow-sm shadow-emerald-600/30',
+          'bg-emerald-600 text-white hover:bg-emerald-500 active:bg-emerald-700 shadow-xs shadow-emerald-600/30',
         outline:
-          'border border-slate-700 bg-transparent text-slate-200 hover:bg-slate-800 hover:text-white',
+          'border border-slate-300 dark:border-slate-700 bg-transparent text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white',
         ghost:
-          'text-slate-300 hover:bg-slate-800/80 hover:text-white',
+          'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-white',
       },
       size: {
         sm: 'h-9 px-3 text-xs rounded-sm',

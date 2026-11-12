@@ -40,7 +40,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-xs font-medium text-slate-300 select-none"
+            className="block text-xs font-medium text-slate-700 dark:text-slate-300 select-none"
           >
             {label}
           </label>
@@ -60,15 +60,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             disabled={disabled}
             aria-invalid={Boolean(error)}
             className={cn(
-              'w-full rounded-sm bg-slate-900 border text-slate-100 placeholder:text-slate-500',
+              'w-full rounded-sm bg-white dark:bg-slate-900 border text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500',
               'transition-colors duration-150',
               'focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500',
-              'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-slate-950',
-              // সাইজিং: শপ-ফ্লোর ট্যাবলেটের জন্য ৪৮px (h-12) নতুবা স্ট্যান্ডার্ড ৪৪px (h-11)
+              'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-950',
               isTouchOptimized ? 'h-12 text-base px-4 touch-target' : 'h-11 text-sm px-3.5',
               leftIcon && 'pl-10',
               rightIcon && 'pr-10',
-              error ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/20' : 'border-slate-700',
+              error ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500/20' : 'border-slate-300 dark:border-slate-700',
               className
             )}
             {...props}

@@ -41,17 +41,30 @@
 
 ## ৩. একীভূত ডিজাইন সিস্টেম গাইডলাইন (Design System Guidelines)
 
-### ৩.১ কালার প্যালেট (Enterprise Slate & Indigo Theme)
+### ৩.১ কালার প্যালেট ও ডুয়াল থিম (Enterprise Slate & Indigo Theme with Dark/Light Support)
 ```css
-/* ব্র্যান্ড ও ব্যাকগ্রাউন্ড টোকেন */
---bg-primary: #0f172a;       /* Slate-900 (ডার্ক মোড ব্যাকগ্রাউন্ড) */
---bg-secondary: #1e293b;     /* Slate-800 (কার্ড ও টেবিল কন্টেইনার) */
---text-primary: #f8fafc;     /* Slate-50 (প্রধান টেক্সট) */
---text-muted: #94a3b8;       /* Slate-400 (সেকেন্ডারি টেক্সট) */
---border-subtle: #334155;    /* Slate-700 (বর্ডার ও ডিভাইডার) */
+/* লাইট মোড টোকেন (Light Mode - Office & Daylight) */
+:root {
+  --bg-primary: #f8fafc;       /* Slate-50 (প্রধান ব্যাকগ্রাউন্ড) */
+  --bg-secondary: #ffffff;     /* White (কার্ড ও টেবিল কন্টেইনার) */
+  --text-primary: #0f172a;     /* Slate-900 (প্রধান টেক্সট) */
+  --text-muted: #64748b;       /* Slate-500 (সেকেন্ডারি টেক্সট) */
+  --border-subtle: #e2e8f0;    /* Slate-200 (বর্ডার ও ডিভাইডার) */
+  --radius: 0.125rem;          /* 2px - ভেরি স্মল কর্নার রেডিয়াস */
+}
 
-/* ব্র্যান্ড অ্যাকসেন্ট ও স্ট্যাটাস টোকেন */
---brand-primary: #6366f1;    /* Indigo-500 (মূল বাটন ও হাইলাইট) */
+/* ডার্ক মোড টোকেন (Dark Mode - Shop-Floor Industrial) */
+.dark {
+  --bg-primary: #020617;       /* Slate-950 (ডার্ক ব্যাকগ্রাউন্ড) */
+  --bg-secondary: #0f172a;     /* Slate-900 (কার্ড ও টেবিল কন্টেইনার) */
+  --text-primary: #f8fafc;     /* Slate-50 (প্রধান টেক্সট) */
+  --text-muted: #94a3b8;       /* Slate-400 (সেকেন্ডারি টেক্সট) */
+  --border-subtle: #1e293b;    /* Slate-800 (বর্ডার ও ডিভাইডার) */
+  --radius: 0.125rem;          /* 2px - ভেরি স্মল কর্নার রেডিয়াস */
+}
+
+/* ব্র্যান্ড অ্যাকসেন্ট ও স্ট্যাটাস টোকেন (উভয় মোডেই অভিন্ন) */
+--brand-primary: #6366f1;    /* Indigo-600 (মূল বাটন ও হাইলাইট) */
 --status-success: #10b981;   /* Emerald-500 (Passed, Active, Online) */
 --status-warning: #f59e0b;   /* Amber-500 (Pending, Idle, Shortage) */
 --status-danger: #f43f5e;    /* Rose-500 (Defect, Rejected, Offline) */
