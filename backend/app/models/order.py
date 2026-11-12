@@ -164,3 +164,4 @@ class Order(BaseModel):
             f"style='{self.style_code}', total_qty={self.total_quantity}, "
             f"status='{self.status}')>"
         )
+
