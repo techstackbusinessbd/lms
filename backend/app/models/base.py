@@ -91,10 +91,17 @@ class BaseModel(Base):
     is_deleted: Mapped[bool] = mapped_column(
         Boolean,
         default=False,
+        server_default=func.false(),
         nullable=False,
         index=True,
         doc="সফট ডিলিট স্ট্যাটাস ফ্ল্যাগ",
     )
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ইনস্ট্যান্স তৈরির সময় ডিফল্ট সফট ডিলিট মান নিশ্চিত করা"""
+        if "is_deleted" not in kwargs:
+            kwargs["is_deleted"] = False
+        super().__init__(**kwargs)
 
     def to_dict(self) -> Dict[str, Any]:
         """
