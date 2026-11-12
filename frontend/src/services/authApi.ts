@@ -109,3 +109,4 @@ export async function fetchCurrentUser(token: string): Promise<UserSummary> {
 
   return response.json();
 }
+

@@ -1,9 +1,8 @@
 /**
- * শপ-ফ্লোর টাচ-অপ্টিমাইজড নিউমেরিক কিপ্যাড (Floor Touch-Optimized Numeric Keypad)
+ * শপ-ফ্লোর টাচ-অপ্টিমাইজড নিউমেরিক কিপ্যাড (Floor Touch-Optimized Keypad)
  * Denim Laser Automation & Control System (Denim LACS)
  *
- * ২০টি Jeanologia লেজার মেশিনের ফ্লোরে অপারেটরদের গ্লাভস পরিহিত অবস্থায়
- * দ্রুত ও ভুলমুক্তভাবে ৪-৬ ডিজিট Quick-PIN প্রদানের জন্য ৫৬px টাচ বাটন সরবরাহ করে।
+ * ৪-৬ সংখ্যার Quick-PIN দ্রুত ও নির্ভুলভাবে এন্ট্রি করার জন্য পরিচ্ছন্ন ও মিনিমাল কিপ্যাড।
  */
 
 import React from 'react';
@@ -49,34 +48,34 @@ export const FloorKeypad: React.FC<FloorKeypadProps> = ({
   const digits = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
   return (
-    <div className="w-full max-w-xs mx-auto select-none">
-      {/* পিন ইনডিকেটর ডিসপ্লে */}
-      <div className="flex justify-center items-center gap-2 mb-4 p-3 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-sm">
+    <div className="w-full select-none">
+      {/* পিন ডটস ইনডিকেটর (মিনিমাল ও নিট) */}
+      <div className="flex justify-center items-center gap-2.5 py-3 mb-1">
         {Array.from({ length: maxDigits }).map((_, index) => {
           const isFilled = index < pin.length;
           return (
             <div
               key={index}
               className={cn(
-                'w-4 h-4 rounded-full border transition-all duration-150',
+                'w-3 h-3 rounded-full transition-all duration-150',
                 isFilled
-                  ? 'bg-blue-600 border-blue-600 scale-110 shadow-sm'
-                  : 'bg-zinc-200 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700'
+                  ? 'bg-blue-600 scale-110 shadow-xs'
+                  : 'bg-zinc-200 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700'
               )}
             />
           );
         })}
       </div>
 
-      {/* ৩x৪ নিউমেরিক গ্রিড কিপ্যাড (প্রতিটি বাটন ৫২px+ উচ্চতা) */}
-      <div className="grid grid-cols-3 gap-2">
+      {/* ৩x৪ কিপ্যাড গ্রিড (৪৮px+ টাচ বাটন) */}
+      <div className="grid grid-cols-3 gap-1.5">
         {digits.map((digit) => (
           <button
             key={digit}
             type="button"
             disabled={disabled || isLoading}
             onClick={() => handleDigitClick(digit)}
-            className="h-14 flex items-center justify-center text-xl font-bold font-mono text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-800/80 hover:bg-zinc-100 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 rounded-sm shadow-xs active:scale-95 transition-all disabled:opacity-50"
+            className="h-12 flex items-center justify-center text-lg font-semibold font-mono text-zinc-900 dark:text-zinc-100 bg-zinc-50 dark:bg-zinc-800/60 hover:bg-zinc-100 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700/80 rounded-sm shadow-2xs active:scale-95 transition-all disabled:opacity-40"
           >
             {digit}
           </button>
@@ -87,10 +86,10 @@ export const FloorKeypad: React.FC<FloorKeypadProps> = ({
           type="button"
           disabled={disabled || isLoading || pin.length === 0}
           onClick={handleClear}
-          title="Clear PIN"
-          className="h-14 flex items-center justify-center text-xs font-semibold uppercase text-zinc-500 hover:text-red-500 bg-white dark:bg-zinc-800/60 hover:bg-zinc-100 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 rounded-sm active:scale-95 transition-all disabled:opacity-30"
+          title="Clear"
+          className="h-12 flex items-center justify-center text-zinc-400 hover:text-red-500 bg-zinc-50 dark:bg-zinc-800/40 hover:bg-zinc-100 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700/80 rounded-sm active:scale-95 transition-all disabled:opacity-30"
         >
-          <RotateCcw className="w-5 h-5" />
+          <RotateCcw className="w-4 h-4" />
         </button>
 
         {/* ডিজিট ০ */}
@@ -98,7 +97,7 @@ export const FloorKeypad: React.FC<FloorKeypadProps> = ({
           type="button"
           disabled={disabled || isLoading}
           onClick={() => handleDigitClick('0')}
-          className="h-14 flex items-center justify-center text-xl font-bold font-mono text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-800/80 hover:bg-zinc-100 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 rounded-sm shadow-xs active:scale-95 transition-all disabled:opacity-50"
+          className="h-12 flex items-center justify-center text-lg font-semibold font-mono text-zinc-900 dark:text-zinc-100 bg-zinc-50 dark:bg-zinc-800/60 hover:bg-zinc-100 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700/80 rounded-sm shadow-2xs active:scale-95 transition-all disabled:opacity-40"
         >
           0
         </button>
@@ -109,9 +108,9 @@ export const FloorKeypad: React.FC<FloorKeypadProps> = ({
           disabled={disabled || isLoading || pin.length === 0}
           onClick={handleBackspace}
           title="Backspace"
-          className="h-14 flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 bg-white dark:bg-zinc-800/60 hover:bg-zinc-100 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 rounded-sm active:scale-95 transition-all disabled:opacity-30"
+          className="h-12 flex items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 bg-zinc-50 dark:bg-zinc-800/40 hover:bg-zinc-100 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700/80 rounded-sm active:scale-95 transition-all disabled:opacity-30"
         >
-          <Delete className="w-5 h-5" />
+          <Delete className="w-4 h-4" />
         </button>
       </div>
 
@@ -120,17 +119,17 @@ export const FloorKeypad: React.FC<FloorKeypadProps> = ({
         type="button"
         disabled={disabled || isLoading || pin.length < 4}
         onClick={onSubmit}
-        className="w-full mt-3 h-12 flex items-center justify-center gap-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:bg-zinc-300 dark:disabled:bg-zinc-800 disabled:text-zinc-500 rounded-sm shadow-sm transition-all"
+        className="w-full mt-2.5 h-10 flex items-center justify-center gap-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:bg-zinc-200 dark:disabled:bg-zinc-800 disabled:text-zinc-400 dark:disabled:text-zinc-500 rounded-sm shadow-xs transition-all"
       >
         {isLoading ? (
           <>
-            <Loader2 className="w-4 h-4 animate-spin" />
-            <span>Verifying PIN...</span>
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <span>Verifying...</span>
           </>
         ) : (
           <>
             <span>Verify & Enter</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-3.5 h-3.5" />
           </>
         )}
       </button>

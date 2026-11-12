@@ -111,3 +111,4 @@ async def seed_initial_system_data() -> None:
 
 if __name__ == "__main__":
     asyncio.run(seed_initial_system_data())
+
