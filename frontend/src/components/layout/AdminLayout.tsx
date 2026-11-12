@@ -49,7 +49,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   }, []);
 
   return (
-    <div className="flex h-screen bg-zinc-100/60 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 overflow-hidden font-sans transition-colors">
+    <div className="flex h-screen bg-zinc-100 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 overflow-hidden font-sans transition-colors">
       {/* বামদিকের ফিক্সড সাইডবার */}
       <Sidebar currentPath={currentPath} onNavigate={onNavigate} />
 
@@ -71,3 +71,4 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
     </div>
   );
 };
+

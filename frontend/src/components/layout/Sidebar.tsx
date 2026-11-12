@@ -66,7 +66,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate }) => 
                 <span className="font-bold text-sm tracking-tight text-zinc-900 dark:text-zinc-100">
                   Denim LACS
                 </span>
-                <span className="text-[9px] font-mono font-semibold px-1 py-0.5 rounded-sm bg-blue-50 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/60">
+                <span className="text-[9px] font-mono font-semibold px-1 py-0.5 rounded-sm bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
                   v1.0
                 </span>
               </div>
@@ -115,7 +115,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate }) => 
                       'w-full h-8 px-2.5 rounded-sm flex items-center justify-between text-xs transition-all',
                       isActive
                         ? 'bg-blue-600 text-white font-semibold shadow-xs'
-                        : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 hover:text-zinc-900 dark:hover:text-zinc-100 font-medium'
+                        : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 font-medium'
                     )}
                   >
                     <div className="flex items-center gap-2 truncate">
@@ -127,7 +127,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate }) => 
                         'text-[10px] font-mono px-1 rounded-sm border shrink-0',
                         isActive
                           ? 'border-white/30 bg-white/10 text-white'
-                          : 'border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400'
+                          : 'border-zinc-200 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'
                       )}
                     >
                       S{step.stepNum}
@@ -157,7 +157,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate }) => 
                       'w-full h-8 px-2.5 rounded-sm flex items-center gap-2 text-xs transition-all',
                       isActive
                         ? 'bg-blue-600 text-white font-semibold shadow-xs'
-                        : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 hover:text-zinc-900 dark:hover:text-zinc-100 font-medium'
+                        : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 font-medium'
                     )}
                   >
                     <Icon className="w-3.5 h-3.5 shrink-0" />
@@ -171,10 +171,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate }) => 
       </div>
 
       {/* ৩. সাইডবার বটম ইউজার প্রোফাইল কার্ড */}
-      <div className="p-3 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/70 dark:bg-zinc-900/60">
+      <div className="p-3 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 min-w-0">
-            <div className="w-7 h-7 rounded-sm bg-blue-600/10 border border-blue-600/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-xs shrink-0">
+            <div className="w-7 h-7 rounded-sm bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-xs shrink-0">
               {user?.full_name ? user.full_name[0] : 'U'}
             </div>
             <div className="min-w-0">
@@ -190,7 +190,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate }) => 
           <button
             onClick={logout}
             title="Sign Out"
-            className="p-1.5 rounded-sm text-zinc-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors shrink-0"
+            className="p-1.5 rounded-sm text-zinc-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors shrink-0"
           >
             <LogOut className="w-3.5 h-3.5" />
           </button>

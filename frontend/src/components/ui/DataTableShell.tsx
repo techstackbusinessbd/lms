@@ -13,7 +13,7 @@ export function Table({
   ...props
 }: React.HTMLAttributes<HTMLTableElement>): React.JSX.Element {
   return (
-    <div className="relative w-full overflow-auto rounded-sm border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-xs">
+    <div className="relative w-full overflow-x-auto">
       <table
         className={cn('w-full caption-bottom text-sm text-left border-collapse', className)}
         {...props}
@@ -28,7 +28,7 @@ export function TableHeader({
 }: React.HTMLAttributes<HTMLTableSectionElement>): React.JSX.Element {
   return (
     <thead
-      className={cn('bg-zinc-50 dark:bg-zinc-900/90 border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-10', className)}
+      className={cn('bg-zinc-50 dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-10', className)}
       {...props}
     />
   );
@@ -40,7 +40,7 @@ export function TableBody({
 }: React.HTMLAttributes<HTMLTableSectionElement>): React.JSX.Element {
   return (
     <tbody
-      className={cn('divide-y divide-zinc-200 dark:divide-zinc-800/60', className)}
+      className={cn('divide-y divide-zinc-200 dark:divide-zinc-800', className)}
       {...props}
     />
   );
@@ -53,7 +53,7 @@ export function TableRow({
   return (
     <tr
       className={cn(
-        'transition-colors hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 data-[state=selected]:bg-zinc-100 dark:data-[state=selected]:bg-zinc-800',
+        'transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50 data-[state=selected]:bg-zinc-100 dark:data-[state=selected]:bg-zinc-800',
         className
       )}
       {...props}
@@ -68,7 +68,7 @@ export function TableHead({
   return (
     <th
       className={cn(
-        'h-11 px-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 select-none',
+        'h-10 px-4 text-xs font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 select-none font-mono',
         className
       )}
       {...props}
@@ -82,7 +82,7 @@ export function TableCell({
 }: React.TdHTMLAttributes<HTMLTableCellElement>): React.JSX.Element {
   return (
     <td
-      className={cn('px-4 py-3.5 text-sm text-zinc-800 dark:text-zinc-200 align-middle', className)}
+      className={cn('px-4 py-3 text-sm text-zinc-800 dark:text-zinc-200 align-middle', className)}
       {...props}
     />
   );
