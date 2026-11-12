@@ -76,3 +76,4 @@ export const adminGroup: ParentMenuItem = {
     { id: 'settings', name: 'System Settings', icon: Settings },
   ],
 };
+

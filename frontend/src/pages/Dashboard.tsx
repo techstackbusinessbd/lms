@@ -1,5 +1,5 @@
 /**
- * অ্যাডমিন প্যানেল ওভারভিউ ড্যাশবোর্ড (Modern Industrial Fleet Dashboard)
+ * অ্যাডমিন প্যানেল ওভারভিউ ড্যাশবোর্ড (Executive Industrial Fleet Dashboard)
  * Denim Laser Automation & Control System (Denim LACS)
  *
  * ২০টি Jeanologia মেশিনের লাইভ মেট্রিক্স, রিয়েলটাইম ফ্লিট ম্যাট্রিক্স ও অর্ডার ট্র্যাকিং।
@@ -62,16 +62,16 @@ export const Dashboard: React.FC = () => {
       {/* ২. ২০টি Jeanologia ফ্ল্যাট কনভেয়ার টেবিলের লাইভ ফ্লিট ম্যাট্রিক্স */}
       <FleetMatrix />
 
-      {/* ৩. লাইভ প্রোডাকশন অর্ডার ট্র্যাকিং (TanStack Table Style Seamless Card) */}
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-sm shadow-xs overflow-hidden">
+      {/* ৩. লাইভ প্রোডাকশন অর্ডার ট্র্যাকিং (Executive Table Seamless Card) */}
+      <div className="relative overflow-hidden bg-white dark:bg-[#121317] border border-slate-200/90 dark:border-[#1f2127] rounded-sm shadow-[0_1px_3px_rgba(0,0,0,0.04)] before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-blue-500/25 before:to-transparent">
         {/* কার্ড হেডার সেকশন */}
-        <div className="p-4 flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+        <div className="p-4 flex items-center justify-between border-b border-slate-100 dark:border-[#1f2127] bg-white dark:bg-[#121317]">
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 font-mono">
               Active Production Orders on Floor
             </h3>
             <p className="text-[11px] text-zinc-500 dark:text-zinc-400 font-mono mt-0.5">
-              Live PO status across the locked 8-step workflow chain
+              Live PO dispatch &amp; execution status across the locked 8-step workflow
             </p>
           </div>
           <Badge variant="primary" hasDot>
@@ -84,7 +84,7 @@ export const Dashboard: React.FC = () => {
           <TableHeader>
             <TableRow>
               <TableHead>PO NUMBER</TableHead>
-              <TableHead>BUYER & STYLE</TableHead>
+              <TableHead>BUYER &amp; STYLE</TableHead>
               <TableHead>WASH REFERENCE</TableHead>
               <TableHead>TOTAL UNITS</TableHead>
               <TableHead>SHIFT PROGRESS</TableHead>
@@ -100,14 +100,14 @@ export const Dashboard: React.FC = () => {
                     {order.po}
                   </TableCell>
                   <TableCell>
-                    <div className="font-semibold text-zinc-900 dark:text-zinc-100">
+                    <div className="font-medium text-zinc-900 dark:text-zinc-100">
                       {order.buyer}
                     </div>
-                    <div className="text-[11px] text-zinc-500 dark:text-zinc-400 font-mono">
+                    <div className="text-[11px] text-zinc-400 font-mono">
                       {order.style}
                     </div>
                   </TableCell>
-                  <TableCell className="text-zinc-700 dark:text-zinc-300 font-medium">
+                  <TableCell className="text-zinc-600 dark:text-zinc-300 font-medium">
                     {order.wash}
                   </TableCell>
                   <TableCell className="font-mono text-zinc-800 dark:text-zinc-200 font-semibold">
@@ -119,9 +119,9 @@ export const Dashboard: React.FC = () => {
                         <span>{order.lasered} pcs</span>
                         <span>{progressPct}%</span>
                       </div>
-                      <div className="w-full bg-zinc-200 dark:bg-zinc-800 h-1.5 rounded-sm overflow-hidden">
+                      <div className="w-full bg-slate-100 dark:bg-[#1c1d23] h-1.5 rounded-sm overflow-hidden">
                         <div
-                          className="bg-blue-600 h-full rounded-sm"
+                          className="bg-blue-600 h-full rounded-sm shadow-[0_0_8px_rgba(37,99,235,0.4)]"
                           style={{ width: `${progressPct}%` }}
                         />
                       </div>
