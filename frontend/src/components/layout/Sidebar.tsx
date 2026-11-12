@@ -163,7 +163,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate }) => 
           <div>
             <div className="px-2 mb-1.5">
               <span className="text-[10px] font-mono font-semibold uppercase tracking-widest text-zinc-500">
-                Monitoring
+                Overview
               </span>
             </div>
             <button
@@ -176,15 +176,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate }) => 
               )}
             >
               <LayoutDashboard className="w-3.5 h-3.5" />
-              <span>Fleet Overview</span>
+              <span>Dashboard</span>
             </button>
           </div>
 
-          {/* সেকশন ১: প্রোডাকশন অপারেশনস (২-লেভেল ড্রপডাউন) */}
+          {/* সেকশন ১: অপারেশনস (২-লেভেল ড্রপডাউন) */}
           <div>
             <div className="px-2 mb-1.5">
               <span className="text-[10px] font-mono font-semibold uppercase tracking-widest text-zinc-500">
-                Production & Fleet
+                Operations
               </span>
             </div>
             <div className="space-y-1">
@@ -193,11 +193,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPath, onNavigate }) => 
             </div>
           </div>
 
-          {/* সেকশন ২: সিস্টেম ম্যানেজমেন্ট (২-লেভেল ড্রপডাউন) */}
+          {/* সেকশন ২: সিস্টেম অ্যাডমিনিস্ট্রেশন (২-লেভেল ড্রপডাউন) */}
           <div>
             <div className="px-2 mb-1.5">
               <span className="text-[10px] font-mono font-semibold uppercase tracking-widest text-zinc-500">
-                System
+                Administration
               </span>
             </div>
             <div className="space-y-1">{renderParentMenu(adminGroup)}</div>

@@ -75,21 +75,21 @@ function AppContent(): React.JSX.Element {
     return <Login />;
   }
 
-  // পেজ টাইটেল ম্যাপিং
+  // পেজ টাইটেল ম্যাপিং (সহজ, পরিষ্কার ও প্রফেশনাল নামকরণ)
   const pageTitles: Record<string, string> = {
-    dashboard: 'Fleet Overview',
-    'step-1': 'Step 1: Order Entry & Size Breakdown',
-    'step-2': 'Step 2: Laser Recipe Vault (.jean5)',
-    'step-3': 'Step 3: QR Code Generation & Printing',
-    'step-4': 'Step 4: QR Code Attachment (Assembly)',
-    'step-5': 'Step 5: Laser Body Intake & Chalan',
-    'step-6': 'Step 6: eMark Auto-Ready at Machine',
-    'step-7': 'Step 7: Production & Live OEE Counting',
-    'step-8': 'Step 8: QC Audit & Lot Handover',
-    machines: 'Laser Machines Fleet (M01-M20)',
-    'machine-agents': 'IPC Edge Agents Telemetry',
-    users: 'Users & Roles Management (RBAC)',
-    settings: 'System Configuration',
+    dashboard: 'Dashboard',
+    'step-1': 'Step 1: Order Entry',
+    'step-2': 'Step 2: Laser Design',
+    'step-3': 'Step 3: QR Print',
+    'step-4': 'Step 4: QR Attach',
+    'step-5': 'Step 5: Body Intake',
+    'step-6': 'Step 6: eMark Ready',
+    'step-7': 'Step 7: Production',
+    'step-8': 'Step 8: QC Audit',
+    machines: 'Machine Fleet',
+    'machine-agents': 'Edge Agents',
+    users: 'Users & Roles',
+    settings: 'Settings',
   };
 
   return (
