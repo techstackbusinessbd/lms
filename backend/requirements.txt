@@ -9,6 +9,7 @@ python-dotenv==1.0.1
 
 # ডেটাবেজ ও ওআরএম (PostgreSQL 16 AsyncIO)
 sqlalchemy==2.0.36
+greenlet==3.1.1
 asyncpg==0.30.0
 alembic==1.14.0
 
