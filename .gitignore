@@ -58,6 +58,9 @@ dist/
 dist-ssr/
 *.local
 .vite/
+*.tsbuildinfo
+frontend/vite.config.d.ts
+frontend/vite.config.js
 
 # ডেটাবেজ ও ডকার লোকাল ডাটা (Local Volumes & Storage)
 pgdata/

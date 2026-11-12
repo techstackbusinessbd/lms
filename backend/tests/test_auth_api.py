@@ -222,3 +222,4 @@ async def test_server_side_validation_rule_23():
             json={"pin": "123", "badge_id_or_username": "BADGE-01"},
         )
         assert res2.status_code == 422
+

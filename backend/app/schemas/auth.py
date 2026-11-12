@@ -87,3 +87,4 @@ class TokenResponse(BaseModel):
     token_type: str = Field(default="bearer", description="টোকেন টাইপ (ডিফল্ট: bearer)")
     expires_in: int = Field(..., description="টোকেন মেয়াদোত্তীর্ণ হওয়ার সময় (সেকেন্ডে)")
     user: UserSummaryResponse = Field(..., description="লগইনকৃত ইউজারের সংক্ষিপ্ত তথ্য")
+

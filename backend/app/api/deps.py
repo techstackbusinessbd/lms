@@ -114,3 +114,4 @@ def require_permission(permission_code: str) -> Callable:
         return current_user
 
     return permission_checker
+

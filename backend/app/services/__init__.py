@@ -6,3 +6,4 @@ Denim Laser Automation & Control System (Denim LACS)
 from app.services.auth_service import AuthService
 
 __all__ = ["AuthService"]
+

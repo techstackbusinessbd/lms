@@ -12,3 +12,4 @@ api_v1_router = APIRouter()
 
 # অথেনটিকেশন রাউটার সংযোজন
 api_v1_router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
+

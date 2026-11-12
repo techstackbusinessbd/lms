@@ -115,3 +115,4 @@ async def get_current_user_profile(
         ),
         permissions=permission_codes,
     )
+

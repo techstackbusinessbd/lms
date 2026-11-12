@@ -175,3 +175,4 @@ class AuthService:
             expires_in=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
             user=user_summary,
         )
+
