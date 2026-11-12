@@ -1,0 +1,36 @@
+# ==============================================================================
+# Denim LACS - Developer Container Dockerfile (Python 3.13)
+# এই ডকারফাইলটি লোকাল পিসির রিসোর্স ব্যবহার না করে কন্টেইনারে ডেভেলপমেন্ট রান করে
+# ==============================================================================
+
+FROM python:3.13-slim
+
+# পাইথন আউটপুট আনবাফার্ড রাখা এবং বাইটকোড তৈরি বন্ধ রাখা
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# সিস্টেম ডিপেন্ডেন্সি ও কার্ল (হেলথচেকের জন্য) ইনস্টল
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    gcc \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# কাজের ডিরেক্টরি নির্ধারণ
+WORKDIR /app
+
+# রিকোয়ারমেন্টস কপি ও ইনস্টল
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# সোর্স কোড কপি (ভলিউম মাউন্টে এটি লাইভ ওভাররাইট হবে)
+COPY . /app
+
+# এপিআই পোর্ট এক্সপোজ
+EXPOSE 8000
+
+# ডিফল্ট কমান্ড: Uvicorn দিয়ে হট-রিলোড মোডে ব্যাকএন্ড রান
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+

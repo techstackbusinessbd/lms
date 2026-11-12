@@ -1,0 +1,67 @@
+# ==============================================================================
+# Denim LACS - Local Development Docker Compose Setup
+# শতভাগ ডকার কনটেইনারাইজড ডেভেলপমেন্ট পরিবেশ (রুল ২১ মেনে তৈরি)
+# ==============================================================================
+
+version: '3.8'
+
+services:
+  # ১. ডেটাবেজ কনটেইনার (PostgreSQL 16 Engine)
+  lacs-dev-db:
+    image: postgres:16-alpine
+    container_name: lacs-dev-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: lacs_dev
+      POSTGRES_USER: lacs_user
+      POSTGRES_PASSWORD: lacs_secure_pass_2026
+    ports:
+      - "5432:5432"
+    volumes:
+      - lacs_dev_pgdata:/var/lib/postgresql/data
+    networks:
+      - lacs-dev-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lacs_user -d lacs_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ২. সেন্ট্রাল ব্যাকএন্ড কনটেইনার (FastAPI + Python 3.13)
+  lacs-dev-backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile.dev
+    container_name: lacs-dev-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=development
+      - POSTGRES_SERVER=lacs-dev-db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=lacs_dev
+      - POSTGRES_USER=lacs_user
+      - POSTGRES_PASSWORD=lacs_secure_pass_2026
+      - SECRET_KEY=lacs_dev_secret_key_change_in_production_2026
+    volumes:
+      # লোকাল কোড ভলিউম বাইন্ড-মাউন্ট (হট-রিলোড সক্ষম করার জন্য)
+      - ../backend:/app
+    networks:
+      - lacs-dev-net
+    depends_on:
+      lacs-dev-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+networks:
+  lacs-dev-net:
+    driver: bridge
+
+volumes:
+  lacs_dev_pgdata:
+
