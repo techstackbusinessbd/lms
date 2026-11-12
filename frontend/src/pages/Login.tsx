@@ -125,17 +125,12 @@ export const Login: React.FC = () => {
 
         {/* ব্র্যান্ড হেডার */}
         <div className="flex flex-col items-center mb-5 text-center">
-          <div className="w-10 h-10 rounded-sm bg-gradient-to-b from-blue-500 to-blue-600 flex items-center justify-center text-white mb-2.5 shadow-md shadow-blue-600/25 ring-1 ring-white/20">
+          <div className="w-10 h-10 rounded-sm bg-blue-600 flex items-center justify-center text-white mb-3 shadow-xs">
             <Cpu className="w-5 h-5" />
           </div>
-          <div className="flex items-center gap-1.5">
-            <h1 className="text-base font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-              Denim LACS
-            </h1>
-            <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded-sm bg-blue-50 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/60 tracking-wider">
-              ENTERPRISE
-            </span>
-          </div>
+          <h1 className="text-base font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+            Laser Automation & Control System (LACS)
+          </h1>
         </div>
 
         {/* সেগমেন্টেড পিল সুইচ (Modern Pill Tab) */}
@@ -182,7 +177,7 @@ export const Login: React.FC = () => {
           <form noValidate onSubmit={handleOfficeSubmit} className="space-y-3.5">
             <div>
               <label className="block text-[11px] font-semibold tracking-wider uppercase text-zinc-500 dark:text-zinc-400 mb-1">
-                Username or Email
+                USERNAME OR EMAIL
               </label>
               <div className="relative">
                 <UserIcon className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -208,7 +203,7 @@ export const Login: React.FC = () => {
 
             <div>
               <label className="block text-[11px] font-semibold tracking-wider uppercase text-zinc-500 dark:text-zinc-400 mb-1">
-                Password
+                PASSWORD
               </label>
               <div className="relative">
                 <Lock className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -235,7 +230,7 @@ export const Login: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-2 h-10 flex items-center justify-center gap-2 text-xs font-semibold tracking-wider uppercase text-white bg-gradient-to-b from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 active:from-blue-700 active:to-blue-800 disabled:from-zinc-200 disabled:to-zinc-300 dark:disabled:from-zinc-800 dark:disabled:to-zinc-850 disabled:text-zinc-400 dark:disabled:text-zinc-600 rounded-sm shadow-[0_1px_3px_rgba(37,99,235,0.25),inset_0_1px_0_rgba(255,255,255,0.2)] disabled:shadow-none active:translate-y-px transition-all"
+              className="w-full mt-2 h-10 flex items-center justify-center gap-2 text-xs font-bold tracking-wider uppercase text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 rounded-sm shadow-xs transition-all"
             >
               {isLoading ? (
                 <>
@@ -244,8 +239,8 @@ export const Login: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <span>Sign In</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <span>SIGN IN</span>
+                  <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>

@@ -119,17 +119,17 @@ export const FloorKeypad: React.FC<FloorKeypadProps> = ({
         type="button"
         disabled={disabled || isLoading || pin.length < 4}
         onClick={onSubmit}
-        className="w-full mt-2 h-10 flex items-center justify-center gap-2 text-xs font-semibold tracking-wider uppercase text-white bg-gradient-to-b from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 active:from-blue-700 active:to-blue-800 disabled:from-zinc-200 disabled:to-zinc-300 dark:disabled:from-zinc-800 dark:disabled:to-zinc-850 disabled:text-zinc-400 dark:disabled:text-zinc-600 rounded-sm shadow-[0_1px_3px_rgba(37,99,235,0.25),inset_0_1px_0_rgba(255,255,255,0.2)] disabled:shadow-none active:translate-y-px transition-all"
+        className="w-full mt-2 h-10 flex items-center justify-center gap-2 text-xs font-bold tracking-wider uppercase text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 rounded-sm shadow-xs transition-all"
       >
         {isLoading ? (
           <>
             <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            <span>Verifying PIN...</span>
+            <span>Verifying...</span>
           </>
         ) : (
           <>
-            <span>Authenticate & Unlock</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <span>VERIFY & ENTER</span>
+            <ArrowRight className="w-4 h-4" />
           </>
         )}
       </button>
