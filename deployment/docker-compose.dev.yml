@@ -58,6 +58,24 @@ services:
       timeout: 5s
       retries: 3
 
+  # ৩. আধুনিক ফ্রন্টএন্ড ক্লায়েন্ট কনটেইনার (React 19 + Vite 6 + Tailwind v4)
+  lacs-dev-frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.dev
+    container_name: lacs-dev-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    networks:
+      - lacs-dev-net
+    depends_on:
+      - lacs-dev-backend
+
+
 networks:
   lacs-dev-net:
     driver: bridge
