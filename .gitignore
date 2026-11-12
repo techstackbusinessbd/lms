@@ -41,6 +41,10 @@ wheels/
 htmlcov/
 .mypy_cache/
 .ruff_cache/
+*.log
+logs/
+backend/logs/
+
 
 # নোড ও ফ্রন্টএন্ড প্যাকেজ (Node & React)
 node_modules/

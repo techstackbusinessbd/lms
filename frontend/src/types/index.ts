@@ -40,3 +40,4 @@ export interface WorkflowStepSummary {
   badgeCount?: number;
   isTouchOptimized: boolean;
 }
+
