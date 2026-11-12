@@ -136,9 +136,6 @@ export const Login: React.FC = () => {
               ENTERPRISE
             </span>
           </div>
-          <p className="text-[11px] font-mono text-zinc-500 dark:text-zinc-400 mt-0.5">
-            Jeanologia Flat Conveyor Fleet (M01-M20)
-          </p>
         </div>
 
         {/* সেগমেন্টেড পিল সুইচ (Modern Pill Tab) */}
