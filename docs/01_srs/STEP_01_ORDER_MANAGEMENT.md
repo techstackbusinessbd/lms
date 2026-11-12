@@ -14,7 +14,11 @@
 একটি ডেনিম ওয়াশিং প্ল্যান্টে কোনো কাজই বায়ারের পারচেজ অর্ডার (PO - Purchase Order) ছাড়া শুরু হতে পারে না। 
 **ধাপ ১ (অর্ডার ম্যানেজমেন্ট ও এন্ট্রি সিস্টেম)** হলো পুরো লেজার অটোমেশন সিস্টেমের প্রবেশদ্বার (Entry Gate)। 
 
-এই মডিউলের মাধ্যমে মার্চেন্ডাইজিং বা প্রোডাকশন প্ল্যানিং টিম বায়ারের সমস্ত অর্ডার, পিও নম্বর, স্টাইল কোড, ফেব্রিক ডিটেইলস, মোট পিস এবং সাইজ রেশিও এন্ট্রি দেবে। এর ওপর ভিত্তি করেই লেজার ডিজাইনার ফাইল লিংক করবেন, কাটিং/সুইং কিউআর প্রিন্ট করবে এবং ২০টি মেশিনের লেজার প্রোডাকশন ট্র্যাক হবে।
+এই মডিউলের মাধ্যমে মার্চেন্ডাইজিং বা প্রোডাকশন প্ল্যানিং টিম বায়ারের সমস্ত অর্ডার, পিও নম্বর, স্টাইল কোড, ফেব্রিক ডিটেইলস, মোট পিস (Total Order Quantity) এন্ট্রি দেবে।
+
+> ⚠️ **সিটিও স্যার কর্তৃক অনুমোদিত পর্যায়ভিত্তিক বাস্তবায়ন কৌশল (Phased Implementation Strategy):**
+> * **১ম পর্যায় (Current Phase 1 - Lean Order Flow):** অর্ডার এন্ট্রি সম্পূর্ণভাবে **টোটাল অর্ডার কোয়ান্টিটি (Total Order Qty)** ভিত্তিক পরিচালিত হবে। প্রাথমিক অপারেশনে সাইজ ব্রেকডাউন বাধ্যতামূলক থাকবে না; সিস্টেম সরাসরি মোট কোয়ান্টিটি দিয়ে অর্ডার ক্রিয়েশন, প্রোডাকশন ট্র্যাকিং ও কিউআর চেইন পরিচালনা করবে।
+> * **ভবিষ্যৎ পর্যায় (Future Phase 2 - Advanced Expansion):** পরবর্তী ধাপে সাইজ ব্রেকডাউন ম্যাট্রিক্স (Size Breakdown Grid) এবং লেজার ডিজাইন ফাইল আপলোড (`.jean5` Vault Upload) পূর্ণাঙ্গভাবে যুক্ত করা হবে।
 
 ---
 
@@ -69,8 +73,9 @@
 | **Target Delivery Date** | Date Picker | ভবিষ্যতের যেকোনো ভ্যালিড তারিখ | *2026-12-15* |
 | **Priority Level** | Dropdown | `NORMAL`, `HIGH`, `URGENT` | *HIGH* |
 
-### ৪.২ সাইজ ব্রেকডাউন ম্যাট্রিক্স (Dynamic Size Breakdown Grid)
-ডেনিম প্যান্টে কোমরের সাইজ (Waist) এবং লম্বার সাইজ (Length/Inseam) অনুযায়ী গ্রিড থাকবে:
+### ৪.২ মোট অর্ডার কোয়ান্টিটি ও ভবিষ্যৎ সাইজ ব্রেকডাউন রোডম্যাপ (Total Qty & Future Size Roadmap)
+- **১ম পর্যায় (বর্তমান কার্যকর মোড):** অর্ডার ফর্মে মার্চেন্ডাইজার সরাসরি অর্ডারের মোট পিস সংখ্যা (`total_quantity`) এন্ট্রি করবেন (যেমন: ১২,৫০০ পিস)। সিস্টেম এই মোট কোয়ান্টিটি অনুসারে লেজার প্রোডাকশন কাউন্ট, রিমেইনিং ব্যালেন্স ও প্রগ্রেস বার ট্র্যাকিং করবে।
+- **ভবিষ্যৎ পর্যায় (রোডম্যাপ):** পরবর্তীতে যখন সাইজ-ভিত্তিক ফাইল লোডিং প্রয়োজন হবে, তখন নিচের সাইজ ব্রেকডাউন গ্রিড সক্রিয় করা হবে:
 
 | Waist / Length | L30 | L32 | L34 | সাইজ-ওয়াইজ মোট |
 | :---: | :---: | :---: | :---: | :---: |
@@ -80,7 +85,7 @@
 | **W34** | ২০০ | ৫০০ | ৩০০ | **১,০০০ পিস** |
 | **মোট কোয়ান্টিটি**| — | — | — | **৫,৫০০ পিস (Auto Total)** |
 
-> **সিস্টেম রুল:** মোট অর্ডার কোয়ান্টিটি কোনো ইনপুট নয়; গ্রিডের সমস্ত সাইজের যোগফল স্বয়ংক্রিয়ভাবে ক্যালকুলেট হয়ে লক থাকবে।
+> **রোডম্যাপ নোট:** প্রাথমিক পর্যায়ে `total_quantity` ইনপুট থেকেই পুরো পাইপলাইন পরিচালিত হবে। পরবর্তী পর্যায়ে সাইজ গ্রিড যুক্ত হলে সাইজের যোগফল দিয়ে এটি স্বয়ংক্রিয়ভাবে সিঙ্ক হবে।
 
 ---
 
@@ -129,65 +134,51 @@
 
 ## ৭. ডেটাবেজ স্কিমা স্পেসিফিকেশন (Database Schema for Step 1)
 
-ধাপ ১-এর জন্য PostgreSQL 16-এ নিচের ৩টি কোর টেবিল তৈরি হবে:
+সিটিও স্যারের পর্যায়ভিত্তিক আর্কিটেকচার অনুযায়ী ধাপ ১-এর বর্তমান বাস্তবায়নে PostgreSQL 16-এ মূল টেবিল হবে:
 
-### টেবিল ১: `buyers` (বায়ার তথ্য)
-```sql
-CREATE TABLE buyers (
-    id UUID PRIMARY KEY, -- RFC 9562 UUIDv7
-    name VARCHAR(150) NOT NULL UNIQUE,
-    code VARCHAR(50) NOT NULL UNIQUE,
-    contact_person VARCHAR(100),
-    email VARCHAR(150),
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    is_deleted BOOLEAN DEFAULT FALSE
-);
-CREATE INDEX idx_buyers_code ON buyers(code);
-```
-
-### টেবিল ২: `orders` (অর্ডার মাস্টার টেবিল)
+### টেবিল ১: `orders` (অর্ডার মাস্টার টেবিল - Total Qty Based)
 ```sql
 CREATE TABLE orders (
     id UUID PRIMARY KEY, -- RFC 9562 UUIDv7
-    buyer_id UUID NOT NULL REFERENCES buyers(id) ON DELETE RESTRICT,
+    buyer_name VARCHAR(150) NOT NULL,
     po_number VARCHAR(100) NOT NULL,
     style_code VARCHAR(100) NOT NULL,
     style_name VARCHAR(150),
     fabric_description VARCHAR(255),
-    wash_reference VARCHAR(150),
+    wash_reference VARCHAR(150) NOT NULL,
     total_quantity INTEGER NOT NULL CHECK (total_quantity > 0),
-    target_date DATE,
+    target_delivery_date DATE NOT NULL,
     priority VARCHAR(20) DEFAULT 'NORMAL', -- NORMAL, HIGH, URGENT
     status VARCHAR(30) DEFAULT 'PENDING_DESIGN', -- DRAFT, PENDING_DESIGN, DESIGN_APPROVED, IN_PRODUCTION, COMPLETED
     current_revision INTEGER DEFAULT 1,
     notes TEXT,
+    created_by UUID NOT NULL REFERENCES users(id),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
     is_deleted BOOLEAN DEFAULT FALSE,
-    CONSTRAINT uq_buyer_po UNIQUE (buyer_id, po_number)
+    CONSTRAINT uq_po_style UNIQUE (po_number, style_code)
 );
-CREATE INDEX idx_orders_buyer_id ON orders(buyer_id);
 CREATE INDEX idx_orders_po_number ON orders(po_number);
+CREATE INDEX idx_orders_buyer ON orders(buyer_name);
 CREATE INDEX idx_orders_status ON orders(status);
 ```
 
-### টেবিল ৩: `order_size_breakdowns` (সাইজ ম্যাট্রিক্স টেবিল)
+### ভবিষ্যৎ টেবিল (Future Roadmap): `order_size_breakdowns`
+*পরবর্তী পর্যায়ে সাইজ-ওয়াইজ ফাইল ম্যাপিংয়ের সময় এই টেবিলটি সক্রিয় করা হবে:*
 ```sql
+-- [ভবিষ্যৎ সম্প্রসারণ রোডম্যাপ - Future Phase 2]
 CREATE TABLE order_size_breakdowns (
-    id UUID PRIMARY KEY, -- RFC 9562 UUIDv7
+    id UUID PRIMARY KEY,
     order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
-    waist_size VARCHAR(20) NOT NULL,    -- যেমন: 28, 30, 32, 34
-    length_size VARCHAR(20) DEFAULT '',  -- যেমন: 30, 32, 34
+    waist_size VARCHAR(20) NOT NULL,
+    length_size VARCHAR(20) DEFAULT '',
     quantity INTEGER NOT NULL CHECK (quantity > 0),
-    lasered_quantity INTEGER DEFAULT 0 CHECK (lasered_quantity >= 0),
+    lasered_quantity INTEGER DEFAULT 0,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
     is_deleted BOOLEAN DEFAULT FALSE,
     CONSTRAINT uq_order_waist_length UNIQUE (order_id, waist_size, length_size)
 );
-CREATE INDEX idx_order_size_order_id ON order_size_breakdowns(order_id);
 ```
 
 ---

@@ -92,7 +92,9 @@ CREATE TABLE machine_auth_credentials (
 CREATE INDEX idx_mach_auth ON machine_auth_credentials(machine_id, is_revoked);
 ```
 
-### ৩.২ অর্ডার ম্যানেজমেন্ট ও সাইজ ব্রেকডাউন (Module: Orders - Step 1)
+### ৩.২ অর্ডার ম্যানেজমেন্ট (Module: Orders - Step 1)
+> 💡 **পর্যায়ভিত্তিক স্থাপত্য নোট:** ১ম পর্যায়ে সিস্টেম মোট অর্ডার কোয়ান্টিটি (`total_quantity`) দিয়ে পরিচালিত হবে। সাইজ ব্রেকডাউন ও ফাইল আপলোড রোডম্যাপ অনুযায়ী পরবর্তী পর্যায়ে সক্রিয় করা হবে।
+
 ```sql
 CREATE TABLE orders (
     id UUID PRIMARY KEY,
@@ -101,7 +103,7 @@ CREATE TABLE orders (
     style_code VARCHAR(100) NOT NULL,         -- Style 511 Slim
     fabric_composition VARCHAR(200),
     wash_reference VARCHAR(100) NOT NULL,     -- Dark Vintage Whisker
-    total_quantity INT NOT NULL,
+    total_quantity INT NOT NULL CHECK (total_quantity > 0),
     current_status VARCHAR(30) DEFAULT 'PENDING_DESIGN', -- PENDING_DESIGN, DESIGN_APPROVED, IN_PRODUCTION, COMPLETED
     target_delivery_date DATE NOT NULL,
     created_by UUID NOT NULL REFERENCES users(id),
@@ -111,22 +113,24 @@ CREATE TABLE orders (
     CONSTRAINT uq_po_style UNIQUE(po_number, style_code)
 );
 CREATE INDEX idx_orders_po ON orders(po_number);
+CREATE INDEX idx_orders_buyer ON orders(buyer_name);
 CREATE INDEX idx_orders_status ON orders(current_status);
 
-CREATE TABLE order_size_breakdowns (
-    id UUID PRIMARY KEY,
-    order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
-    waist_size VARCHAR(20) NOT NULL,          -- W28, W30, W32, W34
-    order_quantity INT NOT NULL,
-    cut_quantity INT DEFAULT 0,
-    lasered_quantity INT DEFAULT 0,
-    qc_passed_quantity INT DEFAULT 0,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    is_deleted BOOLEAN DEFAULT FALSE,
-    CONSTRAINT uq_order_size UNIQUE(order_id, waist_size)
-);
-CREATE INDEX idx_order_size ON order_size_breakdowns(order_id);
+-- [ভবিষ্যৎ সম্প্রসারণ রোডম্যাপ - Future Phase Expansion]
+-- CREATE TABLE order_size_breakdowns (
+--     id UUID PRIMARY KEY,
+--     order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+--     waist_size VARCHAR(20) NOT NULL,          -- W28, W30, W32, W34
+--     order_quantity INT NOT NULL,
+--     cut_quantity INT DEFAULT 0,
+--     lasered_quantity INT DEFAULT 0,
+--     qc_passed_quantity INT DEFAULT 0,
+--     created_at TIMESTAMPTZ DEFAULT NOW(),
+--     updated_at TIMESTAMPTZ DEFAULT NOW(),
+--     is_deleted BOOLEAN DEFAULT FALSE,
+--     CONSTRAINT uq_order_size UNIQUE(order_id, waist_size)
+-- );
+-- CREATE INDEX idx_order_size ON order_size_breakdowns(order_id);
 ```
 
 ### ৩.৩ লেজার ডিজাইন ভল্ট ও রেসিপি ম্যাপিং (Module: Laser Vault - Step 2)
