@@ -62,20 +62,15 @@ export const Dashboard: React.FC = () => {
       {/* ২. ২০টি Jeanologia ফ্ল্যাট কনভেয়ার টেবিলের লাইভ ফ্লিট ম্যাট্রিক্স */}
       <FleetMatrix />
 
-      {/* ৩. লাইভ প্রোডাকশন অর্ডার ট্র্যাকিং (Executive Table Seamless Card) */}
+      {/* ৩. লাইভ প্রোডাকশন অর্ডার ট্র্যাকিং */}
       <div className="relative overflow-hidden bg-white dark:bg-[#121317] border border-slate-200/90 dark:border-[#1f2127] rounded-sm shadow-[0_1px_3px_rgba(0,0,0,0.04)] before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-blue-500/25 before:to-transparent">
-        {/* কার্ড হেডার সেকশন */}
-        <div className="p-4 flex items-center justify-between border-b border-slate-100 dark:border-[#1f2127] bg-white dark:bg-[#121317]">
-          <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 font-mono">
-              Active Production Orders on Floor
-            </h3>
-            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 font-mono mt-0.5">
-              Live PO dispatch &amp; execution status across the locked 8-step workflow
-            </p>
-          </div>
+        {/* কার্ড হেডার */}
+        <div className="p-3.5 px-4 flex items-center justify-between border-b border-slate-100 dark:border-[#1f2127] bg-white dark:bg-[#121317]">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 font-mono">
+            Active Orders
+          </h3>
           <Badge variant="primary" hasDot>
-            3 Running POs
+            3 Active
           </Badge>
         </div>
 

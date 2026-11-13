@@ -7,9 +7,8 @@
  */
 
 import React from 'react';
-import { RefreshCw, Sun, Moon, Activity, Wifi } from 'lucide-react';
+import { RefreshCw, Sun, Moon, Wifi } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
-import { Badge } from '@/components/ui';
 
 interface HeaderProps {
   pageTitle: string;
@@ -28,16 +27,11 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="h-14 px-6 bg-white dark:bg-[#0f1013] border-b border-slate-200 dark:border-[#1f2127] flex items-center justify-between sticky top-0 z-40 transition-colors">
-      {/* ১. বামদিকের পেজ টাইটেল ও সাব-টেলিমিতি */}
+      {/* ১. বামদিকের পেজ টাইটেল */}
       <div className="flex items-center gap-3">
         <h2 className="text-sm font-bold tracking-wider text-zinc-900 dark:text-zinc-100 uppercase font-mono">
           {pageTitle}
         </h2>
-        <span className="text-zinc-300 dark:text-zinc-700 font-mono">/</span>
-        <div className="hidden sm:flex items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400 font-mono">
-          <Activity className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 animate-pulse" />
-          <span>20 Flat Conveyor Tables Online</span>
-        </div>
       </div>
 
       {/* ২. ডানদিকের লাইভ টেলিমিতি ও অ্যাকশন কন্ট্রোলস */}
@@ -47,11 +41,6 @@ export const Header: React.FC<HeaderProps> = ({
           <Wifi className="w-3 h-3 text-emerald-500" />
           <span>Gigabit LAN</span>
         </div>
-
-        {/* সাব-২০০ms SLA ব্যাজ */}
-        <Badge variant="primary" hasDot className="hidden sm:inline-flex text-[10px]">
-          &lt;200ms SLA
-        </Badge>
 
         {/* ডেটাবেজ স্ট্যাটাস */}
         <div className="flex items-center gap-1.5 px-2.5 py-1 bg-zinc-100 dark:bg-[#18191e] border border-zinc-200 dark:border-[#272930] rounded-sm text-[11px] font-mono">

@@ -34,16 +34,11 @@ export const FleetMatrix: React.FC = () => {
   return (
     <div className="relative overflow-hidden bg-white dark:bg-[#121317] border border-slate-200/90 dark:border-[#1f2127] rounded-sm shadow-[0_1px_3px_rgba(0,0,0,0.04)] p-4 before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-blue-500/25 before:to-transparent">
       {/* হেডার ও ফিল্টার কন্ট্রোলস */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3.5 pb-3 border-b border-slate-100 dark:border-[#1f2127]">
-        <div>
-          <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 flex items-center gap-2 font-mono">
-            <Radio className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 animate-pulse" />
-            <span>20 Jeanologia Flat Conveyor Tables Live Matrix</span>
-          </h3>
-          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 font-mono mt-0.5">
-            Realtime Edge-Agent IPC telemetry &amp; eMark .jean5 auto-dispatch
-          </p>
-        </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 pb-2.5 border-b border-slate-100 dark:border-[#1f2127]">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 flex items-center gap-2 font-mono">
+          <Radio className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 animate-pulse" />
+          <span>Laser Fleet (20 Tables)</span>
+        </h3>
 
         {/* সেগমেন্টেড পিল ফিল্টার বাটনস */}
         <div className="flex items-center p-0.5 rounded-sm bg-slate-100 dark:bg-[#0a0b0e] border border-slate-200/80 dark:border-[#1f2127]">

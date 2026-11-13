@@ -87,57 +87,57 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
           <div className="flex items-center justify-between pr-6">
             <ModalTitle className="flex items-center gap-2">
               <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              <span>Job Order: {order.job_no || order.po_number}</span>
+              <span>Order: {order.job_no || order.po_number}</span>
             </ModalTitle>
             <Badge variant={statusVariantMap[order.status]} hasDot>
               {order.status}
             </Badge>
           </div>
           <ModalDescription>
-            {order.company} • Created on {new Date(order.created_at).toLocaleDateString()} (Rev {order.current_revision})
+            {order.company} • Rev {order.current_revision}
           </ModalDescription>
         </ModalHeader>
 
         {/* ১০টি কোর গার্মেন্টস ফিল্ডের তথ্য গ্রিড */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-3.5 bg-slate-50 dark:bg-[#15171d] rounded-sm border border-slate-200/80 dark:border-[#22252e]">
           <div>
-            <span className="text-[10px] text-zinc-400 font-mono uppercase block">1. Company</span>
+            <span className="text-[10px] text-zinc-400 font-mono uppercase block">Company</span>
             <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">{order.company}</span>
           </div>
           <div>
-            <span className="text-[10px] text-zinc-400 font-mono uppercase block">2. Buyer</span>
+            <span className="text-[10px] text-zinc-400 font-mono uppercase block">Buyer</span>
             <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">{order.buyer_name}</span>
           </div>
           <div>
-            <span className="text-[10px] text-zinc-400 font-mono uppercase block">3. Style</span>
+            <span className="text-[10px] text-zinc-400 font-mono uppercase block">Style</span>
             <span className="text-xs font-mono font-bold text-blue-600 dark:text-blue-400">{order.style_code}</span>
           </div>
           <div>
-            <span className="text-[10px] text-zinc-400 font-mono uppercase block">4. Job No.</span>
+            <span className="text-[10px] text-zinc-400 font-mono uppercase block">Job No.</span>
             <span className="text-xs font-mono font-bold text-zinc-900 dark:text-zinc-100">{order.job_no || order.po_number}</span>
           </div>
           <div>
-            <span className="text-[10px] text-zinc-400 font-mono uppercase block">5. Brand</span>
+            <span className="text-[10px] text-zinc-400 font-mono uppercase block">Brand</span>
             <span className="text-xs text-zinc-700 dark:text-zinc-300 font-medium">{order.brand || 'N/A'}</span>
           </div>
           <div>
-            <span className="text-[10px] text-zinc-400 font-mono uppercase block">6. Season</span>
+            <span className="text-[10px] text-zinc-400 font-mono uppercase block">Season</span>
             <span className="text-xs text-zinc-700 dark:text-zinc-300 font-medium">{order.season || 'N/A'}</span>
           </div>
           <div>
-            <span className="text-[10px] text-zinc-400 font-mono uppercase block">7. Order Qty</span>
+            <span className="text-[10px] text-zinc-400 font-mono uppercase block">Order Qty</span>
             <span className="text-xs font-mono font-bold text-zinc-900 dark:text-zinc-100">{order.total_quantity.toLocaleString()}</span>
           </div>
           <div>
-            <span className="text-[10px] text-zinc-400 font-mono uppercase block">8. UOM</span>
+            <span className="text-[10px] text-zinc-400 font-mono uppercase block">UOM</span>
             <span className="text-xs font-mono font-bold text-blue-600 dark:text-blue-400">{order.uom || 'PCS'}</span>
           </div>
           <div>
-            <span className="text-[10px] text-zinc-400 font-mono uppercase block">9. Ship Date</span>
+            <span className="text-[10px] text-zinc-400 font-mono uppercase block">Ship Date</span>
             <span className="text-xs font-mono text-zinc-800 dark:text-zinc-200">{order.target_delivery_date}</span>
           </div>
           <div className="col-span-2 sm:col-span-3">
-            <span className="text-[10px] text-zinc-400 font-mono uppercase block">10. Dealing Merchant</span>
+            <span className="text-[10px] text-zinc-400 font-mono uppercase block">Dealing Merchant</span>
             <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">{order.dealing_merchant || 'Unassigned'}</span>
           </div>
         </div>

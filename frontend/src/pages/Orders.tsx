@@ -8,7 +8,6 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
-  Layers,
   Plus,
   Search,
   RefreshCw,
@@ -21,7 +20,6 @@ import {
   flexRender,
 } from '@tanstack/react-table';
 import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
 import {
   Table,
   TableHeader,
@@ -77,9 +75,9 @@ export const Orders: React.FC = () => {
 
   // স্ট্যাটাস ফিল্টার পিলস
   const statusTabs = [
-    { id: 'ALL', label: 'All Orders' },
+    { id: 'ALL', label: 'All' },
     { id: 'PENDING_DESIGN', label: 'Pending Design' },
-    { id: 'DESIGN_APPROVED', label: 'Design Approved' },
+    { id: 'DESIGN_APPROVED', label: 'Approved' },
     { id: 'IN_PRODUCTION', label: 'In Production' },
     { id: 'COMPLETED', label: 'Completed' },
   ];
@@ -97,22 +95,16 @@ export const Orders: React.FC = () => {
   });
 
   return (
-    <div className="space-y-4">
-      {/* ১. পেজ হেডার ও অ্যাকশন বার */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-white dark:bg-[#121317] border border-slate-200/90 dark:border-[#1f2127] rounded-sm shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
-        <div>
-          <div className="flex items-center gap-2">
-            <Layers className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-            <h1 className="text-base font-bold text-zinc-900 dark:text-zinc-100 font-mono tracking-tight">
-              Order Entry &amp; Purchase Orders (Step 1)
-            </h1>
-            <Badge variant="primary" className="text-[10px]">
-              {totalOrders} Orders Total
-            </Badge>
-          </div>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 font-mono mt-1">
-            Central PO repository with total quantity tracking for 20 Jeanologia Flat Tables.
-          </p>
+    <div className="space-y-3.5">
+      {/* ১. হেডার ও অ্যাকশন বার */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <h1 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 font-mono">
+            Orders
+          </h1>
+          <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded-sm bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+            {totalOrders}
+          </span>
         </div>
 
         <div className="flex items-center gap-2">
@@ -121,18 +113,18 @@ export const Orders: React.FC = () => {
             size="sm"
             onClick={() => loadOrders()}
             disabled={isLoading}
-            className="h-9 px-3"
+            className="h-8 px-2.5 text-xs"
+            title="Refresh"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-            <span className="hidden sm:inline">Refresh</span>
           </Button>
           <Button
             variant="primary"
             size="sm"
             onClick={() => setIsCreateModalOpen(true)}
-            className="h-9 px-3.5 font-semibold"
+            className="h-8 px-3 text-xs font-semibold"
           >
-            <Plus className="w-4 h-4 mr-1.5" />
+            <Plus className="w-3.5 h-3.5 mr-1" />
             <span>New Order</span>
           </Button>
         </div>
@@ -198,8 +190,8 @@ export const Orders: React.FC = () => {
               <TableRow>
                 <TableCell colSpan={columns.length} className="text-center py-10">
                   <div className="flex items-center justify-center gap-2 text-xs font-mono text-zinc-500">
-                    <RefreshCw className="w-4 h-4 animate-spin text-blue-600" />
-                    <span>Loading Orders from Database...</span>
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin text-blue-600" />
+                    <span>Loading...</span>
                   </div>
                 </TableCell>
               </TableRow>
@@ -207,8 +199,8 @@ export const Orders: React.FC = () => {
               <TableRow>
                 <TableCell colSpan={columns.length}>
                   <TableEmptyState
-                    title="No Purchase Orders found"
-                    description="No orders match your filter criteria. Click 'New Order' to register one."
+                    title="No orders found"
+                    description="No orders match your search or filter criteria."
                   />
                 </TableCell>
               </TableRow>

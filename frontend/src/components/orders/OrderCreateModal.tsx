@@ -16,7 +16,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalTitle,
-  ModalDescription,
   ModalFooter,
 } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
@@ -99,12 +98,9 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
       <ModalContent className="max-w-2xl">
         <ModalHeader>
           <ModalTitle className="flex items-center gap-2">
-            <PlusCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-            <span>Order Entry (Step 1)</span>
+            <PlusCircle className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            <span>New Order</span>
           </ModalTitle>
-          <ModalDescription>
-            Register garments purchase order with 10 enterprise tracking fields.
-          </ModalDescription>
         </ModalHeader>
 
         {generalError && (
@@ -119,7 +115,7 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Input
               label="Company *"
-              placeholder="e.g. Denim Solutions Ltd."
+              placeholder="Company / Factory Unit"
               value={formData.company}
               onChange={(e) => handleChange('company', e.target.value)}
               error={fieldErrors['company']}
@@ -127,7 +123,7 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
             />
             <Input
               label="Buyer *"
-              placeholder="e.g. Levi Strauss & Co."
+              placeholder="Buyer Name"
               value={formData.buyer_name}
               onChange={(e) => handleChange('buyer_name', e.target.value)}
               error={fieldErrors['buyer_name']}
@@ -139,7 +135,7 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Input
               label="Style *"
-              placeholder="e.g. 511 Slim Fit"
+              placeholder="Style Code / Name"
               value={formData.style_code}
               onChange={(e) => handleChange('style_code', e.target.value)}
               error={fieldErrors['style_code']}
@@ -147,7 +143,7 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
             />
             <Input
               label="Job No. *"
-              placeholder="e.g. JOB-2026-0042"
+              placeholder="Job No."
               value={formData.job_no}
               onChange={(e) => handleChange('job_no', e.target.value)}
               error={fieldErrors['job_no']}
@@ -159,14 +155,14 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Input
               label="Brand"
-              placeholder="e.g. Levi's Red Tab / Signature"
+              placeholder="Brand"
               value={formData.brand || ''}
               onChange={(e) => handleChange('brand', e.target.value)}
               error={fieldErrors['brand']}
             />
             <Input
               label="Season"
-              placeholder="e.g. Spring/Summer 2026"
+              placeholder="Season"
               value={formData.season || ''}
               onChange={(e) => handleChange('season', e.target.value)}
               error={fieldErrors['season']}
@@ -179,7 +175,7 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
               label="Order Qty *"
               type="number"
               min={1}
-              placeholder="10000"
+              placeholder="Qty"
               value={formData.total_quantity || ''}
               onChange={(e) => handleChange('total_quantity', Number(e.target.value))}
               error={fieldErrors['total_quantity']}
@@ -194,9 +190,9 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
                 onChange={(e) => handleChange('uom', e.target.value)}
                 className="w-full h-11 px-3 rounded-sm bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-blue-600 transition-colors"
               >
-                <option value="PCS">PCS (Pieces)</option>
-                <option value="DZN">DZN (Dozens)</option>
-                <option value="SET">SET (Sets)</option>
+                <option value="PCS">PCS</option>
+                <option value="DZN">DZN</option>
+                <option value="SET">SET</option>
               </select>
             </div>
             <Input
@@ -209,22 +205,22 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
             />
           </div>
 
-          {/* Row 5: Dealing Merchant & Production Notes */}
+          {/* Row 5: Dealing Merchant & Notes */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Input
               label="Dealing Merchant"
-              placeholder="e.g. Tanvir Ahmed"
+              placeholder="Merchant Name"
               value={formData.dealing_merchant || ''}
               onChange={(e) => handleChange('dealing_merchant', e.target.value)}
               error={fieldErrors['dealing_merchant']}
             />
             <div className="space-y-1.5 text-left">
               <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 select-none">
-                Production Notes
+                Notes
               </label>
               <input
                 type="text"
-                placeholder="Special instructions or wash guidance..."
+                placeholder="Optional notes..."
                 value={formData.notes || ''}
                 onChange={(e) => handleChange('notes', e.target.value)}
                 className="w-full h-11 px-3 rounded-sm bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:border-blue-600 transition-colors"
@@ -251,10 +247,10 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
             {isSubmitting ? (
               <>
                 <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
-                <span>Saving Order...</span>
+                <span>Saving...</span>
               </>
             ) : (
-              'Save & Register Order'
+              'Save Order'
             )}
           </Button>
         </ModalFooter>
