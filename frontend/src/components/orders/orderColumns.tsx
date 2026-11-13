@@ -12,6 +12,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Eye, Calendar, UserCheck } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { DataTableColumnHeader } from '@/components/ui/DataTableColumnHeader';
 import { Order } from '@/types/order';
 
 export const statusVariantMap: Record<
@@ -39,7 +40,9 @@ export function getOrderColumns(
   return [
     {
       accessorKey: 'job_no',
-      header: 'JOB NO. & UNIT',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="JOB NO. & UNIT" />
+      ),
       cell: ({ row }) => {
         const order = row.original;
         return (
@@ -56,7 +59,9 @@ export function getOrderColumns(
     },
     {
       accessorKey: 'buyer_name',
-      header: 'BUYER & BRAND',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="BUYER & BRAND" />
+      ),
       cell: ({ row }) => {
         const order = row.original;
         return (
@@ -73,7 +78,9 @@ export function getOrderColumns(
     },
     {
       accessorKey: 'style_code',
-      header: 'STYLE & SEASON',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="STYLE & SEASON" />
+      ),
       cell: ({ row }) => {
         const order = row.original;
         return (
@@ -90,7 +97,9 @@ export function getOrderColumns(
     },
     {
       accessorKey: 'total_quantity',
-      header: 'ORDER QTY',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="ORDER QTY" />
+      ),
       cell: ({ row }) => {
         const order = row.original;
         return (
@@ -107,7 +116,9 @@ export function getOrderColumns(
     },
     {
       accessorKey: 'target_delivery_date',
-      header: 'SHIP DATE',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="SHIP DATE" />
+      ),
       cell: (info) => (
         <div className="flex items-center gap-1.5 text-xs font-mono text-zinc-600 dark:text-zinc-400">
           <Calendar className="w-3 h-3 text-zinc-400" />
@@ -117,7 +128,9 @@ export function getOrderColumns(
     },
     {
       accessorKey: 'dealing_merchant',
-      header: 'MERCHANT',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="MERCHANT" />
+      ),
       cell: (info) => {
         const merchant = String(info.getValue() || 'Unassigned');
         return (
@@ -130,7 +143,9 @@ export function getOrderColumns(
     },
     {
       accessorKey: 'status',
-      header: 'STATUS',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="STATUS" />
+      ),
       cell: (info) => {
         const status = info.getValue() as Order['status'];
         return (
@@ -143,6 +158,7 @@ export function getOrderColumns(
     {
       id: 'actions',
       header: 'ACTION',
+      enableSorting: false,
       cell: ({ row }) => (
         <Button
           size="sm"

@@ -10,5 +10,8 @@ export * from './Card';
 export * from './Modal';
 export * from './StatusIndicator';
 export * from './DataTableShell';
+export * from './DataTable';
+export * from './DataTableColumnHeader';
+export * from './DataTablePagination';
 export * from './Select';
 

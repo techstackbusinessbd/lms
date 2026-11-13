@@ -11,24 +11,9 @@ import {
   Layers,
   Plus,
   RefreshCw,
-  ChevronLeft,
-  ChevronRight,
-  FilterX,
 } from 'lucide-react';
-import {
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-} from '@tanstack/react-table';
 import { Button } from '@/components/ui/Button';
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from '@/components/ui/DataTableShell';
+import { DataTable } from '@/components/ui/DataTable';
 import { getOrders } from '@/services/orderApi';
 import { Order, OrderFilterParams } from '@/types/order';
 import { getOrderColumns } from '@/components/orders/orderColumns';
@@ -41,6 +26,7 @@ export const Orders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [totalOrders, setTotalOrders] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(15);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -56,7 +42,7 @@ export const Orders: React.FC = () => {
     try {
       const params: OrderFilterParams = {
         page: currentPage,
-        page_size: 15,
+        page_size: pageSize,
         search: searchQuery.trim() || undefined,
         status: statusFilter === 'ALL' ? undefined : statusFilter,
       };
@@ -69,7 +55,7 @@ export const Orders: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [currentPage, searchQuery, statusFilter]);
+  }, [currentPage, pageSize, searchQuery, statusFilter]);
 
   useEffect(() => {
     loadOrders();
@@ -95,12 +81,6 @@ export const Orders: React.FC = () => {
     () => getOrderColumns((order) => setSelectedOrder(order)),
     []
   );
-
-  const table = useReactTable({
-    data: orders,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
 
   return (
     <div className="space-y-4">
@@ -168,108 +148,37 @@ export const Orders: React.FC = () => {
         statusCounts={statusCounts}
       />
 
-      {/* ৪. TanStack Table ডাটা ডিসপ্লে কার্ড */}
-      <div className="relative overflow-hidden bg-white dark:bg-[#121317] border border-slate-200/90 dark:border-[#1f2127] rounded-sm shadow-[0_1px_3px_rgba(0,0,0,0.04)] before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-blue-500/25 before:to-transparent">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="bg-slate-50/90 dark:bg-[#15171e]">
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="text-[11px] font-mono py-2.5">
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="text-center py-12">
-                  <div className="flex items-center justify-center gap-2 text-xs font-mono text-zinc-500">
-                    <RefreshCw className="w-3.5 h-3.5 animate-spin text-blue-600" />
-                    <span>Syncing Orders with Database...</span>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : orders.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={columns.length}>
-                  <div className="py-12 text-center flex flex-col items-center justify-center">
-                    <div className="w-10 h-10 rounded-sm bg-slate-100 dark:bg-[#1a1c24] border border-slate-200 dark:border-[#272930] flex items-center justify-center text-zinc-400 mb-2.5">
-                      <FilterX className="w-5 h-5 text-zinc-400" />
-                    </div>
-                    <p className="text-xs font-bold font-mono text-zinc-800 dark:text-zinc-200">
-                      No Matching Orders
-                    </p>
-                    <p className="text-[11px] font-mono text-zinc-400 dark:text-zinc-500 mt-0.5">
-                      No purchase orders match your active search or filter.
-                    </p>
-                    {(searchQuery || statusFilter !== 'ALL') && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={resetFilters}
-                        className="mt-3 h-7 text-xs font-mono"
-                      >
-                        Reset Filter
-                      </Button>
-                    )}
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  onClick={() => setSelectedOrder(row.original)}
-                  className="cursor-pointer hover:bg-blue-50/40 dark:hover:bg-[#151720] transition-colors"
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="py-2.5">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-
-        {/* ৫. ইন্ডাস্ট্রিয়াল পেজিনেশন ফুটার */}
-        <div className="flex items-center justify-between px-4 py-2.5 border-t border-slate-200/90 dark:border-[#1f2127] bg-slate-50/50 dark:bg-[#0f1013] text-xs font-mono text-zinc-500 dark:text-zinc-400">
-          <span>
-            Showing {orders.length} of {totalOrders} orders
-          </span>
-          <div className="flex items-center gap-1.5">
+      {/* ৪. TanStack Table v8 অ্যাডভান্সড ভার্চুয়ালাইজড ডেটাটেবিল (রুল ২৩) */}
+      <DataTable
+        columns={columns}
+        data={orders}
+        isLoading={isLoading}
+        totalCount={totalOrders}
+        pageCount={totalPages}
+        pageIndex={currentPage}
+        pageSize={pageSize}
+        pageSizeOptions={[10, 15, 25, 50, 100]}
+        onPageChange={setCurrentPage}
+        onPageSizeChange={(newSize) => {
+          setPageSize(newSize);
+          setCurrentPage(1);
+        }}
+        onRowClick={(order) => setSelectedOrder(order)}
+        emptyTitle="No Matching Orders"
+        emptyDescription="No purchase orders match your active search or filter criteria."
+        emptyAction={
+          searchQuery || statusFilter !== 'ALL' ? (
             <Button
-              size="sm"
               variant="outline"
-              disabled={currentPage <= 1 || isLoading}
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              className="h-7 px-3 text-xs font-mono flex-nowrap whitespace-nowrap"
-            >
-              <ChevronLeft className="w-3.5 h-3.5 shrink-0" />
-              <span>Previous</span>
-            </Button>
-            <span className="font-semibold text-zinc-800 dark:text-zinc-200 px-2 font-mono text-xs whitespace-nowrap">
-              {currentPage} / {totalPages || 1}
-            </span>
-            <Button
               size="sm"
-              variant="outline"
-              disabled={currentPage >= totalPages || isLoading}
-              onClick={() => setCurrentPage((p) => p + 1)}
-              className="h-7 px-3 text-xs font-mono flex-nowrap whitespace-nowrap"
+              onClick={resetFilters}
+              className="h-7 text-xs font-mono"
             >
-              <span>Next</span>
-              <ChevronRight className="w-3.5 h-3.5 shrink-0" />
+              Reset Filter
             </Button>
-          </div>
-        </div>
-      </div>
+          ) : undefined
+        }
+      />
 
       {/* ক্রিয়েট অর্ডার মডাল */}
       <OrderCreateModal
