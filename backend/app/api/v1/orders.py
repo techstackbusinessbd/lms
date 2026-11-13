@@ -288,3 +288,4 @@ async def delete_order(
         "message": f"Order '{order.po_number}' has been soft-deleted successfully.",
         "order_id": str(order_id),
     }
+

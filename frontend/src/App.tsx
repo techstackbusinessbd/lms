@@ -10,6 +10,7 @@ import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { Login } from '@/pages/Login';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Dashboard } from '@/pages/Dashboard';
+import { Orders } from '@/pages/Orders';
 
 // ব্রাউজারের পাথ থেকে রুট কি (Key) এক্সট্রাক্ট করা
 function getPathFromUrl(): string {
@@ -100,6 +101,8 @@ function AppContent(): React.JSX.Element {
     >
       {currentPath === 'dashboard' ? (
         <Dashboard />
+      ) : currentPath === 'step-1' || currentPath === 'orders' ? (
+        <Orders />
       ) : (
         <div className="p-8 text-center bg-white dark:bg-[#121317] border border-slate-200/90 dark:border-[#1f2127] rounded-sm shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
           <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
