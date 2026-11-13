@@ -37,8 +37,9 @@ export function getSizeMatrixColumns(
     {
       accessorKey: 'size_code',
       header: ({ column }) => <DataTableColumnHeader column={column} title="SIZE" />,
+      size: 70,
       cell: ({ row }) => (
-        <span className="font-mono font-bold text-xs px-2.5 py-1 rounded-sm bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/60 inline-block min-w-10 text-center">
+        <span className="font-mono font-bold text-xs px-2.5 py-1 rounded-sm bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/60 inline-block min-w-10 text-center shadow-2xs">
           {row.original.size_code}
         </span>
       ),
@@ -46,6 +47,7 @@ export function getSizeMatrixColumns(
     {
       id: 'front_body',
       header: 'FRONT BODY (.jean5 / IMG)',
+      size: 280,
       cell: ({ row }) => (
         <MatrixFileSlot
           designId={designId}
@@ -62,6 +64,7 @@ export function getSizeMatrixColumns(
     {
       id: 'back_body',
       header: 'BACK BODY (.jean5 / IMG)',
+      size: 280,
       cell: ({ row }) => (
         <MatrixFileSlot
           designId={designId}
@@ -78,6 +81,7 @@ export function getSizeMatrixColumns(
     {
       id: 'wash_mockup',
       header: 'WASH MOCKUP / SKETCH',
+      size: 250,
       cell: ({ row }) => (
         <MatrixFileSlot
           designId={designId}
@@ -94,6 +98,7 @@ export function getSizeMatrixColumns(
     {
       accessorKey: 'status',
       header: ({ column }) => <DataTableColumnHeader column={column} title="STATUS" />,
+      size: 90,
       cell: ({ row }) => {
         const s = row.original.status;
         if (s === 'COMPLETE') {
@@ -119,4 +124,3 @@ export function getSizeMatrixColumns(
     },
   ];
 }
-

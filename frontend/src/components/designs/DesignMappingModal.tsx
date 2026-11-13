@@ -3,15 +3,13 @@
  * লেজার ডিজাইন ম্যাপিং ইন্টারঅ্যাক্টিভ মডাল (Design Mapping Modal)
  *
  * নির্দিষ্ট স্টাইলের জন্য সাইজ ম্যাট্রিক্স, বাল্ক অটো-ম্যাচ ড্রপজোন ও রেসিপি লকিং ইন্টারফেস।
- * রুল ১৬ (2px Corner Radius) এবং রুল ০৪ (<300 Lines) মেনে প্রস্তুতকৃত।
+ * রুল ১৬ (2px Corner Radius), রুল ২৩ (DataTable) এবং রুল ০৪ (<300 Lines) মেনে প্রস্তুতকৃত।
  */
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Layers, Lock, CopyPlus, Plus, FolderOpen } from 'lucide-react';
-import { Modal, ModalContent, ModalHeader, ModalTitle } from '@/components/ui/Modal';
+import { Lock, CheckCircle2 } from 'lucide-react';
+import { Modal, ModalContent } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
-import { Select } from '@/components/ui/Select';
 import { DataTable } from '@/components/ui/DataTable';
 import { Order } from '@/types/order';
 import { LaserDesign, LaserDesignFile } from '@/types/design';
@@ -22,6 +20,7 @@ import { useSizeMatrix, DEFAULT_SIZES } from './useSizeMatrix';
 import { BulkDropzone } from './BulkDropzone';
 import { RecipeLockModal } from './RecipeLockModal';
 import { ImagePreviewModal } from './ImagePreviewModal';
+import { DesignMappingHeader } from './DesignMappingHeader';
 
 interface DesignMappingModalProps {
   isOpen: boolean;
@@ -46,7 +45,33 @@ export const DesignMappingModal: React.FC<DesignMappingModalProps> = ({
   const [isLockModalOpen, setIsLockModalOpen] = useState(false);
   const [previewFile, setPreviewFile] = useState<LaserDesignFile | null>(null);
 
-  // ১. অর্ডার লোড
+  // ১. অর্ডারের ডিজাইন লোড বা স্বয়ংক্রিয় ড্রাফট ইনিশিয়ালাইজ (Auto-Init Draft)
+  const loadOrCreateOrderDesign = useCallback(
+    async (order: Order) => {
+      setIsLoading(true);
+      try {
+        const designs = await getDesignsByOrder(order.id);
+        if (designs.length > 0) {
+          setActiveDesign(designs[0]);
+        } else {
+          const created = await createDesign({
+            order_id: order.id,
+            style_code: order.style_code,
+            recipe_name: `${order.style_code} Recipe v1`,
+          });
+          setActiveDesign(created);
+          onSaved();
+        }
+      } catch {
+        // হ্যান্ডলিং
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [onSaved]
+  );
+
+  // ২. ডায়ালগ ওপেন হলে অর্ডার লোড
   useEffect(() => {
     if (!isOpen) return;
     async function initOrders() {
@@ -57,32 +82,23 @@ export const DesignMappingModal: React.FC<DesignMappingModalProps> = ({
           setSelectedOrderId(initialDesign.order_id);
           setActiveDesign(initialDesign);
         } else if (res.items.length > 0) {
-          setSelectedOrderId(res.items[0].id);
+          const first = res.items[0];
+          setSelectedOrderId(first.id);
+          await loadOrCreateOrderDesign(first);
         }
       } catch {
         // হ্যান্ডলিং
       }
     }
     initOrders();
-  }, [isOpen, initialDesign]);
-
-  // ২. অর্ডার পরিবর্তন হলে বিদ্যমান ডিজাইন লোড
-  const loadOrderDesigns = useCallback(async (orderId: string) => {
-    if (!orderId) return;
-    setIsLoading(true);
-    try {
-      const designs = await getDesignsByOrder(orderId);
-      setActiveDesign(designs.length > 0 ? designs[0] : null);
-    } catch {
-      // হ্যান্ডলিং
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  }, [isOpen, initialDesign, loadOrCreateOrderDesign]);
 
   const handleOrderChange = (orderId: string) => {
     setSelectedOrderId(orderId);
-    loadOrderDesigns(orderId);
+    const found = orders.find((o) => o.id === orderId);
+    if (found) {
+      loadOrCreateOrderDesign(found);
+    }
   };
 
   const selectedOrder = useMemo(
@@ -122,24 +138,6 @@ export const DesignMappingModal: React.FC<DesignMappingModalProps> = ({
     }
   };
 
-  const handleCreateDraft = async () => {
-    if (!selectedOrder) return;
-    setIsLoading(true);
-    try {
-      const created = await createDesign({
-        order_id: selectedOrder.id,
-        style_code: selectedOrder.style_code,
-        recipe_name: `${selectedOrder.style_code} Recipe v1`,
-      });
-      setActiveDesign(created);
-      onSaved();
-    } catch {
-      // হ্যান্ডলিং
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const matrixRows = useSizeMatrix(activeDesign, extraSizes);
 
   const columns = useMemo(() => {
@@ -153,139 +151,122 @@ export const DesignMappingModal: React.FC<DesignMappingModalProps> = ({
     });
   }, [activeDesign]);
 
+  const completedCount = matrixRows.filter((r) => r.status === 'COMPLETE').length;
+
   return (
     <Modal open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <ModalContent className="max-w-5xl max-h-[92vh] overflow-y-auto">
-        <ModalHeader>
-          <ModalTitle className="flex items-center justify-between gap-3 pb-2 border-b border-slate-200 dark:border-[#272930]">
-            <div className="flex items-center gap-2">
-              <Layers className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              <div>
-                <span className="text-sm font-bold font-mono">
-                  {activeDesign ? `Style Mapping Matrix: ${activeDesign.style_code}` : 'New Laser Design Mapping'}
-                </span>
-                <p className="text-[11px] font-mono text-zinc-400 font-normal">
-                  Map Jeanologia .jean5 recipes &amp; artwork to garment sizes
-                </p>
-              </div>
-            </div>
+      <ModalContent className="max-w-6xl w-[96vw] max-h-[92vh] overflow-hidden flex flex-col p-0 gap-0 border border-slate-200 dark:border-[#272930] bg-white dark:bg-[#121317] rounded-sm shadow-2xl">
+        {/* ১. ডেডিকেটেড ইন্ডাস্ট্রিয়াল হেডার ও স্টাইল সিলেক্টর */}
+        <DesignMappingHeader
+          orders={orders}
+          selectedOrderId={selectedOrderId}
+          selectedOrder={selectedOrder}
+          activeDesign={activeDesign}
+          isInitialDesign={Boolean(initialDesign)}
+          onOrderChange={handleOrderChange}
+          onLockClick={() => setIsLockModalOpen(true)}
+          onNewRevisionClick={async () => {
+            if (!activeDesign) return;
+            const rev = await createNewVersion(activeDesign.id);
+            setActiveDesign(rev);
+            onSaved();
+          }}
+        />
 
-            {/* PO সিলেক্টর */}
-            <div className="w-64">
-              <Select
-                options={orders.map((o) => ({
-                  value: o.id,
-                  label: `${o.job_no || o.po_number} (${o.style_code})`,
-                }))}
-                value={selectedOrderId}
-                onChange={(e) => handleOrderChange(e.target.value)}
-                disabled={Boolean(initialDesign)}
+        {/* ২. স্ক্রোলযোগ্য মডাল বডি */}
+        <div className="overflow-y-auto px-6 py-4 space-y-4 flex-1">
+          {activeDesign && (
+            <>
+              {/* বাল্ক অটো-ম্যাচ ড্রপজোন */}
+              <BulkDropzone
+                designId={activeDesign.id}
+                isLocked={activeDesign.is_locked}
+                onBatchUploaded={handleBatchUploaded}
               />
-            </div>
-          </ModalTitle>
-        </ModalHeader>
 
-        {activeDesign ? (
-          <div className="space-y-3.5 pt-2">
-            {/* হেডার স্ট্যাটাস ও বাটনস */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-slate-50 dark:bg-[#15171e] border border-slate-200/90 dark:border-[#272930] rounded-sm">
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-xs font-bold px-1.5 py-0.5 rounded-sm bg-white dark:bg-[#1e2028] text-zinc-800 dark:text-zinc-200 border border-slate-200 dark:border-[#272930]">
-                  Rev v{activeDesign.version}
-                </span>
-                <span className="text-xs font-bold font-mono text-zinc-800 dark:text-zinc-200">{activeDesign.recipe_name}</span>
-                <Badge variant={activeDesign.is_locked ? 'success' : 'warning'} hasDot className="text-[10px] font-mono py-0.5">
-                  {activeDesign.is_locked ? 'Floor Locked' : 'Draft Editing'}
-                </Badge>
-              </div>
-
-              <div className="flex items-center gap-2">
-                {!activeDesign.is_locked ? (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsLockModalOpen(true)}
-                    disabled={activeDesign.files.length === 0}
-                    className="text-xs font-mono text-amber-600 hover:text-amber-700 border-amber-200 dark:border-amber-900/60"
-                  >
-                    <Lock className="w-3.5 h-3.5 mr-1" />
-                    <span>Lock Recipe</span>
-                  </Button>
-                ) : (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={async () => {
-                      const rev = await createNewVersion(activeDesign.id);
-                      setActiveDesign(rev);
-                      onSaved();
-                    }}
-                    className="text-xs font-mono"
-                  >
-                    <CopyPlus className="w-3.5 h-3.5 mr-1" />
-                    <span>Create New Revision</span>
-                  </Button>
-                )}
-              </div>
-            </div>
-
-            {/* বাল্ক অটো-ম্যাচ ড্রপজোন */}
-            <BulkDropzone
-              designId={activeDesign.id}
-              isLocked={activeDesign.is_locked}
-              onBatchUploaded={handleBatchUploaded}
-            />
-
-            {/* সাইজ ম্যাট্রিক্স টেবিল */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs font-mono text-zinc-500">
-                <span className="font-bold text-zinc-800 dark:text-zinc-200">Size Mapping Grid ({matrixRows.length} sizes)</span>
-                {!activeDesign.is_locked && (
-                  <div className="flex items-center gap-1.5">
-                    <input
-                      type="text"
-                      placeholder="Add Size (e.g. 42)"
-                      value={newSizeInput}
-                      onChange={(e) => setNewSizeInput(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleAddCustomSize()}
-                      className="h-7 px-2 text-xs font-mono rounded-sm border border-slate-200 dark:border-[#272930] bg-white dark:bg-[#121317] w-32"
-                    />
-                    <Button variant="outline" size="sm" onClick={handleAddCustomSize} className="h-7 text-xs font-mono">
-                      + Add
-                    </Button>
+              {/* সাইজ ম্যাট্রিক্স টেবিল ও সাইজ অ্যাডার */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs font-mono">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wide">
+                      Size-by-Size Recipe Matrix
+                    </span>
+                    <span className="text-[11px] text-zinc-400">
+                      ({matrixRows.length} Sizes Active)
+                    </span>
                   </div>
-                )}
-              </div>
 
-              <DataTable
-                columns={columns}
-                data={matrixRows}
-                isLoading={isLoading}
-                emptyTitle="No Sizes Configured"
-                emptyDescription="Size matrix is loading..."
-              />
-            </div>
+                  {!activeDesign.is_locked && (
+                    <div className="flex items-center gap-1.5">
+                      <input
+                        type="text"
+                        placeholder="Add Size (e.g. 42)"
+                        value={newSizeInput}
+                        onChange={(e) => setNewSizeInput(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleAddCustomSize()}
+                        className="h-7 px-2.5 text-xs font-mono rounded-sm border border-slate-200 dark:border-[#272930] bg-white dark:bg-[#15171e] w-36 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:border-blue-500"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleAddCustomSize}
+                        className="h-7 px-2.5 text-xs font-mono"
+                      >
+                        + Add Size
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                <DataTable
+                  columns={columns}
+                  data={matrixRows}
+                  isLoading={isLoading}
+                  emptyTitle="Loading Matrix..."
+                  emptyDescription="Preparing Jeanologia .jean5 recipe slots for this style."
+                />
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* ৩. মডাল ফুটার */}
+        <div className="px-6 py-3 border-t border-slate-200 dark:border-[#272930] bg-slate-50/60 dark:bg-[#15171e]/60 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-xs font-mono text-zinc-500">
+            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+            <span>
+              <strong className="text-zinc-800 dark:text-zinc-200">{completedCount}</strong> of{' '}
+              {matrixRows.length} Sizes Ready (Front &amp; Back Mapped)
+            </span>
           </div>
-        ) : (
-          /* রেসিপি ড্রাফট না থাকলে ইনিশিয়ালাইজেশন */
-          <div className="p-8 text-center bg-slate-50 dark:bg-[#15171e] border border-slate-200 dark:border-[#272930] rounded-sm space-y-3 my-4">
-            <FolderOpen className="w-8 h-8 text-zinc-400 mx-auto" />
-            <p className="text-xs font-bold font-mono text-zinc-800 dark:text-zinc-200">No Design Recipe Draft Found</p>
-            <p className="text-[11px] font-mono text-zinc-400 max-w-sm mx-auto">
-              Initialize the first Jeanologia .jean5 recipe draft for {selectedOrder?.style_code || 'this style'}.
-            </p>
-            <Button variant="primary" size="sm" onClick={handleCreateDraft} disabled={!selectedOrder || isLoading} className="text-xs font-mono">
-              <Plus className="w-3.5 h-3.5 mr-1" />
-              <span>Initialize Recipe Draft</span>
+
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={onClose} className="h-8 text-xs font-mono">
+              Close
             </Button>
+            {activeDesign && !activeDesign.is_locked && (
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => setIsLockModalOpen(true)}
+                disabled={activeDesign.files.length === 0}
+                className="h-8 text-xs font-mono"
+              >
+                <Lock className="w-3.5 h-3.5 mr-1" />
+                <span>Lock &amp; Authorize Recipe</span>
+              </Button>
+            )}
           </div>
-        )}
+        </div>
 
         <RecipeLockModal
           isOpen={isLockModalOpen}
           design={activeDesign}
           onClose={() => setIsLockModalOpen(false)}
-          onLocked={(u) => { setActiveDesign(u); onSaved(); }}
+          onLocked={(u) => {
+            setActiveDesign(u);
+            onSaved();
+          }}
         />
         <ImagePreviewModal
           isOpen={Boolean(previewFile)}

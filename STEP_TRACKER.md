@@ -12,8 +12,8 @@
 | ক্ষেত্র | বিবরণ |
 | :--- | :--- |
 | **📌 সর্বশেষ অনুমোদিত (Approved)** | **স্টেপ ৩.২:** `.jean5` ফাইল আপলোড ও লক এপিআই (`backend/app/api/v1/designs.py` - Recipe Lock Gate) (`✅ APPROVED` - ১৩/১১) |
-| **🔍 বর্তমান কাজ (In Progress)** | **স্টেপ ৩.৩:** ডিজাইন ভল্ট পোর্টাল (Designer Vault UI - TanStack DataTable v8 & Upload Dropzone) |
-| **🚦 বর্তমান অবস্থা (Status)** | 🔄 কাজ চলছে (স্টেপ ৩.৩ বাস্তবায়নাধীন) |
+| **🔍 বর্তমান কাজ (In Progress)** | **স্টেপ ৩.৩:** ডিজাইন ভল্ট পোর্টাল ও সাইজ ম্যাপিং মডাল ইউআই পলিশ (`DesignMappingModal.tsx` & `DesignMappingHeader.tsx`) |
+| **🚦 বর্তমান অবস্থা (Status)** | 🧪 কোড টেস্টেড ও রেডি (সিটিও স্যারের পর্যালোচনার অপেক্ষমাণ) |
 
 ---
 
