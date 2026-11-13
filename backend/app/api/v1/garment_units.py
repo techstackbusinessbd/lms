@@ -235,3 +235,4 @@ async def scan_lookup_unit(
             detail=f"Garment unit with QR/Serial '{clean}' not found in registry.",
         )
     return unit
+

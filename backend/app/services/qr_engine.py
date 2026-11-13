@@ -124,3 +124,4 @@ def generate_batch_zpl_stream(
     """
     labels = [generate_zpl_single_label(unit, order=order) for unit in units]
     return "".join(labels)
+

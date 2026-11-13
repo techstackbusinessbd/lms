@@ -152,3 +152,4 @@ async def test_units_query_and_scan_lookup(auth_headers, test_order_for_units):
         )
         assert mark_res.status_code == 200
         assert mark_res.json()["updated_count"] == 1
+

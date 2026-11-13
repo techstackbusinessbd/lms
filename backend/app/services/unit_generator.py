@@ -126,3 +126,4 @@ async def batch_generate_garment_units(
         "first_serial": sample_first_serial,
         "last_serial": sample_last_serial,
     }
+
