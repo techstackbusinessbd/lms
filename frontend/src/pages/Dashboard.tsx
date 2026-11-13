@@ -29,7 +29,7 @@ export const Dashboard: React.FC = () => {
       wash: 'Dark Vintage Whisker',
       qty: 2400,
       lasered: 1840,
-      step: 'Step 7: Production',
+      step: 'Production',
       stepVariant: 'primary' as const,
     },
     {
@@ -39,7 +39,7 @@ export const Dashboard: React.FC = () => {
       wash: 'Medium Stone Wash',
       qty: 1800,
       lasered: 920,
-      step: 'Step 6: eMark Ready',
+      step: 'eMark Ready',
       stepVariant: 'default' as const,
     },
     {
@@ -49,7 +49,7 @@ export const Dashboard: React.FC = () => {
       wash: 'Cloud Bleach Fade',
       qty: 1200,
       lasered: 0,
-      step: 'Step 2: Laser Vault',
+      step: 'Laser Vault',
       stepVariant: 'outline' as const,
     },
   ];

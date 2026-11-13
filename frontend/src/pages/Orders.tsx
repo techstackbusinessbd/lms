@@ -120,7 +120,7 @@ export const Orders: React.FC = () => {
               </span>
             </div>
             <p className="text-[11px] text-zinc-400 dark:text-zinc-500 font-mono">
-              Step 1: Production Order Entry &amp; Recipe Tracking
+              Production Order Entry &amp; Recipe Tracking
             </p>
           </div>
         </div>

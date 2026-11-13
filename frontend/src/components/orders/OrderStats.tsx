@@ -60,7 +60,7 @@ export const OrderStats: React.FC<OrderStatsProps> = ({ orders, totalCount }) =>
         </div>
       </div>
 
-      {/* ৩. পেন্ডিং ডিজাইন (স্টেপ ২ অপেক্ষমাণ) */}
+      {/* ৩. পেন্ডিং ডিজাইন (লেজার রেসিপি অপেক্ষমাণ) */}
       <div className="relative overflow-hidden p-3.5 bg-white dark:bg-[#121317] border border-slate-200/90 dark:border-[#1f2127] rounded-sm shadow-[0_1px_3px_rgba(0,0,0,0.03)] before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-amber-500/30 before:to-transparent">
         <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 font-mono">
           <span className="flex items-center gap-1.5 uppercase tracking-wider text-[11px] font-semibold text-amber-600 dark:text-amber-400">
@@ -68,7 +68,7 @@ export const OrderStats: React.FC<OrderStatsProps> = ({ orders, totalCount }) =>
             <span>PENDING DESIGN</span>
           </span>
           <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-sm bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 font-medium">
-            Step 2
+            Vault
           </span>
         </div>
         <div className="mt-2 flex items-baseline justify-between">
@@ -79,7 +79,7 @@ export const OrderStats: React.FC<OrderStatsProps> = ({ orders, totalCount }) =>
         </div>
       </div>
 
-      {/* ৪. লাইভ প্রোডাকশনে চলমান (স্টেপ ৭) */}
+      {/* ৪. লাইভ প্রোডাকশনে চলমান */}
       <div className="relative overflow-hidden p-3.5 bg-white dark:bg-[#121317] border border-slate-200/90 dark:border-[#1f2127] rounded-sm shadow-[0_1px_3px_rgba(0,0,0,0.03)] before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-blue-500/30 before:to-transparent">
         <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 font-mono">
           <span className="flex items-center gap-1.5 uppercase tracking-wider text-[11px] font-semibold text-blue-600 dark:text-blue-400">
@@ -87,7 +87,7 @@ export const OrderStats: React.FC<OrderStatsProps> = ({ orders, totalCount }) =>
             <span>IN PRODUCTION</span>
           </span>
           <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-sm bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 font-medium">
-            Step 7
+            Active
           </span>
         </div>
         <div className="mt-2 flex items-baseline justify-between">
