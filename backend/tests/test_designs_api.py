@@ -106,7 +106,7 @@ async def test_upload_design_file_and_lock_lifecycle(auth_headers, test_order):
             headers=auth_headers,
         )
         assert lock_attempt.status_code == 400
-        assert "at least one mapped .jean5 file" in lock_attempt.json()["detail"]
+        assert "at least one mapped" in lock_attempt.json()["detail"]
 
         # গ. অবৈধ ফাইল ফরম্যাট (.txt) আপলোড করলে রিজেক্ট
         invalid_file = io.BytesIO(b"some malicious or invalid text data")

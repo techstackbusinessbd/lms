@@ -63,3 +63,18 @@ export interface RecipeLockPayload {
   lock_notes?: string;
 }
 
+export interface LaserDesignListResponse {
+  items: LaserDesign[];
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+}
+
+export interface LaserDesignFilterParams {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  status?: string;
+}
+

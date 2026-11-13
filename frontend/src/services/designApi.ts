@@ -12,6 +12,8 @@ import {
   LaserDesign,
   LaserDesignCreatePayload,
   LaserDesignFile,
+  LaserDesignFilterParams,
+  LaserDesignListResponse,
   RecipeLockPayload,
 } from '@/types/design';
 import { PydanticValidationErrorResponse } from '@/types/auth';
@@ -91,6 +93,26 @@ export async function createDesign(payload: LaserDesignCreatePayload): Promise<L
   if (!res.ok) {
     await handleResponseError(res);
   }
+  return res.json();
+}
+
+/**
+ * সকল লেজার ডিজাইন রেসিপির তালিকা অনুসন্ধান (পেজিনেশন ও ফিল্টার সহ)
+ */
+export async function getDesigns(
+  params: LaserDesignFilterParams = {}
+): Promise<LaserDesignListResponse> {
+  const query = new URLSearchParams();
+  if (params.page) query.append('page', String(params.page));
+  if (params.page_size) query.append('page_size', String(params.page_size));
+  if (params.search) query.append('search', params.search);
+  if (params.status && params.status !== 'ALL') query.append('status', params.status);
+
+  const res = await fetch(`${API_BASE}/?${query.toString()}`, {
+    method: 'GET',
+    headers: getAuthHeaders(),
+  });
+  if (!res.ok) await handleResponseError(res);
   return res.json();
 }
 

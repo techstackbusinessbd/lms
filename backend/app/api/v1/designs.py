@@ -7,6 +7,7 @@ Jeanologia eMark (.jean এবং .jean5) রেসিপি আপলোড, �
 রুল ০৪ (<300 Lines), রুল ০৫ (Sub-100ms) এবং রুল ২৩ (Pydantic v2) মেনে প্রস্তুতকৃত।
 """
 
+import math
 import uuid
 from typing import List, Literal, Optional
 from fastapi import (
@@ -15,11 +16,12 @@ from fastapi import (
     File,
     Form,
     HTTPException,
+    Query,
     UploadFile,
     status,
 )
 from fastapi.responses import FileResponse
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -31,6 +33,7 @@ from app.models.user import User
 from app.schemas.laser_design import (
     LaserDesignCreate,
     LaserDesignFileResponse,
+    LaserDesignListResponse,
     LaserDesignResponse,
     RecipeLockRequest,
 )
@@ -86,6 +89,30 @@ async def create_design(
     return await get_design_or_404(db, new_design.id)
 
 
+@router.get("/", response_model=LaserDesignListResponse, summary="সকল লেজার ডিজাইন রেসিপির তালিকা")
+async def list_designs(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    search: Optional[str] = Query(None),
+    status_filter: Optional[str] = Query(None, alias="status"),
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(get_current_active_user),
+) -> LaserDesignListResponse:
+    """সকল স্টাইলের জন্য প্রস্তুতকৃত লেজার রেসিপি তালিকা (সার্চ ও ফিল্টারিং সহ)"""
+    query = select(LaserDesign).options(selectinload(LaserDesign.files)).where(LaserDesign.is_deleted.is_(False))
+    if search:
+        s = f"%{search.strip()}%"
+        query = query.where(or_(LaserDesign.style_code.ilike(s), LaserDesign.recipe_name.ilike(s)))
+    if status_filter and status_filter != "ALL":
+        query = query.where(LaserDesign.status == status_filter)
+
+    total = (await db.execute(select(func.count()).select_from(query.subquery()))).scalar() or 0
+    query = query.order_by(LaserDesign.updated_at.desc()).offset((page - 1) * page_size).limit(page_size)
+    items = (await db.execute(query)).scalars().all()
+    pages = math.ceil(total / page_size) if total > 0 else 1
+    return LaserDesignListResponse(items=list(items), total=total, page=page, page_size=page_size, total_pages=pages)
+
+
 @router.post(
     "/{design_id}/upload-file",
     response_model=LaserDesignFileResponse,
@@ -114,21 +141,15 @@ async def upload_design_file(
     try:
         content = await file.read()
         storage_meta = vault_storage_service.save_design_file(
-            order_id=design.order_id,
-            design_id=design.id,
-            placement=placement,
-            size_code=size_code,
-            original_filename=file.filename or f"recipe_{size_code}.jean5",
-            content=content,
+            order_id=design.order_id, design_id=design.id, placement=placement,
+            size_code=size_code, original_filename=file.filename or f"recipe_{size_code}.jean5", content=content,
         )
     except (InvalidFileFormatError, VaultStorageError) as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     file_stmt = select(LaserDesignFile).where(
-        LaserDesignFile.design_id == design.id,
-        LaserDesignFile.size_code == size_code,
-        LaserDesignFile.placement == placement,
-        LaserDesignFile.is_deleted.is_(False),
+        LaserDesignFile.design_id == design.id, LaserDesignFile.size_code == size_code,
+        LaserDesignFile.placement == placement, LaserDesignFile.is_deleted.is_(False),
     )
     existing_file = (await db.execute(file_stmt)).scalar_one_or_none()
 
@@ -144,17 +165,11 @@ async def upload_design_file(
         target_file = existing_file
     else:
         new_file = LaserDesignFile(
-            design_id=design.id,
-            size_code=size_code,
-            placement=placement,
-            file_format=storage_meta["file_format"],
-            original_filename=file.filename or f"recipe_{size_code}.jean5",
-            file_path=storage_meta["file_path"],
-            file_size_bytes=storage_meta["file_size_bytes"],
-            file_hash_sha256=storage_meta["file_hash_sha256"],
-            power_percentage=power_percentage,
-            speed_percentage=speed_percentage,
-            cycle_time_estimate_sec=cycle_time_estimate_sec,
+            design_id=design.id, size_code=size_code, placement=placement,
+            file_format=storage_meta["file_format"], original_filename=file.filename or f"recipe_{size_code}.jean5",
+            file_path=storage_meta["file_path"], file_size_bytes=storage_meta["file_size_bytes"],
+            file_hash_sha256=storage_meta["file_hash_sha256"], power_percentage=power_percentage,
+            speed_percentage=speed_percentage, cycle_time_estimate_sec=cycle_time_estimate_sec,
         )
         db.add(new_file)
         target_file = new_file
@@ -180,15 +195,9 @@ async def lock_recipe(
     if design.is_locked:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Recipe is already locked.")
     if not design.files:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Cannot lock recipe without at least one mapped .jean5 file.",
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cannot lock recipe without at least one mapped file.")
 
-    design.is_locked = True
-    design.status = "LOCKED"
-    design.locked_by = current_user.id
-    design.locked_at = func.now()
+    design.is_locked, design.status, design.locked_by, design.locked_at = True, "LOCKED", current_user.id, func.now()
     if payload.lock_notes:
         design.notes = f"{design.notes or ''}\n[Lock Note]: {payload.lock_notes}".strip()
 
@@ -250,13 +259,10 @@ async def create_new_version(
 
 @router.get("/files/{file_id}/content", summary="ফাইল কনটেন্ট ডাউনলোড বা প্রিভিউ স্ট্রিম")
 async def get_design_file_content(
-    file_id: uuid.UUID,
-    db: AsyncSession = Depends(get_db),
-    _: User = Depends(get_current_active_user),
+    file_id: uuid.UUID, db: AsyncSession = Depends(get_db), _: User = Depends(get_current_active_user)
 ):
     """ভল্ট থেকে নির্দিষ্ট ফাইল স্ট্রিম করে (ইমেজ প্রিভিউ ও ডাউনলোড)"""
-    stmt = select(LaserDesignFile).where(LaserDesignFile.id == file_id, LaserDesignFile.is_deleted.is_(False))
-    f = (await db.execute(stmt)).scalar_one_or_none()
+    f = (await db.execute(select(LaserDesignFile).where(LaserDesignFile.id == file_id, LaserDesignFile.is_deleted.is_(False)))).scalar_one_or_none()
     if not f:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Design file not found.")
 
@@ -273,13 +279,10 @@ async def get_design_file_content(
 
 @router.delete("/files/{file_id}", status_code=status.HTTP_204_NO_CONTENT, summary="ম্যাপ করা ফাইল অপসারণ")
 async def delete_design_file(
-    file_id: uuid.UUID,
-    db: AsyncSession = Depends(get_db),
-    _: User = Depends(get_current_active_user),
+    file_id: uuid.UUID, db: AsyncSession = Depends(get_db), _: User = Depends(get_current_active_user)
 ):
     """ভল্ট থেকে ম্যাপ করা নির্দিষ্ট ফাইল মুছে ফেলা (শুধুমাত্র DRAFT রেসিপির জন্য)"""
-    stmt = select(LaserDesignFile).where(LaserDesignFile.id == file_id, LaserDesignFile.is_deleted.is_(False))
-    f = (await db.execute(stmt)).scalar_one_or_none()
+    f = (await db.execute(select(LaserDesignFile).where(LaserDesignFile.id == file_id, LaserDesignFile.is_deleted.is_(False)))).scalar_one_or_none()
     if not f:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Design file not found.")
 
