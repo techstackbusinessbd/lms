@@ -76,18 +76,22 @@ function AppContent(): React.JSX.Element {
     return <Login />;
   }
 
-  // পেজ টাইটেল ম্যাপিং (সহজ, পরিষ্কার ও প্রফেশনাল নামকরণ)
+  // পেজ টাইটেল ম্যাপিং (মেনু নামের সাথে শতভাগ সম্পর্কিত নামকরণ)
   const pageTitles: Record<string, string> = {
     dashboard: 'Dashboard',
-    'step-1': 'Step 1: Order Entry',
-    'step-2': 'Step 2: Laser Design',
-    'step-3': 'Step 3: QR Print',
-    'step-4': 'Step 4: QR Attach',
-    'step-5': 'Step 5: Body Intake',
-    'step-6': 'Step 6: eMark Ready',
-    'step-7': 'Step 7: Production',
-    'step-8': 'Step 8: QC Audit',
+    'order-entry': 'Order Entry',
+    orders: 'Order Entry',
+    'step-1': 'Order Entry',
+    'laser-design': 'Laser Design',
+    'qr-print': 'QR Print',
+    'qr-attach': 'QR Attach',
+    'body-intake': 'Body Intake',
+    'emark-ready': 'eMark Ready',
+    production: 'Production',
+    'qc-audit': 'QC Audit',
+    'machine-fleet': 'Machine Fleet',
     machines: 'Machine Fleet',
+    'edge-agents': 'Edge Agents',
     'machine-agents': 'Edge Agents',
     users: 'Users & Roles',
     settings: 'Settings',
@@ -101,7 +105,7 @@ function AppContent(): React.JSX.Element {
     >
       {currentPath === 'dashboard' ? (
         <Dashboard />
-      ) : currentPath === 'step-1' || currentPath === 'orders' ? (
+      ) : currentPath === 'order-entry' || currentPath === 'orders' || currentPath === 'step-1' ? (
         <Orders />
       ) : (
         <div className="p-8 text-center bg-white dark:bg-[#121317] border border-slate-200/90 dark:border-[#1f2127] rounded-sm shadow-[0_1px_3px_rgba(0,0,0,0.04)]">

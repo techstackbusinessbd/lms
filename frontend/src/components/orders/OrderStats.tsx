@@ -100,3 +100,4 @@ export const OrderStats: React.FC<OrderStatsProps> = ({ orders, totalCount }) =>
     </div>
   );
 };
+

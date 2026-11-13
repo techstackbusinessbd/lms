@@ -44,14 +44,14 @@ export const workflowGroup: ParentMenuItem = {
   icon: Layers,
   badge: '8 Steps',
   children: [
-    { id: 'step-1', name: 'Order Entry', stepNum: 'S1', icon: Layers },
-    { id: 'step-2', name: 'Laser Design', stepNum: 'S2', icon: FileCode },
-    { id: 'step-3', name: 'QR Print', stepNum: 'S3', icon: QrCode },
-    { id: 'step-4', name: 'QR Attach', stepNum: 'S4', icon: CheckSquare },
-    { id: 'step-5', name: 'Body Intake', stepNum: 'S5', icon: Truck },
-    { id: 'step-6', name: 'eMark Ready', stepNum: 'S6', icon: Cpu },
-    { id: 'step-7', name: 'Production', stepNum: 'S7', icon: Flame },
-    { id: 'step-8', name: 'QC Audit', stepNum: 'S8', icon: CheckCircle2 },
+    { id: 'order-entry', name: 'Order Entry', stepNum: 'S1', icon: Layers },
+    { id: 'laser-design', name: 'Laser Design', stepNum: 'S2', icon: FileCode },
+    { id: 'qr-print', name: 'QR Print', stepNum: 'S3', icon: QrCode },
+    { id: 'qr-attach', name: 'QR Attach', stepNum: 'S4', icon: CheckSquare },
+    { id: 'body-intake', name: 'Body Intake', stepNum: 'S5', icon: Truck },
+    { id: 'emark-ready', name: 'eMark Ready', stepNum: 'S6', icon: Cpu },
+    { id: 'production', name: 'Production', stepNum: 'S7', icon: Flame },
+    { id: 'qc-audit', name: 'QC Audit', stepNum: 'S8', icon: CheckCircle2 },
   ],
 };
 
@@ -62,8 +62,8 @@ export const fleetGroup: ParentMenuItem = {
   icon: Radio,
   badge: '20 Tables',
   children: [
-    { id: 'machines', name: 'Machine Fleet', icon: Radio },
-    { id: 'machine-agents', name: 'Edge Agents', icon: Server },
+    { id: 'machine-fleet', name: 'Machine Fleet', icon: Radio },
+    { id: 'edge-agents', name: 'Edge Agents', icon: Server },
   ],
 };
 
