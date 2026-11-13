@@ -10,6 +10,7 @@ from app.api.v1.auth import router as auth_router
 from app.api.v1.orders import router as orders_router
 from app.api.v1.designs import router as designs_router
 from app.api.v1.garment_units import router as units_router
+from app.api.v1.master import master_router
 
 api_v1_router = APIRouter()
 
@@ -24,4 +25,7 @@ api_v1_router.include_router(designs_router, prefix="/designs", tags=["Laser Des
 
 # কিউআর কোড জেনারেশন ও ট্র্যাকিং রাউটার সংযোজন (Workflow ধাপ ৩ ও ৪)
 api_v1_router.include_router(units_router, prefix="/units", tags=["Garment Units & QR"])
+
+# মাস্টার ডাটা রাউটার সংযোজন (Company, Buyer, Brand, Season)
+api_v1_router.include_router(master_router, prefix="/master", tags=["Master Data"])
 

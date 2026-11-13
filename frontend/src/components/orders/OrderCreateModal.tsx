@@ -21,11 +21,11 @@ import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { createOrder, OrderApiError } from '@/services/orderApi';
 import { Order, OrderCreatePayload } from '@/types/order';
+import { useMasterOptions } from './useMasterOptions';
 import {
   COMPANY_OPTIONS,
   BUYER_OPTIONS,
   BRAND_OPTIONS,
-  SEASON_OPTIONS,
   SEASON_YEAR_OPTIONS,
   UOM_OPTIONS,
 } from './orderFormOptions';
@@ -57,6 +57,7 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
   onOrderCreated,
 }) => {
   const [formData, setFormData] = useState<OrderCreatePayload>(INITIAL_FORM);
+  const { companyOptions, buyerOptions, brandOptions, seasonOptions } = useMasterOptions(formData.buyer_name);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [generalError, setGeneralError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -124,7 +125,7 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Select
               label="Company *"
-              options={COMPANY_OPTIONS}
+              options={companyOptions}
               value={formData.company}
               onChange={(e) => handleChange('company', e.target.value)}
               error={fieldErrors['company']}
@@ -132,7 +133,7 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
             />
             <Select
               label="Buyer *"
-              options={BUYER_OPTIONS}
+              options={buyerOptions}
               value={formData.buyer_name}
               onChange={(e) => handleChange('buyer_name', e.target.value)}
               error={fieldErrors['buyer_name']}
@@ -164,7 +165,7 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Select
               label="Brand"
-              options={BRAND_OPTIONS}
+              options={brandOptions}
               value={formData.brand || ''}
               onChange={(e) => handleChange('brand', e.target.value)}
               error={fieldErrors['brand']}
@@ -172,7 +173,7 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
             <div className="grid grid-cols-2 gap-2">
               <Select
                 label="Season"
-                options={SEASON_OPTIONS}
+                options={seasonOptions}
                 value={formData.season || ''}
                 onChange={(e) => handleChange('season', e.target.value)}
                 error={fieldErrors['season']}

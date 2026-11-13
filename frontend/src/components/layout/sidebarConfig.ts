@@ -20,6 +20,7 @@ import {
   Settings,
   Radio,
   Server,
+  Database,
 } from 'lucide-react';
 
 export interface SubMenuItem {
@@ -73,6 +74,7 @@ export const adminGroup: ParentMenuItem = {
   name: 'Administration',
   icon: Settings,
   children: [
+    { id: 'master-data', name: 'Master Data', icon: Database },
     { id: 'users', name: 'Users & Roles', icon: Users },
     { id: 'settings', name: 'Settings', icon: Settings },
   ],
