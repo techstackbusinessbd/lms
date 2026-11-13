@@ -8,11 +8,12 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
+  Layers,
   Plus,
-  Search,
   RefreshCw,
   ChevronLeft,
   ChevronRight,
+  FilterX,
 } from 'lucide-react';
 import {
   useReactTable,
@@ -27,11 +28,12 @@ import {
   TableRow,
   TableHead,
   TableCell,
-  TableEmptyState,
 } from '@/components/ui/DataTableShell';
 import { getOrders } from '@/services/orderApi';
 import { Order, OrderFilterParams } from '@/types/order';
 import { getOrderColumns } from '@/components/orders/orderColumns';
+import { OrderStats } from '@/components/orders/OrderStats';
+import { OrderToolbar } from '@/components/orders/OrderToolbar';
 import { OrderCreateModal } from '@/components/orders/OrderCreateModal';
 import { OrderDetailsModal } from '@/components/orders/OrderDetailsModal';
 
@@ -73,16 +75,22 @@ export const Orders: React.FC = () => {
     loadOrders();
   }, [loadOrders]);
 
-  // স্ট্যাটাস ফিল্টার পিলস
-  const statusTabs = [
-    { id: 'ALL', label: 'All' },
-    { id: 'PENDING_DESIGN', label: 'Pending Design' },
-    { id: 'DESIGN_APPROVED', label: 'Approved' },
-    { id: 'IN_PRODUCTION', label: 'In Production' },
-    { id: 'COMPLETED', label: 'Completed' },
-  ];
+  const resetFilters = () => {
+    setSearchQuery('');
+    setStatusFilter('ALL');
+    setCurrentPage(1);
+  };
 
-  // TanStack Table কলাম ডেফিনিশন (এক্সটার্নাল ফাইল থেকে মেমোয়াইজড)
+  // স্ট্যাটাসভিত্তিক কাউন্ট ম্যাপ
+  const statusCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    orders.forEach((o) => {
+      counts[o.status] = (counts[o.status] || 0) + 1;
+    });
+    return counts;
+  }, [orders]);
+
+  // TanStack Table কলাম ডেফিনিশন (মেমোয়াইজড)
   const columns = useMemo(
     () => getOrderColumns((order) => setSelectedOrder(order)),
     []
@@ -95,16 +103,26 @@ export const Orders: React.FC = () => {
   });
 
   return (
-    <div className="space-y-3.5">
-      {/* ১. হেডার ও অ্যাকশন বার */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <h1 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 font-mono">
-            Orders
-          </h1>
-          <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded-sm bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
-            {totalOrders}
-          </span>
+    <div className="space-y-4">
+      {/* ১. পেজ হেডার ও প্রাইমারি অ্যাকশন বার */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-sm bg-blue-600/10 dark:bg-blue-500/15 border border-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+            <Layers className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 font-mono">
+                Garments Purchase Orders
+              </h1>
+              <span className="text-[10px] font-mono font-semibold px-1.5 py-0.2 rounded-sm bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                {totalOrders} POs
+              </span>
+            </div>
+            <p className="text-[11px] text-zinc-400 dark:text-zinc-500 font-mono">
+              Step 1: Production Order Entry &amp; Recipe Tracking
+            </p>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
@@ -113,16 +131,17 @@ export const Orders: React.FC = () => {
             size="sm"
             onClick={() => loadOrders()}
             disabled={isLoading}
-            className="h-8 px-2.5 text-xs"
+            className="h-8 px-2.5 text-xs font-mono"
             title="Refresh"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline ml-1.5 text-[11px]">Sync</span>
           </Button>
           <Button
             variant="primary"
             size="sm"
             onClick={() => setIsCreateModalOpen(true)}
-            className="h-8 px-3 text-xs font-semibold"
+            className="h-8 px-3 text-xs font-semibold shadow-xs"
           >
             <Plus className="w-3.5 h-3.5 mr-1" />
             <span>New Order</span>
@@ -130,56 +149,36 @@ export const Orders: React.FC = () => {
         </div>
       </div>
 
-      {/* ২. সেগমেন্টেড স্ট্যাটাস ফিল্টার পিলস ও সার্চ বার */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-        <div className="flex items-center p-0.5 rounded-sm bg-slate-100 dark:bg-[#0c0d11] border border-slate-200/80 dark:border-[#1f2127] overflow-x-auto">
-          {statusTabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => {
-                setStatusFilter(tab.id);
-                setCurrentPage(1);
-              }}
-              className={`px-3 py-1.5 text-xs font-mono font-medium rounded-sm transition-all whitespace-nowrap cursor-pointer ${
-                statusFilter === tab.id
-                  ? 'bg-white dark:bg-[#1c1d23] text-zinc-900 dark:text-zinc-100 shadow-2xs font-semibold'
-                  : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {/* ২. এক্সিকিউটিভ কেপিআই সারসংক্ষেপ স্ট্রিপ */}
+      <OrderStats orders={orders} totalCount={totalOrders} />
 
-        <div className="relative w-full md:w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
-          <input
-            type="text"
-            placeholder="Search Job No, style, buyer, company..."
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="w-full h-9 pl-9 pr-3 rounded-sm bg-white dark:bg-[#121317] border border-slate-200 dark:border-[#1f2127] text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:border-blue-600 transition-colors"
-          />
-        </div>
-      </div>
+      {/* ৩. ইউনিফাইড ফিল্টার ও সার্চ টুলবার */}
+      <OrderToolbar
+        activeStatus={statusFilter}
+        onSelectStatus={(statusId) => {
+          setStatusFilter(statusId);
+          setCurrentPage(1);
+        }}
+        searchQuery={searchQuery}
+        onSearchChange={(query) => {
+          setSearchQuery(query);
+          setCurrentPage(1);
+        }}
+        totalOrders={totalOrders}
+        statusCounts={statusCounts}
+      />
 
-      {/* ৩. TanStack Table ডাটা ডিসপ্লে */}
-      <div className="bg-white dark:bg-[#121317] border border-slate-200/90 dark:border-[#1f2127] rounded-sm overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      {/* ৪. TanStack Table ডাটা ডিসপ্লে কার্ড */}
+      <div className="relative overflow-hidden bg-white dark:bg-[#121317] border border-slate-200/90 dark:border-[#1f2127] rounded-sm shadow-[0_1px_3px_rgba(0,0,0,0.04)] before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-blue-500/25 before:to-transparent">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className="bg-slate-50/90 dark:bg-[#15171e]">
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead key={header.id} className="text-[11px] font-mono py-2.5">
                     {header.isPlaceholder
                       ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
               </TableRow>
@@ -188,31 +187,49 @@ export const Orders: React.FC = () => {
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="text-center py-10">
+                <TableCell colSpan={columns.length} className="text-center py-12">
                   <div className="flex items-center justify-center gap-2 text-xs font-mono text-zinc-500">
                     <RefreshCw className="w-3.5 h-3.5 animate-spin text-blue-600" />
-                    <span>Loading...</span>
+                    <span>Syncing Orders with Database...</span>
                   </div>
                 </TableCell>
               </TableRow>
             ) : orders.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={columns.length}>
-                  <TableEmptyState
-                    title="No orders found"
-                    description="No orders match your search or filter criteria."
-                  />
+                  <div className="py-12 text-center flex flex-col items-center justify-center">
+                    <div className="w-10 h-10 rounded-sm bg-slate-100 dark:bg-[#1a1c24] border border-slate-200 dark:border-[#272930] flex items-center justify-center text-zinc-400 mb-2.5">
+                      <FilterX className="w-5 h-5 text-zinc-400" />
+                    </div>
+                    <p className="text-xs font-bold font-mono text-zinc-800 dark:text-zinc-200">
+                      No Matching Orders
+                    </p>
+                    <p className="text-[11px] font-mono text-zinc-400 dark:text-zinc-500 mt-0.5">
+                      No purchase orders match your active search or filter.
+                    </p>
+                    {(searchQuery || statusFilter !== 'ALL') && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={resetFilters}
+                        className="mt-3 h-7 text-xs font-mono"
+                      >
+                        Reset Filter
+                      </Button>
+                    )}
+                  </div>
                 </TableCell>
               </TableRow>
             ) : (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
+                <TableRow
+                  key={row.id}
+                  onClick={() => setSelectedOrder(row.original)}
+                  className="cursor-pointer hover:bg-blue-50/40 dark:hover:bg-[#151720] transition-colors"
+                >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                    <TableCell key={cell.id} className="py-2.5">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -221,8 +238,8 @@ export const Orders: React.FC = () => {
           </TableBody>
         </Table>
 
-        {/* পেজিনেশন ফুটার */}
-        <div className="flex items-center justify-between px-4 py-3 border-t border-slate-200 dark:border-[#1f2127] text-xs font-mono text-zinc-500 dark:text-zinc-400">
+        {/* ৫. ইন্ডাস্ট্রিয়াল পেজিনেশন ফুটার */}
+        <div className="flex items-center justify-between px-4 py-2.5 border-t border-slate-200/90 dark:border-[#1f2127] bg-slate-50/50 dark:bg-[#0f1013] text-xs font-mono text-zinc-500 dark:text-zinc-400">
           <span>
             Showing {orders.length} of {totalOrders} orders
           </span>
@@ -232,29 +249,29 @@ export const Orders: React.FC = () => {
               variant="outline"
               disabled={currentPage <= 1 || isLoading}
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              className="h-7 px-2"
+              className="h-7 px-2 text-xs"
             >
-              <ChevronLeft className="w-3.5 h-3.5 mr-1" />
+              <ChevronLeft className="w-3.5 h-3.5 mr-0.5" />
               <span>Previous</span>
             </Button>
-            <span className="font-semibold text-zinc-800 dark:text-zinc-200">
-              Page {currentPage} of {totalPages || 1}
+            <span className="font-semibold text-zinc-800 dark:text-zinc-200 px-1">
+              {currentPage} / {totalPages || 1}
             </span>
             <Button
               size="sm"
               variant="outline"
               disabled={currentPage >= totalPages || isLoading}
               onClick={() => setCurrentPage((p) => p + 1)}
-              className="h-7 px-2"
+              className="h-7 px-2 text-xs"
             >
               <span>Next</span>
-              <ChevronRight className="w-3.5 h-3.5 ml-1" />
+              <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
             </Button>
           </div>
         </div>
       </div>
 
-      {/* ৪. ক্রিয়েট অর্ডার মডাল */}
+      {/* ক্রিয়েট অর্ডার মডাল */}
       <OrderCreateModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
@@ -263,7 +280,7 @@ export const Orders: React.FC = () => {
         }}
       />
 
-      {/* ৫. অর্ডার ডিটেইলস ও অ্যাকশন মডাল */}
+      {/* অর্ডার ডিটেইলস ও অ্যাকশন মডাল */}
       <OrderDetailsModal
         order={selectedOrder}
         isOpen={Boolean(selectedOrder)}
