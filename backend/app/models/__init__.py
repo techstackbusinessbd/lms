@@ -9,6 +9,7 @@ Denim Laser Automation & Control System (Denim LACS)
 from app.models.base import Base, BaseModel, generate_uuid7
 from app.models.machine import LaserMachine, MachineAuthCredential
 from app.models.order import Order
+from app.models.laser_design import LaserDesign, LaserDesignFile
 from app.models.user import Permission, Role, User, role_permissions
 
 __all__ = [
@@ -22,4 +23,6 @@ __all__ = [
     "LaserMachine",
     "MachineAuthCredential",
     "Order",
+    "LaserDesign",
+    "LaserDesignFile",
 ]

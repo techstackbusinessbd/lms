@@ -166,3 +166,4 @@ export function DataTable<TData, TValue>({
     </div>
   );
 }
+
