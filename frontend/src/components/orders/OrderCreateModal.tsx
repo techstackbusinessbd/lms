@@ -23,9 +23,6 @@ import { createOrder, OrderApiError } from '@/services/orderApi';
 import { Order, OrderCreatePayload } from '@/types/order';
 import { useMasterOptions } from './useMasterOptions';
 import {
-  COMPANY_OPTIONS,
-  BUYER_OPTIONS,
-  BRAND_OPTIONS,
   SEASON_YEAR_OPTIONS,
   UOM_OPTIONS,
 } from './orderFormOptions';
@@ -37,12 +34,12 @@ interface OrderCreateModalProps {
 }
 
 const INITIAL_FORM: OrderCreatePayload = {
-  company: COMPANY_OPTIONS[0].value as string,
-  buyer_name: BUYER_OPTIONS[0].value as string,
-  brand: BRAND_OPTIONS[0].value as string,
+  company: '',
+  buyer_name: '',
+  brand: '',
   style_code: '',
   job_no: '',
-  season: 'Spring/Summer',
+  season: '',
   season_year: 2026,
   total_quantity: 0,
   uom: 'PCS',

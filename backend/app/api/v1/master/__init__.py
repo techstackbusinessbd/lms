@@ -17,3 +17,4 @@ master_router.include_router(companies_router, prefix="/companies", tags=["Maste
 master_router.include_router(buyers_router, prefix="/buyers", tags=["Master Data - Buyers"])
 master_router.include_router(brands_router, prefix="/brands", tags=["Master Data - Brands"])
 master_router.include_router(seasons_router, prefix="/seasons", tags=["Master Data - Seasons"])
+

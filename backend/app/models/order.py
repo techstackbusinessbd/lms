@@ -46,8 +46,6 @@ class Order(BaseModel):
     company: Mapped[str] = mapped_column(
         String(150),
         nullable=False,
-        default="Denim Solutions Ltd.",
-        server_default="Denim Solutions Ltd.",
         index=True,
         doc="কোম্পানি বা ম্যানুফ্যাকচারিং ইউনিট",
     )

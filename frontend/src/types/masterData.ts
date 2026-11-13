@@ -65,3 +65,4 @@ export interface MasterFilterParams {
   search?: string;
   active_only?: boolean;
 }
+

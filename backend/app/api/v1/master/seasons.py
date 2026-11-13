@@ -138,3 +138,4 @@ async def delete_season(
     season.is_deleted = True
     season.is_active = False
     await db.commit()
+

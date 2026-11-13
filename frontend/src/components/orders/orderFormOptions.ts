@@ -1,60 +1,27 @@
 /**
  * ডেনিম লেজার অটোমেশন ও কন্ট্রোল সিস্টেম (Denim LACS)
- * অর্ডার এন্ট্রি ফর্ম ড্রপডাউন অপশনসমূহ (Garments Order Dropdown Options)
- *
+ * অর্ডার এন্ট্রি ফর্ম অপশনসমূহ (Garments Order Dropdown Options)
+ * 
+ * Company, Buyer, Brand ও Season এখন ১০০% মাস্টার ডাটা এপিআই দ্বারা চালিত।
+ * কোনো সিড বা ডেমো ডাটা রাখা হয়নি।
  * রুল ০৪ (<300 Lines) মেনে ডেটা আলাদা মডিউলে সংরক্ষিত।
  */
 
 import { SelectOption } from '@/components/ui/Select';
 
-// ১. কোম্পানি / ফ্যাক্টরি ইউনিট ড্রপডাউন
-export const COMPANY_OPTIONS: SelectOption[] = [
-  { value: 'Denim Solutions Ltd. Unit-1', label: 'Denim Solutions Ltd. Unit-1' },
-  { value: 'Denim Solutions Ltd. Unit-2', label: 'Denim Solutions Ltd. Unit-2' },
-  { value: 'Pacific Jeans Ltd. Unit-1', label: 'Pacific Jeans Ltd. Unit-1' },
-  { value: 'Pacific Jeans Ltd. Unit-2', label: 'Pacific Jeans Ltd. Unit-2' },
-  { value: 'Ananta Denim Ltd.', label: 'Ananta Denim Ltd.' },
-  { value: 'Ha-Meem Denim Division', label: 'Ha-Meem Denim Division' },
-];
+// কোম্পানি / ফ্যাক্টরি ইউনিট ড্রপডাউন (ডায়নামিক মাস্টার ডাটা থেকে লোড হবে)
+export const COMPANY_OPTIONS: SelectOption[] = [];
 
-// ২. বায়ার ড্রপডাউন
-export const BUYER_OPTIONS: SelectOption[] = [
-  { value: 'Levi Strauss & Co.', label: 'Levi Strauss & Co.' },
-  { value: 'H&M', label: 'H&M' },
-  { value: 'Zara', label: 'Zara' },
-  { value: 'American Eagle', label: 'American Eagle' },
-  { value: 'GAP Inc.', label: 'GAP Inc.' },
-  { value: 'Target', label: 'Target' },
-  { value: 'Tommy Hilfiger', label: 'Tommy Hilfiger' },
-  { value: 'Wrangler / Lee', label: 'Wrangler / Lee' },
-];
+// বায়ার ড্রপডাউন (ডায়নামিক মাস্টার ডাটা থেকে লোড হবে)
+export const BUYER_OPTIONS: SelectOption[] = [];
 
-// ৩. ব্র্যান্ড ড্রপডাউন
-export const BRAND_OPTIONS: SelectOption[] = [
-  { value: "Levi's Red Tab", label: "Levi's Red Tab" },
-  { value: "Levi's Signature", label: "Levi's Signature" },
-  { value: "Levi's Premium", label: "Levi's Premium" },
-  { value: 'H&M Divided', label: 'H&M Divided' },
-  { value: 'H&M Regular', label: 'H&M Regular' },
-  { value: 'Zara Denim Lab', label: 'Zara Denim Lab' },
-  { value: 'Zara Man', label: 'Zara Man' },
-  { value: 'AEO Premium', label: 'AEO Premium' },
-  { value: 'GAP 1969', label: 'GAP 1969' },
-  { value: 'Main Brand', label: 'Main Brand' },
-];
+// ব্র্যান্ড ড্রপডাউন (ডায়নামিক মাস্টার ডাটা থেকে লোড হবে)
+export const BRAND_OPTIONS: SelectOption[] = [];
 
-// ৪. সিজন ড্রপডাউন
-export const SEASON_OPTIONS: SelectOption[] = [
-  { value: 'Spring/Summer', label: 'Spring/Summer' },
-  { value: 'Autumn/Winter', label: 'Autumn/Winter' },
-  { value: 'Spring', label: 'Spring' },
-  { value: 'Summer', label: 'Summer' },
-  { value: 'Fall', label: 'Fall' },
-  { value: 'Winter', label: 'Winter' },
-  { value: 'Holiday', label: 'Holiday' },
-];
+// সিজন ড্রপডাউন (ডায়নামিক মাস্টার ডাটা থেকে লোড হবে)
+export const SEASON_OPTIONS: SelectOption[] = [];
 
-// ৫. সিজন বছর ড্রপডাউন
+// সিজন বছর ড্রপডাউন (স্ট্যান্ডার্ড ক্যালেন্ডার বছর)
 export const SEASON_YEAR_OPTIONS: SelectOption[] = [
   { value: 2024, label: '2024' },
   { value: 2025, label: '2025' },
@@ -65,10 +32,9 @@ export const SEASON_YEAR_OPTIONS: SelectOption[] = [
   { value: 2030, label: '2030' },
 ];
 
-// ৬. ইউওএম (পরিমাপের একক) ড্রপডাউন
+// ইউওএম (পরিমাপের একক) ড্রপডাউন
 export const UOM_OPTIONS: SelectOption[] = [
-  { value: 'PCS', label: 'PCS' },
-  { value: 'DZN', label: 'DZN' },
+  { value: 'PCS', label: 'PCS (Pieces)' },
+  { value: 'DZN', label: 'DZN (Dozens)' },
   { value: 'SET', label: 'SET' },
 ];
-

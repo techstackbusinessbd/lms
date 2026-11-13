@@ -144,3 +144,4 @@ async def delete_buyer(
     buyer.is_deleted = True
     buyer.is_active = False
     await db.commit()
+

@@ -141,3 +141,4 @@ async def delete_company(
     company.is_deleted = True
     company.is_active = False
     await db.commit()
+

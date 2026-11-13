@@ -133,3 +133,4 @@ export const updateSeason = (id: string, payload: Partial<Season>) =>
 
 export const deleteSeason = (id: string) =>
   fetch(`${BASE_URL}/seasons/${id}`, { method: 'DELETE', headers: getAuthHeaders() }).then(handleResponse<void>);
+

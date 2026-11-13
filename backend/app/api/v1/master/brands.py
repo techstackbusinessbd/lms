@@ -200,3 +200,4 @@ async def delete_brand(
     brand.is_deleted = True
     brand.is_active = False
     await db.commit()
+

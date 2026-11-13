@@ -194,3 +194,4 @@ export const CompanyTab: React.FC = () => {
     </div>
   );
 };
+

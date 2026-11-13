@@ -32,11 +32,10 @@ class OrderBase(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
     company: str = Field(
-        default="Denim Solutions Ltd.",
+        ...,
         min_length=2,
         max_length=150,
         description="কোম্পানি বা কারখানা ইউনিট (Company)",
-        examples=["Denim Solutions Ltd. (Unit 1)"],
     )
     buyer_name: str = Field(
         ...,

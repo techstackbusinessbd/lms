@@ -82,3 +82,4 @@ export const MasterDataPage: React.FC = () => {
     </div>
   );
 };
+

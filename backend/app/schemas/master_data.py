@@ -191,3 +191,4 @@ class SeasonListResponse(BaseModel):
     total_pages: int
 
     model_config = ConfigDict(from_attributes=True)
+

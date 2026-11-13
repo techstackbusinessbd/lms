@@ -199,3 +199,4 @@ class Season(BaseModel):
     __table_args__ = (
         Index("ix_seasons_code_active", "code", "is_active"),
     )
+

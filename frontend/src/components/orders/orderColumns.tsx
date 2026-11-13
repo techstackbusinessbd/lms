@@ -51,7 +51,7 @@ export function getOrderColumns(
               {order.job_no || order.po_number}
             </span>
             <span className="text-[10px] text-zinc-500 dark:text-zinc-400 font-mono truncate block max-w-[140px]" title={order.company}>
-              {order.company || 'Denim Solutions Ltd.'}
+              {order.company || '—'}
             </span>
           </div>
         );
