@@ -16,6 +16,7 @@ from app.api.deps import get_current_active_user
 from app.core.database import get_db
 from app.models.master_data import Buyer
 from app.models.user import User
+from app.services.master_code_generator import generate_auto_master_code
 from app.schemas.master_data import (
     BuyerCreate,
     BuyerListResponse,
@@ -62,19 +63,25 @@ async def create_buyer(
     db: AsyncSession = Depends(get_db),
     _: User = Depends(get_current_active_user),
 ) -> Buyer:
-    """নতুন বায়ার রেকর্ড ডাটাবেজে সংরক্ষণ করে"""
+    """নতুন বায়ার রেকর্ড ডাটাবেজে সংরক্ষণ করে (কোড ফাঁকা থাকলে অটো-জেনারেট হয়)"""
+    final_code = (
+        payload.code.strip().upper()
+        if payload.code and payload.code.strip()
+        else await generate_auto_master_code(db, Buyer, "BYR")
+    )
+
     exists_stmt = select(Buyer).where(
-        or_(Buyer.code == payload.code.upper(), Buyer.name == payload.name),
+        or_(Buyer.code == final_code, Buyer.name == payload.name),
         Buyer.is_deleted.is_(False),
     )
     if (await db.execute(exists_stmt)).scalar_one_or_none():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Buyer with code '{payload.code}' or name '{payload.name}' already exists.",
+            detail=f"Buyer with code '{final_code}' or name '{payload.name}' already exists.",
         )
 
     buyer = Buyer(
-        code=payload.code.upper(),
+        code=final_code,
         name=payload.name,
         country=payload.country,
         contact_email=payload.contact_email,

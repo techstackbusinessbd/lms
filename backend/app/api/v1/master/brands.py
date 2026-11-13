@@ -17,6 +17,7 @@ from app.api.deps import get_current_active_user
 from app.core.database import get_db
 from app.models.master_data import Brand, Buyer
 from app.models.user import User
+from app.services.master_code_generator import generate_auto_master_code
 from app.schemas.master_data import (
     BrandCreate,
     BrandListResponse,
@@ -85,7 +86,7 @@ async def create_brand(
     db: AsyncSession = Depends(get_db),
     _: User = Depends(get_current_active_user),
 ) -> BrandResponse:
-    """নতুন বায়ার ব্র্যান্ড রেকর্ড তৈরি করে"""
+    """নতুন বায়ার ব্র্যান্ড রেকর্ড তৈরি করে (কোড ফাঁকা থাকলে অটো-জেনারেট হয়)"""
     buyer_name: Optional[str] = None
     if payload.buyer_id:
         buyer = (
@@ -95,9 +96,25 @@ async def create_brand(
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Referenced Buyer not found.")
         buyer_name = buyer.name
 
+    final_code = (
+        payload.code.strip().upper()
+        if payload.code and payload.code.strip()
+        else await generate_auto_master_code(db, Brand, "BRD")
+    )
+
+    exists_stmt = select(Brand).where(
+        Brand.code == final_code,
+        Brand.is_deleted.is_(False),
+    )
+    if (await db.execute(exists_stmt)).scalar_one_or_none():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Brand with code '{final_code}' already exists.",
+        )
+
     brand = Brand(
         buyer_id=payload.buyer_id,
-        code=payload.code.upper(),
+        code=final_code,
         name=payload.name,
         is_active=payload.is_active,
     )

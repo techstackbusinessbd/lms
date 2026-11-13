@@ -74,8 +74,8 @@ export const MasterFormModal: React.FC<MasterFormModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!code.trim() || !name.trim()) {
-      setErrorMsg('Code and Name are strictly required.');
+    if (!name.trim()) {
+      setErrorMsg('Display Name is strictly required.');
       return;
     }
 
@@ -83,10 +83,13 @@ export const MasterFormModal: React.FC<MasterFormModalProps> = ({
     setErrorMsg(null);
     try {
       const payload: any = {
-        code: code.trim().toUpperCase(),
         name: name.trim(),
         is_active: isActive,
       };
+
+      if (code.trim()) {
+        payload.code = code.trim().toUpperCase();
+      }
 
       if (entityType === 'company') payload.address = address.trim() || null;
       if (entityType === 'buyer') {
@@ -146,8 +149,8 @@ export const MasterFormModal: React.FC<MasterFormModalProps> = ({
           {/* কোড ও নাম */}
           <div className="grid grid-cols-2 gap-2.5">
             <Input
-              label="Identifier Code *"
-              placeholder="e.g. DSL-U1"
+              label="Code (Auto / Optional)"
+              placeholder="Auto-generated"
               value={code}
               onChange={(e) => setCode(e.target.value)}
               className="uppercase font-mono"

@@ -3,6 +3,7 @@
 Denim Laser Automation & Control System (Denim LACS)
 
 Company, Buyer, Brand এবং Season-এর টাইপ-সেফ ডিটিও মডেল।
+অটো-সিস্টেম জেনারেটেড কোড সাপোর্টসহ।
 রুল ২৩ (Pydantic v2), রুল ০৪ (<300 Lines) এবং রুল ১১ (Bangla Comments) মেনে প্রস্তুতকৃত।
 """
 
@@ -19,7 +20,7 @@ from pydantic import BaseModel, ConfigDict, Field
 class CompanyBase(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
-    code: str = Field(..., min_length=2, max_length=50, examples=["DSL-U1"])
+    code: Optional[str] = Field(None, max_length=50, description="ঐচ্ছিক কোড; ফাঁকা রাখলে সিস্টেম স্বয়ংক্রিয়ভাবে তৈরি করবে")
     name: str = Field(..., min_length=2, max_length=150, examples=["Denim Solutions Ltd. Unit-1"])
     address: Optional[str] = Field(None, max_length=500, examples=["Plot 12, EPZ, Dhaka"])
     is_active: bool = Field(True, description="সক্রিয়/নিষ্ক্রিয় স্ট্যাটাস")
@@ -40,6 +41,7 @@ class CompanyUpdate(BaseModel):
 
 class CompanyResponse(CompanyBase):
     id: uuid.UUID
+    code: str
     created_at: datetime
     updated_at: datetime
     is_deleted: bool
@@ -64,7 +66,7 @@ class CompanyListResponse(BaseModel):
 class BuyerBase(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
-    code: str = Field(..., min_length=2, max_length=50, examples=["LEVI"])
+    code: Optional[str] = Field(None, max_length=50, description="ঐচ্ছিক কোড; ফাঁকা রাখলে সিস্টেম স্বয়ংক্রিয়ভাবে তৈরি করবে")
     name: str = Field(..., min_length=2, max_length=150, examples=["Levi Strauss & Co."])
     country: Optional[str] = Field(None, max_length=100, examples=["USA"])
     contact_email: Optional[str] = Field(None, max_length=150, examples=["merchandising@levi.com"])
@@ -87,6 +89,7 @@ class BuyerUpdate(BaseModel):
 
 class BuyerResponse(BuyerBase):
     id: uuid.UUID
+    code: str
     created_at: datetime
     updated_at: datetime
     is_deleted: bool
@@ -112,7 +115,7 @@ class BrandBase(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
     buyer_id: Optional[uuid.UUID] = Field(None, description="সম্পর্কিত বায়ার আইডি (ঐচ্ছিক)")
-    code: str = Field(..., min_length=2, max_length=50, examples=["RED_TAB"])
+    code: Optional[str] = Field(None, max_length=50, description="ঐচ্ছিক কোড; ফাঁকা রাখলে সিস্টেম স্বয়ংক্রিয়ভাবে তৈরি করবে")
     name: str = Field(..., min_length=2, max_length=150, examples=["Levi's Red Tab"])
     is_active: bool = Field(True, description="সক্রিয় ব্র্যান্ড")
 
@@ -132,6 +135,7 @@ class BrandUpdate(BaseModel):
 
 class BrandResponse(BrandBase):
     id: uuid.UUID
+    code: str
     buyer_name: Optional[str] = None
     created_at: datetime
     updated_at: datetime
@@ -157,7 +161,7 @@ class BrandListResponse(BaseModel):
 class SeasonBase(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
-    code: str = Field(..., min_length=2, max_length=50, examples=["SS"])
+    code: Optional[str] = Field(None, max_length=50, description="ঐচ্ছিক কোড; ফাঁকা রাখলে সিস্টেম স্বয়ংক্রিয়ভাবে তৈরি করবে")
     name: str = Field(..., min_length=2, max_length=100, examples=["Spring/Summer"])
     is_active: bool = Field(True, description="সক্রিয় সিজন")
 
@@ -176,6 +180,7 @@ class SeasonUpdate(BaseModel):
 
 class SeasonResponse(SeasonBase):
     id: uuid.UUID
+    code: str
     created_at: datetime
     updated_at: datetime
     is_deleted: bool
@@ -191,4 +196,3 @@ class SeasonListResponse(BaseModel):
     total_pages: int
 
     model_config = ConfigDict(from_attributes=True)
-

@@ -191,3 +191,63 @@ async def test_season_crud_lifecycle(auth_headers):
     async with AsyncSessionLocal() as session:
         await session.execute(text(f"DELETE FROM seasons WHERE id = '{season_id}'"))
         await session.commit()
+
+
+@pytest.mark.asyncio
+async def test_auto_generated_master_codes(auth_headers):
+    uid = uuid.uuid4().hex[:6].upper()
+    transport = ASGITransport(app=app)
+    created_ids = {}
+
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        # ১. কোম্পানি অটো কোড (CMP-XXXX)
+        res_cmp = await ac.post(
+            "/api/v1/master/companies",
+            headers=auth_headers,
+            json={"name": f"Auto Co {uid}"},
+        )
+        assert res_cmp.status_code == 201
+        data_cmp = res_cmp.json()
+        assert data_cmp["code"].startswith("CMP-")
+        created_ids["company"] = data_cmp["id"]
+
+        # ২. বায়ার অটো কোড (BYR-XXXX)
+        res_byr = await ac.post(
+            "/api/v1/master/buyers",
+            headers=auth_headers,
+            json={"name": f"Auto Buyer {uid}"},
+        )
+        assert res_byr.status_code == 201
+        data_byr = res_byr.json()
+        assert data_byr["code"].startswith("BYR-")
+        created_ids["buyer"] = data_byr["id"]
+
+        # ৩. ব্র্যান্ড অটো কোড (BRD-XXXX)
+        res_brd = await ac.post(
+            "/api/v1/master/brands",
+            headers=auth_headers,
+            json={"name": f"Auto Brand {uid}", "buyer_id": created_ids["buyer"]},
+        )
+        assert res_brd.status_code == 201
+        data_brd = res_brd.json()
+        assert data_brd["code"].startswith("BRD-")
+        created_ids["brand"] = data_brd["id"]
+
+        # ৪. সিজন অটো কোড (SSN-XXXX)
+        res_ssn = await ac.post(
+            "/api/v1/master/seasons",
+            headers=auth_headers,
+            json={"name": f"Auto Season {uid}"},
+        )
+        assert res_ssn.status_code == 201
+        data_ssn = res_ssn.json()
+        assert data_ssn["code"].startswith("SSN-")
+        created_ids["season"] = data_ssn["id"]
+
+    # ক্লিনআপ
+    async with AsyncSessionLocal() as session:
+        await session.execute(text(f"DELETE FROM brands WHERE id = '{created_ids['brand']}'"))
+        await session.execute(text(f"DELETE FROM buyers WHERE id = '{created_ids['buyer']}'"))
+        await session.execute(text(f"DELETE FROM companies WHERE id = '{created_ids['company']}'"))
+        await session.execute(text(f"DELETE FROM seasons WHERE id = '{created_ids['season']}'"))
+        await session.commit()

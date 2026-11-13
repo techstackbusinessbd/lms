@@ -16,6 +16,7 @@ from app.api.deps import get_current_active_user
 from app.core.database import get_db
 from app.models.master_data import Season
 from app.models.user import User
+from app.services.master_code_generator import generate_auto_master_code
 from app.schemas.master_data import (
     SeasonCreate,
     SeasonListResponse,
@@ -62,19 +63,25 @@ async def create_season(
     db: AsyncSession = Depends(get_db),
     _: User = Depends(get_current_active_user),
 ) -> Season:
-    """নতুন সিজন রেকর্ড যুক্ত করে"""
+    """নতুন সিজন রেকর্ড যুক্ত করে (কোড ফাঁকা থাকলে অটো-জেনারেট হয়)"""
+    final_code = (
+        payload.code.strip().upper()
+        if payload.code and payload.code.strip()
+        else await generate_auto_master_code(db, Season, "SSN")
+    )
+
     exists_stmt = select(Season).where(
-        or_(Season.code == payload.code.upper(), Season.name == payload.name),
+        or_(Season.code == final_code, Season.name == payload.name),
         Season.is_deleted.is_(False),
     )
     if (await db.execute(exists_stmt)).scalar_one_or_none():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Season with code '{payload.code}' or name '{payload.name}' already exists.",
+            detail=f"Season with code '{final_code}' or name '{payload.name}' already exists.",
         )
 
     season = Season(
-        code=payload.code.upper(),
+        code=final_code,
         name=payload.name,
         is_active=payload.is_active,
     )

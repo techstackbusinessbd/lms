@@ -16,6 +16,7 @@ from app.api.deps import get_current_active_user
 from app.core.database import get_db
 from app.models.master_data import Company
 from app.models.user import User
+from app.services.master_code_generator import generate_auto_master_code
 from app.schemas.master_data import (
     CompanyCreate,
     CompanyListResponse,
@@ -62,19 +63,25 @@ async def create_company(
     db: AsyncSession = Depends(get_db),
     _: User = Depends(get_current_active_user),
 ) -> Company:
-    """নতুন ফ্যাক্টরি ইউনিট বা কোম্পানি রেকর্ড যুক্ত করে"""
+    """নতুন ফ্যাক্টরি ইউনিট বা কোম্পানি রেকর্ড যুক্ত করে (কোড ফাঁকা থাকলে অটো-জেনারেট হয়)"""
+    final_code = (
+        payload.code.strip().upper()
+        if payload.code and payload.code.strip()
+        else await generate_auto_master_code(db, Company, "CMP")
+    )
+
     exists_stmt = select(Company).where(
-        or_(Company.code == payload.code.upper(), Company.name == payload.name),
+        or_(Company.code == final_code, Company.name == payload.name),
         Company.is_deleted.is_(False),
     )
     if (await db.execute(exists_stmt)).scalar_one_or_none():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Company with code '{payload.code}' or name '{payload.name}' already exists.",
+            detail=f"Company with code '{final_code}' or name '{payload.name}' already exists.",
         )
 
     company = Company(
-        code=payload.code.upper(),
+        code=final_code,
         name=payload.name,
         address=payload.address,
         is_active=payload.is_active,
