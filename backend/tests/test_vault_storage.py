@@ -104,27 +104,25 @@ def test_vault_path_traversal_prevention(temp_vault):
 async def test_laser_design_orm_lifecycle():
     """PostgreSQL 16-এ LaserDesign এবং LaserDesignFile ওআরএম মডেল টেস্ট"""
     async with AsyncSessionLocal() as db_session:
-        # ১. বিদ্যমান ডামি ইউজার ও অর্ডার অনুসন্ধান
+        # ১. স্বতন্ত্র টেস্ট ইউজার ও টেস্ট অর্ডার তৈরি
         user_stmt = select(User).limit(1)
         user = (await db_session.execute(user_stmt)).scalar_one()
 
-        order_stmt = select(Order).limit(1)
-        order = (await db_session.execute(order_stmt)).scalar_one_or_none()
-
-        if not order:
-            order = Order(
-                company="Denim Solutions Ltd.",
-                buyer_name="Levi's",
-                po_number="PO-TEST-DESIGN-01",
-                job_no="JOB-TEST-DESIGN-01",
-                style_code="511-SLIM",
-                total_quantity=5000,
-                target_delivery_date=datetime.now().date(),
-                created_by=user.id,
-            )
-            db_session.add(order)
-            await db_session.commit()
-            await db_session.refresh(order)
+        uid = uuid.uuid4().hex[:6].upper()
+        order = Order(
+            company="Denim Test Vault Ltd.",
+            buyer_name=f"Test Buyer {uid}",
+            po_number=f"PO-TEST-DES-{uid}",
+            job_no=f"JOB-TEST-DES-{uid}",
+            style_code=f"511-SLIM-{uid}",
+            total_quantity=5000,
+            target_delivery_date=datetime.now().date(),
+            created_by=user.id,
+        )
+        db_session.add(order)
+        await db_session.commit()
+        await db_session.refresh(order)
+        order_id = order.id
 
         # ২. নতুন LaserDesign তৈরি
         design = LaserDesign(
@@ -202,5 +200,7 @@ async def test_laser_design_orm_lifecycle():
         assert locked_design.status == "LOCKED"
 
         # ক্লিনআপ
+        from sqlalchemy import text
         await db_session.delete(locked_design)
+        await db_session.execute(text(f"DELETE FROM orders WHERE id = '{order_id}'"))
         await db_session.commit()

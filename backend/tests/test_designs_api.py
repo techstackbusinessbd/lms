@@ -41,27 +41,40 @@ async def auth_headers():
 
 @pytest.fixture
 async def test_order():
-    """টেস্টের জন্য একটি নিশ্চিত সক্রিয় (Non-deleted) অর্ডার রিটার্ন করে"""
+    """টেস্টের জন্য স্বতন্ত্র টেস্ট অর্ডার তৈরি করে এবং টেস্ট শেষে সম্পূর্ণ ক্লিনআপ করে"""
+    order_id = None
     async with AsyncSessionLocal() as session:
-        order_stmt = select(Order).where(Order.is_deleted.is_(False)).limit(1)
-        order = (await session.execute(order_stmt)).scalar_one_or_none()
-        if not order:
-            user_stmt = select(User).limit(1)
-            user = (await session.execute(user_stmt)).scalar_one()
-            order = Order(
-                company="Denim Solutions Ltd.",
-                buyer_name="Levi's",
-                po_number="PO-TEST-VAULT-01",
-                job_no="JOB-TEST-VAULT-01",
-                style_code="511-SLIM",
-                total_quantity=5000,
-                target_delivery_date=datetime.now().date(),
-                created_by=user.id,
-            )
-            session.add(order)
-            await session.commit()
-            await session.refresh(order)
-        return order
+        user = (await session.execute(select(User).limit(1))).scalar_one()
+        uid = uuid.uuid4().hex[:6].upper()
+        order = Order(
+            company="Denim Test Vault Ltd.",
+            buyer_name=f"Test Buyer {uid}",
+            po_number=f"PO-TEST-{uid}",
+            job_no=f"JOB-TEST-{uid}",
+            style_code=f"STYLE-TEST-{uid}",
+            total_quantity=5000,
+            target_delivery_date=datetime.now().date(),
+            created_by=user.id,
+        )
+        session.add(order)
+        await session.commit()
+        await session.refresh(order)
+        order_id = order.id
+
+    yield order
+
+    import os
+    import shutil
+    from sqlalchemy import text
+    async with AsyncSessionLocal() as session:
+        await session.execute(text(f"DELETE FROM laser_design_files WHERE design_id IN (SELECT id FROM laser_designs WHERE order_id = '{order_id}')"))
+        await session.execute(text(f"DELETE FROM laser_designs WHERE order_id = '{order_id}'"))
+        await session.execute(text(f"DELETE FROM orders WHERE id = '{order_id}'"))
+        await session.commit()
+
+    vault_dir = f"/data/vault/orders/{order_id}"
+    if os.path.exists(vault_dir):
+        shutil.rmtree(vault_dir, ignore_errors=True)
 
 
 @pytest.mark.asyncio

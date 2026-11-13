@@ -27,29 +27,24 @@ from app.models.user import User
 
 @pytest.fixture
 async def setup_test_context():
-    """টেস্টের জন্য সক্রিয় ইউজার, অর্ডার ও লেজার মেশিন প্রদান করে"""
+    """টেস্টের জন্য সক্রিয় ইউজার, স্বতন্ত্র টেস্ট অর্ডার ও লেজার মেশিন প্রদান করে এবং শেষে ক্লিনআপ করে"""
     async with AsyncSessionLocal() as session:
         user = (await session.execute(select(User).limit(1))).scalar_one()
-        
-        order = (
-            await session.execute(
-                select(Order).where(Order.is_deleted.is_(False)).limit(1)
-            )
-        ).scalar_one_or_none()
-        if not order:
-            order = Order(
-                company="Denim Dynamics Ltd.",
-                buyer_name="American Eagle",
-                po_number=f"PO-TEST-{uuid.uuid4().hex[:6]}",
-                job_no=f"JOB-TEST-{uuid.uuid4().hex[:6].upper()}",
-                style_code="2008-DENIM",
-                total_quantity=1000,
-                target_delivery_date=datetime.now().date(),
-                created_by=user.id,
-            )
-            session.add(order)
-            await session.commit()
-            await session.refresh(order)
+        uid = uuid.uuid4().hex[:6].upper()
+        order = Order(
+            company="Denim Dynamics Ltd.",
+            buyer_name=f"Test Buyer {uid}",
+            po_number=f"PO-TEST-{uid}",
+            job_no=f"JOB-TEST-{uid}",
+            style_code=f"STYLE-{uid}",
+            total_quantity=1000,
+            target_delivery_date=datetime.now().date(),
+            created_by=user.id,
+        )
+        session.add(order)
+        await session.commit()
+        await session.refresh(order)
+        order_id = order.id
 
         machine = (
             await session.execute(
@@ -57,7 +52,13 @@ async def setup_test_context():
             )
         ).scalar_one_or_none()
 
-        return {"user": user, "order": order, "machine": machine}
+    yield {"user": user, "order": order, "machine": machine}
+
+    from sqlalchemy import text
+    async with AsyncSessionLocal() as session:
+        await session.execute(text(f"DELETE FROM garment_units WHERE order_id = '{order_id}'"))
+        await session.execute(text(f"DELETE FROM orders WHERE id = '{order_id}'"))
+        await session.commit()
 
 
 @pytest.mark.asyncio
