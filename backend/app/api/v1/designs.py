@@ -64,7 +64,7 @@ async def get_design_or_404(db: AsyncSession, design_id: uuid.UUID) -> LaserDesi
     "/",
     response_model=LaserDesignResponse,
     status_code=status.HTTP_201_CREATED,
-    summary="নতুন লেজার ডিজাইন রেসিপি ড্রাফট তৈরি (Create Design Draft)",
+    summary="নতুন লেজার ডিজাইন রেসিপি ড্রাফট তৈরি",
 )
 async def create_design(
     payload: LaserDesignCreate,
@@ -72,28 +72,14 @@ async def create_design(
     _: User = Depends(get_current_active_user),
 ) -> LaserDesignResponse:
     """অর্ডারের জন্য নতুন লেজার ডিজাইন ড্রাফট তৈরি করে"""
-    order_stmt = select(Order).where(Order.id == payload.order_id, Order.is_deleted.is_(False))
-    order = (await db.execute(order_stmt)).scalar_one_or_none()
+    order = (await db.execute(select(Order).where(Order.id == payload.order_id, Order.is_deleted.is_(False)))).scalar_one_or_none()
     if not order:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Order with ID '{payload.order_id}' not found.",
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Order '{payload.order_id}' not found.")
 
-    ver_stmt = select(func.max(LaserDesign.version)).where(
-        LaserDesign.order_id == payload.order_id,
-        LaserDesign.is_deleted.is_(False),
-    )
-    max_ver = (await db.execute(ver_stmt)).scalar() or 0
-
+    max_ver = (await db.execute(select(func.max(LaserDesign.version)).where(LaserDesign.order_id == payload.order_id, LaserDesign.is_deleted.is_(False)))).scalar() or 0
     new_design = LaserDesign(
-        order_id=payload.order_id,
-        style_code=payload.style_code or order.style_code,
-        recipe_name=payload.recipe_name,
-        version=max_ver + 1,
-        status="DRAFT",
-        is_locked=False,
-        notes=payload.notes,
+        order_id=payload.order_id, style_code=payload.style_code or order.style_code,
+        recipe_name=payload.recipe_name, version=max_ver + 1, status="DRAFT", is_locked=False, notes=payload.notes,
     )
     db.add(new_design)
     await db.commit()
@@ -251,21 +237,11 @@ async def create_new_version(
 ) -> LaserDesignResponse:
     """লক করা রেসিপি অপরিবর্তিত রেখে নতুন ড্রাফট রিভিশন (v2, v3...) প্রস্তুত করে"""
     source_design = await get_design_or_404(db, design_id)
-
-    ver_stmt = select(func.max(LaserDesign.version)).where(
-        LaserDesign.order_id == source_design.order_id,
-        LaserDesign.is_deleted.is_(False),
-    )
-    max_ver = (await db.execute(ver_stmt)).scalar() or source_design.version
-
+    max_ver = (await db.execute(select(func.max(LaserDesign.version)).where(LaserDesign.order_id == source_design.order_id, LaserDesign.is_deleted.is_(False)))).scalar() or source_design.version
     new_design = LaserDesign(
-        order_id=source_design.order_id,
-        style_code=source_design.style_code,
-        recipe_name=f"{source_design.recipe_name} (v{max_ver + 1})",
-        version=max_ver + 1,
-        status="DRAFT",
-        is_locked=False,
-        notes=f"Revision of version {source_design.version}",
+        order_id=source_design.order_id, style_code=source_design.style_code,
+        recipe_name=f"{source_design.recipe_name} (v{max_ver + 1})", version=max_ver + 1,
+        status="DRAFT", is_locked=False, notes=f"Revision of version {source_design.version}",
     )
     db.add(new_design)
     await db.commit()
@@ -293,3 +269,23 @@ async def get_design_file_content(
         "WEBP": "image/webp", "BMP": "image/bmp",
     }.get(f.file_format.upper(), "application/octet-stream")
     return FileResponse(path=str(abs_path), media_type=mime, filename=f.original_filename)
+
+
+@router.delete("/files/{file_id}", status_code=status.HTTP_204_NO_CONTENT, summary="ম্যাপ করা ফাইল অপসারণ")
+async def delete_design_file(
+    file_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(get_current_active_user),
+):
+    """ভল্ট থেকে ম্যাপ করা নির্দিষ্ট ফাইল মুছে ফেলা (শুধুমাত্র DRAFT রেসিপির জন্য)"""
+    stmt = select(LaserDesignFile).where(LaserDesignFile.id == file_id, LaserDesignFile.is_deleted.is_(False))
+    f = (await db.execute(stmt)).scalar_one_or_none()
+    if not f:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Design file not found.")
+
+    design = await get_design_or_404(db, f.design_id)
+    if design.is_locked:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cannot delete files from a LOCKED recipe.")
+
+    f.is_deleted = True
+    await db.commit()

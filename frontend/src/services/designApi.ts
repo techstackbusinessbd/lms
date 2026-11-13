@@ -206,3 +206,16 @@ export async function fetchDesignFileBlob(fileId: string): Promise<string> {
   return URL.createObjectURL(blob);
 }
 
+/**
+ * ভল্ট থেকে ম্যাপ করা নির্দিষ্ট ফাইল মুছে ফেলা (শুধুমাত্র DRAFT রেসিপির জন্য)
+ */
+export async function deleteDesignFile(fileId: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/files/${fileId}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+  });
+  if (!res.ok) {
+    await handleResponseError(res);
+  }
+}
+
