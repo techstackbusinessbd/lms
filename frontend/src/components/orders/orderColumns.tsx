@@ -150,7 +150,7 @@ export function getOrderColumns(
           onClick={() => onViewOrder(row.original)}
           className="h-7 px-2.5 text-xs border border-slate-200 dark:border-[#272930] hover:bg-slate-100 dark:hover:bg-[#1a1c22] rounded-sm font-mono cursor-pointer"
         >
-          <Eye className="w-3 h-3 mr-1 text-blue-600 dark:text-blue-400" />
+          <Eye className="w-3 h-3 text-blue-600 dark:text-blue-400 shrink-0" />
           <span>View</span>
         </Button>
       ),

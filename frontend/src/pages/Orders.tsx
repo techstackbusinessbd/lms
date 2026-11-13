@@ -131,19 +131,19 @@ export const Orders: React.FC = () => {
             size="sm"
             onClick={() => loadOrders()}
             disabled={isLoading}
-            className="h-8 px-2.5 text-xs font-mono"
-            title="Refresh"
+            className="font-mono text-xs"
+            title="Refresh Orders"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-            <span className="hidden sm:inline ml-1.5 text-[11px]">Sync</span>
+            <RefreshCw className={`w-3.5 h-3.5 shrink-0 ${isLoading ? 'animate-spin' : ''}`} />
+            <span>Sync</span>
           </Button>
           <Button
             variant="primary"
             size="sm"
             onClick={() => setIsCreateModalOpen(true)}
-            className="h-8 px-3 text-xs font-semibold shadow-xs"
+            className="text-xs font-semibold shadow-xs"
           >
-            <Plus className="w-3.5 h-3.5 mr-1" />
+            <Plus className="w-3.5 h-3.5 shrink-0" />
             <span>New Order</span>
           </Button>
         </div>

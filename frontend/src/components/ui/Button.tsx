@@ -11,7 +11,7 @@ import { cn } from '@/utils/cn';
 
 // বাটনের ভিজ্যুয়াল ভ্যারিয়েন্ট ও সাইজ কনফিগারেশন
 export const buttonVariants = cva(
-  'inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950 disabled:pointer-events-none disabled:opacity-50 select-none cursor-pointer',
+  'inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-zinc-950 disabled:pointer-events-none disabled:opacity-50 select-none cursor-pointer',
   {
     variants: {
       variant: {
@@ -24,15 +24,15 @@ export const buttonVariants = cva(
         success:
           'bg-emerald-600 text-white hover:bg-emerald-500 active:bg-emerald-700 shadow-xs shadow-emerald-600/25',
         outline:
-          'border border-zinc-300 dark:border-zinc-700 bg-transparent text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white',
+          'border border-slate-200 dark:border-[#22242c] bg-white dark:bg-[#121317] text-zinc-700 dark:text-zinc-200 hover:bg-slate-50 dark:hover:bg-[#1a1c22] hover:text-zinc-900 dark:hover:text-white shadow-2xs',
         ghost:
           'text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 hover:text-zinc-900 dark:hover:text-white',
       },
       size: {
-        sm: 'h-9 px-3 text-xs rounded-sm',
-        default: 'h-11 px-4 text-sm rounded-sm',
+        sm: 'h-8 px-2.5 text-xs rounded-sm',
+        default: 'h-10 px-4 text-sm rounded-sm',
         lg: 'h-12 px-6 text-base rounded-sm touch-target', // রুল ১৮ মেনে শপ-ফ্লোর ট্যাবলেটের জন্য ৪৮px সাইজ
-        icon: 'h-11 w-11 rounded-sm p-0',
+        icon: 'h-8 w-8 rounded-sm p-0',
         'icon-lg': 'h-12 w-12 rounded-sm p-0 touch-target',
       },
     },
@@ -73,15 +73,14 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(buttonVariants({ variant, size, className }))}
         {...props}
       >
-        {isLoading && (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin text-current" />
+        {isLoading ? (
+          <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0 text-current" />
+        ) : (
+          leftIcon && <span className="inline-flex items-center shrink-0">{leftIcon}</span>
         )}
-        {!isLoading && leftIcon && (
-          <span className="mr-2 inline-flex items-center">{leftIcon}</span>
-        )}
-        <span>{children}</span>
+        {children}
         {!isLoading && rightIcon && (
-          <span className="ml-2 inline-flex items-center">{rightIcon}</span>
+          <span className="inline-flex items-center shrink-0">{rightIcon}</span>
         )}
       </button>
     );
