@@ -52,8 +52,7 @@ class OrderBase(BaseModel):
         examples=["511 Slim Fit"],
     )
     job_no: str = Field(
-        ...,
-        min_length=2,
+        default="",
         max_length=100,
         description="ফ্যাক্টরি ইন্টারনাল জব ট্র্যাকিং নম্বর (Job No.)",
         examples=["JOB-2026-0042"],
@@ -143,7 +142,13 @@ class OrderBase(BaseModel):
 
 class OrderCreate(OrderBase):
     """নতুন অর্ডার তৈরির রিকোয়েস্ট DTO"""
-    pass
+    job_no: str = Field(
+        ...,
+        min_length=2,
+        max_length=100,
+        description="ফ্যাক্টরি ইন্টারনাল জব ট্র্যাকিং নম্বর (Job No.)",
+        examples=["JOB-2026-0042"],
+    )
 
 
 class OrderUpdate(BaseModel):

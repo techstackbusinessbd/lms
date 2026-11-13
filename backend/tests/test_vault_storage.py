@@ -116,6 +116,7 @@ async def test_laser_design_orm_lifecycle():
                 company="Denim Solutions Ltd.",
                 buyer_name="Levi's",
                 po_number="PO-TEST-DESIGN-01",
+                job_no="JOB-TEST-DESIGN-01",
                 style_code="511-SLIM",
                 total_quantity=5000,
                 target_delivery_date=datetime.now().date(),

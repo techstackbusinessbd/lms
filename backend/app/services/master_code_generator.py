@@ -34,3 +34,4 @@ async def generate_auto_master_code(
         if not exists:
             return candidate
         seq += 1
+

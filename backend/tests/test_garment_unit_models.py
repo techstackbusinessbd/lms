@@ -41,6 +41,7 @@ async def setup_test_context():
                 company="Denim Dynamics Ltd.",
                 buyer_name="American Eagle",
                 po_number=f"PO-TEST-{uuid.uuid4().hex[:6]}",
+                job_no=f"JOB-TEST-{uuid.uuid4().hex[:6].upper()}",
                 style_code="2008-DENIM",
                 total_quantity=1000,
                 target_delivery_date=datetime.now().date(),

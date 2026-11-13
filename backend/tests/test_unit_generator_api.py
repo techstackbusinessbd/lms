@@ -37,13 +37,14 @@ async def auth_headers():
 
 @pytest.fixture
 async def test_order_for_units():
-    """টেস্টের জন্য সক্রিয় অর্ডার রিটার্ন করে"""
+    """টেস্টের জন্য সক্রিয় অর্ডার রিটার্ন করে এবং পরীক্ষা শেষে ক্লিনআপ করে"""
     async with AsyncSessionLocal() as session:
         user = (await session.execute(select(User).limit(1))).scalar_one()
         order = Order(
             company="Denim Global Ltd.",
             buyer_name="American Eagle",
             po_number=f"PO-QR-{uuid.uuid4().hex[:6]}",
+            job_no=f"JOB-QR-{uuid.uuid4().hex[:6].upper()}",
             style_code=f"STYLE-{uuid.uuid4().hex[:4].upper()}",
             total_quantity=2000,
             target_delivery_date=datetime.now().date(),
@@ -52,7 +53,15 @@ async def test_order_for_units():
         session.add(order)
         await session.commit()
         await session.refresh(order)
-        return order
+        order_id = order.id
+
+    yield order
+
+    async with AsyncSessionLocal() as session:
+        from sqlalchemy import text
+        await session.execute(text(f"DELETE FROM garment_units WHERE order_id = '{order_id}'"))
+        await session.execute(text(f"DELETE FROM orders WHERE id = '{order_id}'"))
+        await session.commit()
 
 
 @pytest.mark.asyncio

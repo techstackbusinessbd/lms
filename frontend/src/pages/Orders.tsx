@@ -11,6 +11,7 @@ import {
   Layers,
   Plus,
   RefreshCw,
+  AlertCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { DataTable } from '@/components/ui/DataTable';
@@ -31,6 +32,7 @@ export const Orders: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // মডাল স্টেট
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -39,6 +41,7 @@ export const Orders: React.FC = () => {
   // অর্ডার লোড করার এসিঙ্ক ফাংশন
   const loadOrders = useCallback(async () => {
     setIsLoading(true);
+    setErrorMessage(null);
     try {
       const params: OrderFilterParams = {
         page: currentPage,
@@ -50,8 +53,9 @@ export const Orders: React.FC = () => {
       setOrders(data.items);
       setTotalOrders(data.total);
       setTotalPages(data.total_pages);
-    } catch {
-      // হ্যান্ডলিং
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to load orders. Please try again.';
+      setErrorMessage(msg);
     } finally {
       setIsLoading(false);
     }
@@ -128,6 +132,19 @@ export const Orders: React.FC = () => {
           </Button>
         </div>
       </div>
+
+      {/* ত্রুটি বার্তা (যদি থাকে) */}
+      {errorMessage && (
+        <div className="p-2.5 text-xs text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900 rounded-sm flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>{errorMessage}</span>
+          </div>
+          <Button variant="outline" size="sm" onClick={() => loadOrders()} className="h-6 text-[11px] font-mono">
+            Retry
+          </Button>
+        </div>
+      )}
 
       {/* ২. এক্সিকিউটিভ কেপিআই সারসংক্ষেপ স্ট্রিপ */}
       <OrderStats orders={orders} totalCount={totalOrders} />

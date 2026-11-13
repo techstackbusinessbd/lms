@@ -52,6 +52,7 @@ async def test_order():
                 company="Denim Solutions Ltd.",
                 buyer_name="Levi's",
                 po_number="PO-TEST-VAULT-01",
+                job_no="JOB-TEST-VAULT-01",
                 style_code="511-SLIM",
                 total_quantity=5000,
                 target_delivery_date=datetime.now().date(),
