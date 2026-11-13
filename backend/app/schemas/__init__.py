@@ -27,6 +27,13 @@ from app.schemas.laser_design import (
     RecipeUnlockRequest,
     LaserDesignFileParameterUpdate,
 )
+from app.schemas.garment_unit import (
+    GarmentUnitBatchGenerateRequest,
+    GarmentUnitCreate,
+    GarmentUnitListResponse,
+    GarmentUnitResponse,
+    GarmentUnitStageUpdate,
+)
 
 __all__ = [
     "LoginRequest",
@@ -47,5 +54,10 @@ __all__ = [
     "RecipeLockRequest",
     "RecipeUnlockRequest",
     "LaserDesignFileParameterUpdate",
+    "GarmentUnitCreate",
+    "GarmentUnitBatchGenerateRequest",
+    "GarmentUnitStageUpdate",
+    "GarmentUnitResponse",
+    "GarmentUnitListResponse",
 ]
 

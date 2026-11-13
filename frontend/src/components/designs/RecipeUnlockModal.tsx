@@ -140,3 +140,4 @@ export const RecipeUnlockModal: React.FC<RecipeUnlockModalProps> = ({
     </Modal>
   );
 };
+

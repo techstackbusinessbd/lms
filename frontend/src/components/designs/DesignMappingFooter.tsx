@@ -69,3 +69,4 @@ export const DesignMappingFooter: React.FC<DesignMappingFooterProps> = ({
     </div>
   );
 };
+

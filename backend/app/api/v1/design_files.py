@@ -245,3 +245,4 @@ async def delete_design_file(
 
     f.is_deleted = True
     await db.commit()
+
