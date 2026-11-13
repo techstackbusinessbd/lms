@@ -221,3 +221,4 @@ class LaserDesignFile(BaseModel):
             f"<LaserDesignFile(id={self.id}, size='{self.size_code}', "
             f"placement='{self.placement}', hash='{self.file_hash_sha256[:8]}...')>"
         )
+

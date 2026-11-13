@@ -17,6 +17,14 @@ from app.schemas.order import (
     OrderStatusUpdate,
     OrderUpdate,
 )
+from app.schemas.laser_design import (
+    LaserDesignCreate,
+    LaserDesignFileResponse,
+    LaserDesignListResponse,
+    LaserDesignResponse,
+    LaserDesignUpdate,
+    RecipeLockRequest,
+)
 
 __all__ = [
     "LoginRequest",
@@ -29,5 +37,11 @@ __all__ = [
     "OrderStatusUpdate",
     "OrderResponse",
     "OrderListResponse",
+    "LaserDesignCreate",
+    "LaserDesignUpdate",
+    "LaserDesignResponse",
+    "LaserDesignListResponse",
+    "LaserDesignFileResponse",
+    "RecipeLockRequest",
 ]
 

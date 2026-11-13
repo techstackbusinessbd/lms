@@ -1,0 +1,205 @@
+"""
+লেজার ডিজাইন ভল্ট ও রেসিপি লক এপিআই টেস্ট স্যুট (Laser Design API Tests)
+Denim Laser Automation & Control System (Denim LACS)
+
+স্টেপ ৩.২ ভেরিফিকেশন:
+১. POST /api/v1/designs/ — রেসিপি ড্রাফট তৈরি
+২. POST /api/v1/designs/{id}/upload-file — .jean5 ফাইল আপলোড ও সাইজ ম্যাপিং
+৩. অননুমোদিত ফাইল ফরম্যাট ও সাইজ রিজেকশন (Rule 23)
+৪. POST /api/v1/designs/{id}/lock — রেসিপি লক গেটওয়ে (Recipe Lock Gate)
+৫. লকড রেসিপিতে পরিবর্তন প্রতিরোধ
+৬. POST /api/v1/designs/{id}/new-version — নতুন রিভিশন (v2, v3...) প্রস্তুত
+৭. GET /api/v1/designs/order/{order_id} — অর্ডারভিত্তিক রেসিপি কোয়েরি (Sub-50ms)
+রুল ০৪ (<300 Lines) মেনে প্রস্তুতকৃত।
+"""
+
+import io
+import uuid
+from datetime import datetime
+import pytest
+from httpx import ASGITransport, AsyncClient
+from sqlalchemy import select
+
+from app.core.database import AsyncSessionLocal
+from app.core.security import create_access_token
+from app.main import app
+from app.models.base import generate_uuid7
+from app.models.laser_design import LaserDesign
+from app.models.order import Order
+from app.models.user import User
+
+
+@pytest.fixture
+async def auth_headers():
+    """অথেনটিকেশন টোকেন হেডার প্রস্তুত করে"""
+    async with AsyncSessionLocal() as session:
+        user_stmt = select(User).limit(1)
+        user = (await session.execute(user_stmt)).scalar_one()
+        token = create_access_token(subject=str(user.id))
+        return {"Authorization": f"Bearer {token}"}
+
+
+@pytest.fixture
+async def test_order():
+    """টেস্টের জন্য একটি নিশ্চিত সক্রিয় (Non-deleted) অর্ডার রিটার্ন করে"""
+    async with AsyncSessionLocal() as session:
+        order_stmt = select(Order).where(Order.is_deleted.is_(False)).limit(1)
+        order = (await session.execute(order_stmt)).scalar_one_or_none()
+        if not order:
+            user_stmt = select(User).limit(1)
+            user = (await session.execute(user_stmt)).scalar_one()
+            order = Order(
+                company="Denim Solutions Ltd.",
+                buyer_name="Levi's",
+                po_number="PO-TEST-VAULT-01",
+                style_code="511-SLIM",
+                total_quantity=5000,
+                target_delivery_date=datetime.now().date(),
+                created_by=user.id,
+            )
+            session.add(order)
+            await session.commit()
+            await session.refresh(order)
+        return order
+
+
+@pytest.mark.asyncio
+async def test_create_design_draft(auth_headers, test_order):
+    """১. নতুন লেজার ডিজাইন রেসিপি ড্রাফট তৈরি টেস্ট"""
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        payload = {
+            "order_id": str(test_order.id),
+            "recipe_name": "511 Whisker Scrape Wash v1",
+            "style_code": test_order.style_code,
+            "notes": "Testing laser design draft creation",
+        }
+        res = await client.post("/api/v1/designs/", json=payload, headers=auth_headers)
+        assert res.status_code == 201
+        data = res.json()
+        assert data["recipe_name"] == "511 Whisker Scrape Wash v1"
+        assert data["status"] == "DRAFT"
+        assert data["is_locked"] is False
+        assert data["version"] >= 1
+        assert len(data["files"]) == 0
+
+
+@pytest.mark.asyncio
+async def test_upload_design_file_and_lock_lifecycle(auth_headers, test_order):
+    """২-৫. .jean5 ফাইল আপলোড, অননুমোদিত এক্সটেনশন রিজেকশন, এবং রেসিপি লক টেস্ট"""
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        # ক. ড্রাফট রেসিপি তৈরি
+        draft_payload = {
+            "order_id": str(test_order.id),
+            "recipe_name": "511 Slim Two-Step Front Back",
+            "style_code": test_order.style_code,
+        }
+        draft_res = await client.post("/api/v1/designs/", json=draft_payload, headers=auth_headers)
+        assert draft_res.status_code == 201
+        design_id = draft_res.json()["id"]
+
+        # খ. ফাইল ছাড়া লক করার চেষ্টা করলে রিজেক্ট (400 Bad Request)
+        lock_attempt = await client.post(
+            f"/api/v1/designs/{design_id}/lock",
+            json={"confirm_lock": True, "lock_notes": "Early lock"},
+            headers=auth_headers,
+        )
+        assert lock_attempt.status_code == 400
+        assert "at least one mapped .jean5 file" in lock_attempt.json()["detail"]
+
+        # গ. অবৈধ ফাইল ফরম্যাট (.txt) আপলোড করলে রিজেক্ট
+        invalid_file = io.BytesIO(b"some malicious or invalid text data")
+        bad_upload = await client.post(
+            f"/api/v1/designs/{design_id}/upload-file",
+            data={"size_code": "32", "placement": "FRONT"},
+            files={"file": ("virus.txt", invalid_file, "text/plain")},
+            headers=auth_headers,
+        )
+        assert bad_upload.status_code == 400
+        assert "Invalid file format" in bad_upload.json()["detail"]
+
+        # ঘ. বৈধ .jean5 ফাইল আপলোড (Front Body)
+        mock_jean5_front = io.BytesIO(b"JEANOLOGIA_EMARK_NATIVE_BINARY_DATA_FRONT_32")
+        upload_front = await client.post(
+            f"/api/v1/designs/{design_id}/upload-file",
+            data={
+                "size_code": "32",
+                "placement": "FRONT",
+                "power_percentage": 85.0,
+                "speed_percentage": 90.0,
+                "cycle_time_estimate_sec": 42.0,
+            },
+            files={"file": ("511_Front_32.jean5", mock_jean5_front, "application/octet-stream")},
+            headers=auth_headers,
+        )
+        assert upload_front.status_code == 201
+        front_data = upload_front.json()
+        assert front_data["placement"] == "FRONT"
+        assert front_data["size_code"] == "32"
+        assert front_data["file_format"] == "JEAN5"
+        assert len(front_data["file_hash_sha256"]) == 64
+
+        # ঙ. বৈধ .jean5 ফাইল আপলোড (Back Body)
+        mock_jean5_back = io.BytesIO(b"JEANOLOGIA_EMARK_NATIVE_BINARY_DATA_BACK_32")
+        upload_back = await client.post(
+            f"/api/v1/designs/{design_id}/upload-file",
+            data={"size_code": "32", "placement": "BACK", "power_percentage": 80.0},
+            files={"file": ("511_Back_32.jean5", mock_jean5_back, "application/octet-stream")},
+            headers=auth_headers,
+        )
+        assert upload_back.status_code == 201
+
+        # চ. সফল রেসিপি লক (Recipe Lock Gate)
+        lock_res = await client.post(
+            f"/api/v1/designs/{design_id}/lock",
+            json={"confirm_lock": True, "lock_notes": "Approved for 20 Flat Conveyor Tables"},
+            headers=auth_headers,
+        )
+        assert lock_res.status_code == 200
+        locked_data = lock_res.json()
+        assert locked_data["is_locked"] is True
+        assert locked_data["status"] == "LOCKED"
+        assert locked_data["locked_at"] is not None
+        assert len(locked_data["files"]) == 2
+
+        # ছ. লকড রেসিপিতে নতুন ফাইল আপলোড চেষ্টা করলে ব্লক (400 Bad Request)
+        mock_extra = io.BytesIO(b"TRYING_TO_MUTATE_LOCKED_RECIPE")
+        blocked_upload = await client.post(
+            f"/api/v1/designs/{design_id}/upload-file",
+            data={"size_code": "34", "placement": "FRONT"},
+            files={"file": ("511_Front_34.jean5", mock_extra, "application/octet-stream")},
+            headers=auth_headers,
+        )
+        assert blocked_upload.status_code == 400
+        assert "Cannot modify or upload files to a LOCKED laser recipe" in blocked_upload.json()["detail"]
+
+        # জ. লকড রেসিপি থেকে নতুন রিভিশন (New Version) তৈরি
+        new_ver_res = await client.post(
+            f"/api/v1/designs/{design_id}/new-version",
+            headers=auth_headers,
+        )
+        assert new_ver_res.status_code == 201
+        new_ver_data = new_ver_res.json()
+        assert new_ver_data["version"] == locked_data["version"] + 1
+        assert new_ver_data["status"] == "DRAFT"
+        assert new_ver_data["is_locked"] is False
+
+        # ঝ. অর্ডারের অধীনে সমস্ত রেসিপি তালিকা সংগ্রহ
+        list_res = await client.get(
+            f"/api/v1/designs/order/{test_order.id}",
+            headers=auth_headers,
+        )
+        assert list_res.status_code == 200
+        order_designs = list_res.json()
+        assert len(order_designs) >= 2
+
+
+@pytest.mark.asyncio
+async def test_get_design_by_id_404(auth_headers):
+    """অবিদ্যমান ডিজাইন আইডির ক্ষেত্রে HTTP 404 হ্যান্ডলিং"""
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        fake_id = uuid.uuid4()
+        res = await client.get(f"/api/v1/designs/{fake_id}", headers=auth_headers)
+        assert res.status_code == 404

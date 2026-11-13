@@ -201,3 +201,4 @@ class LaserVaultStorageService:
 
 # সিঙ্গেলটন স্টোরেজ সার্ভিস ইনস্ট্যান্স
 vault_storage_service = LaserVaultStorageService()
+
