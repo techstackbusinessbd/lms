@@ -14,7 +14,7 @@ export interface LaserDesignFile {
   design_id: string;
   size_code: string;
   placement: BodyPlacement;
-  file_format: 'JEAN5' | 'JEAN';
+  file_format: 'JEAN5' | 'JEAN' | 'PNG' | 'JPG' | 'JPEG' | 'WEBP' | 'BMP' | string;
   original_filename: string;
   file_path: string;
   file_size_bytes: number;
@@ -62,3 +62,4 @@ export interface RecipeLockPayload {
   confirm_lock: boolean;
   lock_notes?: string;
 }
+

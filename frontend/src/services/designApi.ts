@@ -190,3 +190,19 @@ export async function createNewVersion(designId: string): Promise<LaserDesign> {
   }
   return res.json();
 }
+
+/**
+ * ভল্ট থেকে ফাইল কনটেন্ট ব্লব ইউআরএল (Blob URL) ফেচ করা (ইমেজ প্রিভিউ)
+ */
+export async function fetchDesignFileBlob(fileId: string): Promise<string> {
+  const res = await fetch(`${API_BASE}/files/${fileId}/content`, {
+    method: 'GET',
+    headers: getAuthHeaders(),
+  });
+  if (!res.ok) {
+    await handleResponseError(res);
+  }
+  const blob = await res.blob();
+  return URL.createObjectURL(blob);
+}
+

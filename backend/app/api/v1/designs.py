@@ -18,6 +18,7 @@ from fastapi import (
     UploadFile,
     status,
 )
+from fastapi.responses import FileResponse
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -269,3 +270,26 @@ async def create_new_version(
     db.add(new_design)
     await db.commit()
     return await get_design_or_404(db, new_design.id)
+
+
+@router.get("/files/{file_id}/content", summary="ফাইল কনটেন্ট ডাউনলোড বা প্রিভিউ স্ট্রিম")
+async def get_design_file_content(
+    file_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(get_current_active_user),
+):
+    """ভল্ট থেকে নির্দিষ্ট ফাইল স্ট্রিম করে (ইমেজ প্রিভিউ ও ডাউনলোড)"""
+    stmt = select(LaserDesignFile).where(LaserDesignFile.id == file_id, LaserDesignFile.is_deleted.is_(False))
+    f = (await db.execute(stmt)).scalar_one_or_none()
+    if not f:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Design file not found.")
+
+    abs_path = vault_storage_service.resolve_absolute_path(f.file_path)
+    if not abs_path.is_file():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Physical file missing from vault.")
+
+    mime = {
+        "PNG": "image/png", "JPG": "image/jpeg", "JPEG": "image/jpeg",
+        "WEBP": "image/webp", "BMP": "image/bmp",
+    }.get(f.file_format.upper(), "application/octet-stream")
+    return FileResponse(path=str(abs_path), media_type=mime, filename=f.original_filename)

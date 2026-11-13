@@ -37,7 +37,7 @@ class LaserVaultStorageService:
     ফ্যাক্টরি সার্ভারের সেন্ট্রাল স্টোরেজে রেসিপি ফাইল সংরক্ষণ ও পুনরুদ্ধার পরিচালনা করে।
     """
 
-    ALLOWED_EXTENSIONS = {".jean5", ".jean"}
+    ALLOWED_EXTENSIONS = {".jean5", ".jean", ".png", ".jpg", ".jpeg", ".webp", ".bmp"}
     MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024  # সর্বোচ্চ ৫০ মেগাবাইট
 
     def __init__(self, base_dir: Optional[str] = None):
@@ -70,7 +70,7 @@ class LaserVaultStorageService:
         ext = Path(filename).suffix.lower()
         if ext not in self.ALLOWED_EXTENSIONS:
             raise InvalidFileFormatError(
-                f"Invalid file format '{ext}'. Only native Jeanologia .jean and .jean5 files are accepted."
+                f"Invalid file format '{ext}'. Allowed formats: .jean5, .jean, .png, .jpg, .jpeg, .webp, .bmp."
             )
 
         if len(content) == 0:
@@ -107,9 +107,10 @@ class LaserVaultStorageService:
 
         clean_placement = self.sanitize_name(placement.upper())
         clean_size = self.sanitize_name(size_code.upper())
-        clean_ext = "jean5" if ext == ".jean5" else "jean"
+        clean_ext = ext.lstrip(".").lower()
+        file_format = "JPG" if clean_ext in {"jpg", "jpeg"} else clean_ext.upper()
 
-        # স্ট্যান্ডার্ড ফাইল ফরম্যাট: FRONT_32_a1b2c3d4.jean5
+        # স্ট্যান্ডার্ড ফাইল ফরম্যাট: FRONT_32_a1b2c3d4.jean5 / FRONT_32_a1b2c3d4.png
         hash_prefix = file_hash[:8]
         stored_filename = f"{clean_placement}_{clean_size}_{hash_prefix}.{clean_ext}"
 
@@ -146,7 +147,7 @@ class LaserVaultStorageService:
             "absolute_path": str(target_file_path),
             "file_size_bytes": file_size,
             "file_hash_sha256": file_hash,
-            "file_format": "JEAN5" if ext == ".jean5" else "JEAN",
+            "file_format": file_format,
             "stored_filename": stored_filename,
         }
 

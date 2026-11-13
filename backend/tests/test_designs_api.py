@@ -203,3 +203,41 @@ async def test_get_design_by_id_404(auth_headers):
         fake_id = uuid.uuid4()
         res = await client.get(f"/api/v1/designs/{fake_id}", headers=auth_headers)
         assert res.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_upload_image_and_stream_content(auth_headers, test_order):
+    """ইমেজ ফাইল (.png) আপলোড এবং কনটেন্ট প্রিভিউ স্ট্রিমিং টেস্ট"""
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        # ১. ড্রাফট রেসিপি তৈরি
+        draft_res = await client.post(
+            "/api/v1/designs/",
+            json={
+                "order_id": str(test_order.id),
+                "recipe_name": "Image Support Test Recipe",
+                "style_code": test_order.style_code,
+            },
+            headers=auth_headers,
+        )
+        assert draft_res.status_code == 201
+        design_id = draft_res.json()["id"]
+
+        # ২. পিএনজি ইমেজ ফাইল আপলোড (লেজার মকআপ/স্কেচ)
+        mock_png = io.BytesIO(b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDRFAKE_PNG_BINARY")
+        img_upload = await client.post(
+            f"/api/v1/designs/{design_id}/upload-file",
+            data={"size_code": "ALL", "placement": "FRONT"},
+            files={"file": ("front_whisker_sketch.png", mock_png, "image/png")},
+            headers=auth_headers,
+        )
+        assert img_upload.status_code == 201
+        img_data = img_upload.json()
+        assert img_data["file_format"] == "PNG"
+        file_id = img_data["id"]
+
+        # ৩. কনটেন্ট প্রিভিউ এন্ডপয়েন্ট থেকে ইমেজ রিড
+        preview_res = await client.get(f"/api/v1/designs/files/{file_id}/content", headers=auth_headers)
+        assert preview_res.status_code == 200
+        assert preview_res.headers["content-type"] == "image/png"
+        assert b"FAKE_PNG_BINARY" in preview_res.content

@@ -15,11 +15,12 @@ import { Select } from '@/components/ui/Select';
 import { getOrders } from '@/services/orderApi';
 import { getDesignsByOrder, createNewVersion } from '@/services/designApi';
 import { Order } from '@/types/order';
-import { LaserDesign } from '@/types/design';
+import { LaserDesign, LaserDesignFile } from '@/types/design';
 import { getDesignFileColumns } from '@/components/designs/designColumns';
 import { DesignFileUploadModal } from '@/components/designs/DesignFileUploadModal';
 import { RecipeLockModal } from '@/components/designs/RecipeLockModal';
 import { DesignCreateModal } from '@/components/designs/DesignCreateModal';
+import { ImagePreviewModal } from '@/components/designs/ImagePreviewModal';
 
 export const LaserDesignPage: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -34,6 +35,7 @@ export const LaserDesignPage: React.FC = () => {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isLockModalOpen, setIsLockModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [previewFile, setPreviewFile] = useState<LaserDesignFile | null>(null);
 
   // ১. অর্ডার তালিকা লোড
   useEffect(() => {
@@ -96,7 +98,7 @@ export const LaserDesignPage: React.FC = () => {
     }
   };
 
-  const columns = useMemo(() => getDesignFileColumns(), []);
+  const columns = useMemo(() => getDesignFileColumns((f) => setPreviewFile(f)), []);
 
   return (
     <div className="space-y-4">
@@ -192,33 +194,17 @@ export const LaserDesignPage: React.FC = () => {
             <div className="flex items-center gap-2">
               {!activeDesign.is_locked ? (
                 <>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={() => setIsUploadModalOpen(true)}
-                    className="text-xs font-semibold shadow-xs"
-                  >
+                  <Button variant="primary" size="sm" onClick={() => setIsUploadModalOpen(true)} className="text-xs font-semibold shadow-xs">
                     <Plus className="w-3.5 h-3.5 shrink-0" />
-                    <span>Upload .jean5</span>
+                    <span>Upload File</span>
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsLockModalOpen(true)}
-                    disabled={activeDesign.files.length === 0}
-                    className="text-xs font-mono text-amber-600 hover:text-amber-700 border-amber-200 dark:border-amber-900/60"
-                  >
+                  <Button variant="outline" size="sm" onClick={() => setIsLockModalOpen(true)} disabled={activeDesign.files.length === 0} className="text-xs font-mono text-amber-600 hover:text-amber-700 border-amber-200 dark:border-amber-900/60">
                     <Lock className="w-3.5 h-3.5 shrink-0" />
                     <span>Lock Recipe</span>
                   </Button>
                 </>
               ) : (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleNewRevision}
-                  className="text-xs font-mono"
-                >
+                <Button variant="outline" size="sm" onClick={handleNewRevision} className="text-xs font-mono">
                   <CopyPlus className="w-3.5 h-3.5 shrink-0" />
                   <span>Create New Revision</span>
                 </Button>
@@ -288,6 +274,11 @@ export const LaserDesignPage: React.FC = () => {
         order={selectedOrder}
         onClose={() => setIsCreateModalOpen(false)}
         onDesignCreated={(c) => { setActiveDesign(c); loadDesigns(selectedOrderId); }}
+      />
+      <ImagePreviewModal
+        isOpen={Boolean(previewFile)}
+        file={previewFile}
+        onClose={() => setPreviewFile(null)}
       />
     </div>
   );

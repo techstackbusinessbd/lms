@@ -7,8 +7,9 @@
  */
 
 import { ColumnDef } from '@tanstack/react-table';
-import { FileCode, Zap, Clock, ShieldCheck } from 'lucide-react';
+import { FileCode, Zap, Clock, ShieldCheck, Image as ImageIcon, Eye } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
 import { DataTableColumnHeader } from '@/components/ui/DataTableColumnHeader';
 import { LaserDesignFile } from '@/types/design';
 
@@ -20,7 +21,9 @@ function formatBytes(bytes: number): string {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
 }
 
-export function getDesignFileColumns(): ColumnDef<LaserDesignFile>[] {
+export function getDesignFileColumns(
+  onPreviewImage?: (file: LaserDesignFile) => void
+): ColumnDef<LaserDesignFile>[] {
   return [
     {
       accessorKey: 'size_code',
@@ -51,20 +54,39 @@ export function getDesignFileColumns(): ColumnDef<LaserDesignFile>[] {
     },
     {
       accessorKey: 'original_filename',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="RECIPE FILE" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="RECIPE / ARTWORK FILE" />,
       cell: ({ row }) => {
         const file = row.original;
+        const isImage = ['PNG', 'JPG', 'JPEG', 'WEBP', 'BMP'].includes(file.file_format.toUpperCase());
         return (
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-sm bg-slate-100 dark:bg-[#1a1c24] border border-slate-200 dark:border-[#272930] flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
-              <FileCode className="w-3.5 h-3.5" />
+            <div className={`w-6 h-6 rounded-sm border flex items-center justify-center shrink-0 ${
+              isImage
+                ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400'
+                : 'bg-slate-100 dark:bg-[#1a1c24] border-slate-200 dark:border-[#272930] text-blue-600 dark:text-blue-400'
+            }`}>
+              {isImage ? <ImageIcon className="w-3.5 h-3.5" /> : <FileCode className="w-3.5 h-3.5" />}
             </div>
             <div className="space-y-0.5">
-              <div className="font-mono text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate max-w-[200px]" title={file.original_filename}>
-                {file.original_filename}
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate max-w-[180px]" title={file.original_filename}>
+                  {file.original_filename}
+                </span>
+                {isImage && onPreviewImage && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onPreviewImage(file)}
+                    className="h-5 px-1.5 text-[10px] font-mono text-blue-600 hover:text-blue-700"
+                    title="Preview Image"
+                  >
+                    <Eye className="w-3 h-3 mr-0.5" />
+                    Preview
+                  </Button>
+                )}
               </div>
               <div className="flex items-center gap-1.5 text-[10px] font-mono text-zinc-400">
-                <span>{file.file_format}</span>
+                <span className={isImage ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : ''}>{file.file_format}</span>
                 <span>•</span>
                 <span>{formatBytes(file.file_size_bytes)}</span>
               </div>
@@ -119,3 +141,4 @@ export function getDesignFileColumns(): ColumnDef<LaserDesignFile>[] {
     },
   ];
 }
+

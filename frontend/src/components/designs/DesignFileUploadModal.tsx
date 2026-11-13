@@ -7,7 +7,7 @@
  */
 
 import React, { useState, useRef } from 'react';
-import { Upload, FileCode, AlertCircle, Loader2, X } from 'lucide-react';
+import { Upload, FileCode, AlertCircle, Loader2, X, Image as ImageIcon } from 'lucide-react';
 import {
   Modal,
   ModalContent,
@@ -52,6 +52,7 @@ export const DesignFileUploadModal: React.FC<DesignFileUploadModalProps> = ({
   onFileUploaded,
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [sizeCode, setSizeCode] = useState<string>('32');
   const [placement, setPlacement] = useState<BodyPlacement>('FRONT');
   const [powerPercentage, setPowerPercentage] = useState<string>('');
@@ -62,15 +63,28 @@ export const DesignFileUploadModal: React.FC<DesignFileUploadModalProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const ALLOWED_EXTS = ['jean5', 'jean', 'png', 'jpg', 'jpeg', 'webp', 'bmp'];
+
+  const clearSelectedFile = () => {
+    if (imagePreviewUrl) URL.revokeObjectURL(imagePreviewUrl);
+    setImagePreviewUrl(null);
+    setSelectedFile(null);
+  };
 
   const handleFileSelect = (file: File) => {
     setError(null);
     const ext = file.name.split('.').pop()?.toLowerCase();
-    if (ext !== 'jean5' && ext !== 'jean') {
-      setError('Invalid file format. Only Jeanologia .jean and .jean5 files are allowed.');
+    if (!ext || !ALLOWED_EXTS.includes(ext)) {
+      setError('Invalid file format. Allowed formats: .jean5, .jean, .png, .jpg, .jpeg, .webp, .bmp.');
       return;
     }
     setSelectedFile(file);
+    if (['png', 'jpg', 'jpeg', 'webp', 'bmp'].includes(ext)) {
+      setImagePreviewUrl(URL.createObjectURL(file));
+    } else {
+      if (imagePreviewUrl) URL.revokeObjectURL(imagePreviewUrl);
+      setImagePreviewUrl(null);
+    }
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -84,7 +98,7 @@ export const DesignFileUploadModal: React.FC<DesignFileUploadModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedFile) {
-      setError('Please select or drop a .jean5 recipe file.');
+      setError('Please select or drop a recipe or image file.');
       return;
     }
     setError(null);
@@ -101,7 +115,7 @@ export const DesignFileUploadModal: React.FC<DesignFileUploadModalProps> = ({
       });
 
       onFileUploaded(uploaded);
-      setSelectedFile(null);
+      clearSelectedFile();
       onClose();
     } catch (err) {
       if (err instanceof DesignApiError) {
@@ -115,12 +129,12 @@ export const DesignFileUploadModal: React.FC<DesignFileUploadModalProps> = ({
   };
 
   return (
-    <Modal open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Modal open={isOpen} onOpenChange={(open) => { if (!open) { clearSelectedFile(); onClose(); } }}>
       <ModalContent className="max-w-lg">
         <ModalHeader>
           <ModalTitle className="flex items-center gap-2">
             <Upload className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-            <span>Upload Laser Recipe (.jean5)</span>
+            <span>Upload Laser Recipe / Artwork File</span>
           </ModalTitle>
         </ModalHeader>
 
@@ -152,35 +166,46 @@ export const DesignFileUploadModal: React.FC<DesignFileUploadModalProps> = ({
             <input
               ref={fileInputRef}
               type="file"
-              accept=".jean5,.jean"
+              accept=".jean5,.jean,.png,.jpg,.jpeg,.webp,.bmp,image/*"
               onChange={(e) => e.target.files?.[0] && handleFileSelect(e.target.files[0])}
               className="hidden"
             />
             {selectedFile ? (
-              <div className="flex items-center justify-center gap-2 text-xs font-mono text-emerald-600 dark:text-emerald-400">
-                <FileCode className="w-4 h-4" />
-                <span className="font-bold truncate max-w-xs">{selectedFile.name}</span>
-                <span className="text-[10px] text-zinc-400">
-                  ({(selectedFile.size / 1024).toFixed(1)} KB)
-                </span>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedFile(null);
-                  }}
-                  className="p-1 hover:bg-slate-200 dark:hover:bg-zinc-800 rounded-sm ml-2"
-                >
-                  <X className="w-3.5 h-3.5 text-zinc-500" />
-                </button>
+              <div className="space-y-2">
+                {imagePreviewUrl && (
+                  <div className="relative inline-block mx-auto">
+                    <img
+                      src={imagePreviewUrl}
+                      alt="Preview"
+                      className="max-h-24 max-w-full rounded-sm object-contain border border-slate-200 dark:border-zinc-700 mx-auto"
+                    />
+                  </div>
+                )}
+                <div className="flex items-center justify-center gap-2 text-xs font-mono text-emerald-600 dark:text-emerald-400">
+                  {imagePreviewUrl ? <ImageIcon className="w-4 h-4" /> : <FileCode className="w-4 h-4" />}
+                  <span className="font-bold truncate max-w-xs">{selectedFile.name}</span>
+                  <span className="text-[10px] text-zinc-400">
+                    ({(selectedFile.size / 1024).toFixed(1)} KB)
+                  </span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      clearSelectedFile();
+                    }}
+                    className="p-1 hover:bg-slate-200 dark:hover:bg-zinc-800 rounded-sm ml-2"
+                  >
+                    <X className="w-3.5 h-3.5 text-zinc-500" />
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="space-y-1">
                 <Upload className="w-6 h-6 mx-auto text-zinc-400" />
                 <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                  Drag &amp; drop Jeanologia <span className="text-blue-600 font-mono">.jean5</span> file here
+                  Drag &amp; drop Jeanologia <span className="text-blue-600 font-mono">.jean5</span> or artwork <span className="text-emerald-600 font-mono">image</span>
                 </p>
-                <p className="text-[11px] font-mono text-zinc-400">or click to browse from local workstation</p>
+                <p className="text-[11px] font-mono text-zinc-400">supports .jean5, .jean, .png, .jpg, .webp, .bmp</p>
               </div>
             )}
           </div>
@@ -258,3 +283,4 @@ export const DesignFileUploadModal: React.FC<DesignFileUploadModalProps> = ({
     </Modal>
   );
 };
+
