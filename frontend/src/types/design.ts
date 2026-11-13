@@ -63,6 +63,17 @@ export interface RecipeLockPayload {
   lock_notes?: string;
 }
 
+export interface RecipeUnlockPayload {
+  confirm_unlock: boolean;
+  unlock_notes?: string;
+}
+
+export interface FileParametersPayload {
+  power_percentage?: number | null;
+  speed_percentage?: number | null;
+  cycle_time_estimate_sec?: number | null;
+}
+
 export interface LaserDesignListResponse {
   items: LaserDesign[];
   total: number;

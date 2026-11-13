@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import { Layers, Lock, CopyPlus, Sparkles } from 'lucide-react';
+import { Layers, Lock, Unlock, CopyPlus, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Select } from '@/components/ui/Select';
@@ -22,6 +22,7 @@ interface DesignMappingHeaderProps {
   isInitialDesign: boolean;
   onOrderChange: (orderId: string) => void;
   onLockClick: () => void;
+  onUnlockClick: () => void;
   onNewRevisionClick: () => void;
 }
 
@@ -33,6 +34,7 @@ export const DesignMappingHeader: React.FC<DesignMappingHeaderProps> = ({
   isInitialDesign,
   onOrderChange,
   onLockClick,
+  onUnlockClick,
   onNewRevisionClick,
 }) => {
   return (
@@ -83,15 +85,28 @@ export const DesignMappingHeader: React.FC<DesignMappingHeaderProps> = ({
                 <span>Lock Recipe</span>
               </Button>
             ) : (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onNewRevisionClick}
-                className="h-7 text-xs font-mono"
-              >
-                <CopyPlus className="w-3.5 h-3.5 mr-1" />
-                <span>Create New Rev</span>
-              </Button>
+              <div className="flex items-center gap-1.5">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onUnlockClick}
+                  className="h-7 text-xs font-mono text-blue-600 dark:text-blue-400 border-blue-300 dark:border-blue-900/60 hover:bg-blue-50 dark:hover:bg-blue-950/30"
+                  title="Unlock to allow operator parameter adjustments on the floor"
+                >
+                  <Unlock className="w-3.5 h-3.5 mr-1" />
+                  <span>Unlock Recipe</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onNewRevisionClick}
+                  className="h-7 text-xs font-mono"
+                  title="Create new design revision"
+                >
+                  <CopyPlus className="w-3.5 h-3.5 mr-1" />
+                  <span>New Rev</span>
+                </Button>
+              </div>
             )}
           </div>
         )}
@@ -157,3 +172,4 @@ export const DesignMappingHeader: React.FC<DesignMappingHeaderProps> = ({
     </div>
   );
 };
+

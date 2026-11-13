@@ -2,12 +2,12 @@
  * ডেনিম লেজার অটোমেশন ও কন্ট্রোল সিস্টেম (Denim LACS)
  * লেজার ডিজাইন ম্যাপিং ইন্টারঅ্যাক্টিভ মডাল (Design Mapping Modal)
  *
- * ডিজাইনারের চাহিদা অনুযায়ী ডায়নামিক সাইজ অ্যাডিশন ও রেসিপি ম্যাপিং ইন্টারফেস।
+ * ডিজাইনারের চাহিদা অনুযায়ী ডায়নামিক সাইজ ও রেসিপি লক/আনলক ইন্টারফেস।
  * রুল ১৬ (2px Corner Radius), রুল ২৩ (DataTable) এবং রুল ০৪ (<300 Lines) মেনে প্রস্তুতকৃত।
  */
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Lock, CheckCircle2, PlusCircle } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 import { Modal, ModalContent } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { DataTable } from '@/components/ui/DataTable';
@@ -18,9 +18,11 @@ import { getDesignsByOrder, createDesign, createNewVersion } from '@/services/de
 import { getSizeMatrixColumns } from './matrixColumns';
 import { useSizeMatrix } from './useSizeMatrix';
 import { RecipeLockModal } from './RecipeLockModal';
+import { RecipeUnlockModal } from './RecipeUnlockModal';
 import { ImagePreviewModal } from './ImagePreviewModal';
 import { DesignMappingHeader } from './DesignMappingHeader';
 import { DesignSizeToolbar } from './DesignSizeToolbar';
+import { DesignMappingFooter } from './DesignMappingFooter';
 
 interface DesignMappingModalProps {
   isOpen: boolean;
@@ -42,6 +44,7 @@ export const DesignMappingModal: React.FC<DesignMappingModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const [isLockModalOpen, setIsLockModalOpen] = useState(false);
+  const [isUnlockModalOpen, setIsUnlockModalOpen] = useState(false);
   const [previewFile, setPreviewFile] = useState<LaserDesignFile | null>(null);
 
   // ১. অর্ডারের ডিজাইন লোড বা স্বয়ংক্রিয় ড্রাফট ইনিশিয়ালাইজ (Auto-Init Draft)
@@ -121,7 +124,6 @@ export const DesignMappingModal: React.FC<DesignMappingModalProps> = ({
     onSaved();
   };
 
-  // ডায়নামিক সাইজ যোগ ও রিমুভ হ্যান্ডলার
   const handleAddSizes = (inputSizes: string) => {
     const tokens = inputSizes
       .split(/[,;\s]+/)
@@ -169,6 +171,7 @@ export const DesignMappingModal: React.FC<DesignMappingModalProps> = ({
           isInitialDesign={Boolean(initialDesign)}
           onOrderChange={handleOrderChange}
           onLockClick={() => setIsLockModalOpen(true)}
+          onUnlockClick={() => setIsUnlockModalOpen(true)}
           onNewRevisionClick={async () => {
             if (!activeDesign) return;
             const rev = await createNewVersion(activeDesign.id);
@@ -192,14 +195,9 @@ export const DesignMappingModal: React.FC<DesignMappingModalProps> = ({
               {/* সাইজ ম্যাট্রিক্স টেবিল */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs font-mono">
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wide">
-                      Size-by-Size Recipe Matrix
-                    </span>
-                    <span className="text-[11px] text-zinc-400">
-                      ({matrixRows.length} Sizes Added)
-                    </span>
-                  </div>
+                  <span className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wide">
+                    Size-by-Size Recipe Matrix ({matrixRows.length} Sizes)
+                  </span>
                 </div>
 
                 {matrixRows.length > 0 ? (
@@ -238,39 +236,30 @@ export const DesignMappingModal: React.FC<DesignMappingModalProps> = ({
         </div>
 
         {/* ৩. মডাল ফুটার */}
-        <div className="px-6 py-3 border-t border-slate-200 dark:border-[#272930] bg-slate-50/60 dark:bg-[#15171e]/60 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs font-mono text-zinc-500">
-            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-            <span>
-              <strong className="text-zinc-800 dark:text-zinc-200">{completedCount}</strong> of{' '}
-              {matrixRows.length} Sizes Ready (Front &amp; Back Mapped)
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={onClose} className="h-8 text-xs font-mono">
-              Close
-            </Button>
-            {activeDesign && !activeDesign.is_locked && (
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={() => setIsLockModalOpen(true)}
-                disabled={activeDesign.files.length === 0}
-                className="h-8 text-xs font-mono"
-              >
-                <Lock className="w-3.5 h-3.5 mr-1" />
-                <span>Lock &amp; Authorize Recipe</span>
-              </Button>
-            )}
-          </div>
-        </div>
+        <DesignMappingFooter
+          completedCount={completedCount}
+          totalSizes={matrixRows.length}
+          isLocked={Boolean(activeDesign?.is_locked)}
+          hasFiles={Boolean(activeDesign && activeDesign.files.length > 0)}
+          onClose={onClose}
+          onLockClick={() => setIsLockModalOpen(true)}
+          onUnlockClick={() => setIsUnlockModalOpen(true)}
+        />
 
         <RecipeLockModal
           isOpen={isLockModalOpen}
           design={activeDesign}
           onClose={() => setIsLockModalOpen(false)}
           onLocked={(u) => {
+            setActiveDesign(u);
+            onSaved();
+          }}
+        />
+        <RecipeUnlockModal
+          isOpen={isUnlockModalOpen}
+          design={activeDesign}
+          onClose={() => setIsUnlockModalOpen(false)}
+          onUnlocked={(u) => {
             setActiveDesign(u);
             onSaved();
           }}

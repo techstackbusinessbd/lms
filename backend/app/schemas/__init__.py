@@ -24,6 +24,8 @@ from app.schemas.laser_design import (
     LaserDesignResponse,
     LaserDesignUpdate,
     RecipeLockRequest,
+    RecipeUnlockRequest,
+    LaserDesignFileParameterUpdate,
 )
 
 __all__ = [
@@ -43,5 +45,7 @@ __all__ = [
     "LaserDesignListResponse",
     "LaserDesignFileResponse",
     "RecipeLockRequest",
+    "RecipeUnlockRequest",
+    "LaserDesignFileParameterUpdate",
 ]
 

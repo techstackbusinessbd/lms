@@ -15,6 +15,8 @@ import {
   LaserDesignFilterParams,
   LaserDesignListResponse,
   RecipeLockPayload,
+  RecipeUnlockPayload,
+  FileParametersPayload,
 } from '@/types/design';
 import { PydanticValidationErrorResponse } from '@/types/auth';
 
@@ -188,6 +190,45 @@ export async function lockRecipe(
 ): Promise<LaserDesign> {
   const res = await fetch(`${API_BASE}/${designId}/lock`, {
     method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    await handleResponseError(res);
+  }
+  return res.json();
+}
+
+/**
+ * রেসিপি আনলক ও অপারেটর প্যারামিটার এডিটিং উন্মুক্তকরণ (Recipe Unlock Gate)
+ */
+export async function unlockRecipe(
+  designId: string,
+  payload?: RecipeUnlockPayload
+): Promise<LaserDesign> {
+  const res = await fetch(`${API_BASE}/${designId}/unlock`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(payload || { confirm_unlock: true }),
+  });
+
+  if (!res.ok) {
+    await handleResponseError(res);
+  }
+  return res.json();
+}
+
+/**
+ * লেজার ফাইলের প্যারামিটার আপডেট (Power %, Speed %, Cycle Time)
+ */
+export async function updateFileParameters(
+  designId: string,
+  fileId: string,
+  payload: FileParametersPayload
+): Promise<LaserDesignFile> {
+  const res = await fetch(`${API_BASE}/${designId}/files/${fileId}/parameters`, {
+    method: 'PATCH',
     headers: getAuthHeaders(),
     body: JSON.stringify(payload),
   });

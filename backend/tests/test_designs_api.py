@@ -174,6 +174,39 @@ async def test_upload_design_file_and_lock_lifecycle(auth_headers, test_order):
         assert blocked_upload.status_code == 400
         assert "Cannot modify or upload files to a LOCKED laser recipe" in blocked_upload.json()["detail"]
 
+        # ছ(১). লকড থাকা অবস্থায় অপারেটর প্যারামিটার এডিট করতে গেলে ব্লক (403 Forbidden)
+        front_file_id = front_data["id"]
+        blocked_param_res = await client.patch(
+            f"/api/v1/designs/{design_id}/files/{front_file_id}/parameters",
+            json={"power_percentage": 95.0, "speed_percentage": 92.0},
+            headers=auth_headers,
+        )
+        assert blocked_param_res.status_code == 403
+        assert "Cannot edit laser parameters: Recipe is LOCKED by designer" in blocked_param_res.json()["detail"]
+
+        # ছ(২). রেসিপি আনলক (Recipe Unlock Gate)
+        unlock_res = await client.post(
+            f"/api/v1/designs/{design_id}/unlock",
+            json={"confirm_unlock": True, "unlock_notes": "Unlocked for wash parameter tuning"},
+            headers=auth_headers,
+        )
+        assert unlock_res.status_code == 200
+        unlocked_data = unlock_res.json()
+        assert unlocked_data["is_locked"] is False
+        assert unlocked_data["status"] == "DRAFT"
+
+        # ছ(৩). আনলক থাকা অবস্থায় অপারেটর প্যারামিটার সফলভাবে এডিট করতে পারবে (200 OK)
+        allowed_param_res = await client.patch(
+            f"/api/v1/designs/{design_id}/files/{front_file_id}/parameters",
+            json={"power_percentage": 92.0, "speed_percentage": 88.0, "cycle_time_estimate_sec": 39.5},
+            headers=auth_headers,
+        )
+        assert allowed_param_res.status_code == 200
+        updated_file_data = allowed_param_res.json()
+        assert updated_file_data["power_percentage"] == 92.0
+        assert updated_file_data["speed_percentage"] == 88.0
+        assert updated_file_data["cycle_time_estimate_sec"] == 39.5
+
         # জ. লকড রেসিপি থেকে নতুন রিভিশন (New Version) তৈরি
         new_ver_res = await client.post(
             f"/api/v1/designs/{design_id}/new-version",

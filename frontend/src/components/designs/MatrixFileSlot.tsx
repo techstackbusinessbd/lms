@@ -2,15 +2,17 @@
  * ডেনিম লেজার অটোমেশন ও কন্ট্রোল সিস্টেম (Denim LACS)
  * সাইজ ম্যাট্রিক্স ফাইল স্লট কম্পোনেন্ট (Size Matrix File Slot)
  *
- * নির্দিষ্ট সাইজ ও প্লেসমেন্টের জন্য ফাইল আপলোড, ডিসপ্লে, প্রিভিউ ও ডিলিট পরিচালনার ইনলাইন সেল।
+ * নির্দিষ্ট সাইজ ও প্লেসমেন্টের জন্য ফাইল আপলোড, ডিসপ্লে, প্রিভিউ, প্যারামিটার ও ডিলিট ইনলাইন সেল।
+ * রুল: লক থাকলে অপারেটর প্যারামিটার এডিট করতে পারবে না; আনলক থাকলে এডিট করতে পারবে।
  * রুল ১৬ (2px Corner Radius) এবং রুল ০৪ (<300 Lines) মেনে প্রস্তুতকৃত।
  */
 
 import React, { useState, useRef } from 'react';
-import { Upload, FileCode, Image as ImageIcon, Eye, X, Loader2 } from 'lucide-react';
+import { Upload, FileCode, Image as ImageIcon, Eye, X, Loader2, SlidersHorizontal, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { BodyPlacement, LaserDesignFile } from '@/types/design';
 import { uploadDesignFile, deleteDesignFile } from '@/services/designApi';
+import { FileParametersModal } from './FileParametersModal';
 
 interface MatrixFileSlotProps {
   designId: string;
@@ -35,6 +37,7 @@ export const MatrixFileSlot: React.FC<MatrixFileSlotProps> = ({
 }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [isParamModalOpen, setIsParamModalOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -70,67 +73,105 @@ export const MatrixFileSlot: React.FC<MatrixFileSlotProps> = ({
   const isImage = file && ['PNG', 'JPG', 'JPEG', 'WEBP', 'BMP'].includes(file.file_format.toUpperCase());
 
   if (file) {
+    const hasParams = file.power_percentage !== null && file.power_percentage !== undefined;
+
     return (
-      <div
-        className="flex items-center justify-between gap-1.5 p-1.5 rounded-sm bg-slate-50 dark:bg-[#15171e] border border-slate-200 dark:border-[#272930] text-xs font-mono group transition-colors hover:border-slate-300 dark:hover:border-zinc-700"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <div className="flex items-center gap-1.5 min-w-0">
-          <div
-            className={`w-5 h-5 rounded-sm flex items-center justify-center shrink-0 ${
-              isImage
-                ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400'
-                : 'bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400'
-            }`}
-          >
-            {isImage ? <ImageIcon className="w-3 h-3" /> : <FileCode className="w-3 h-3" />}
+      <>
+        <div
+          className="flex items-center justify-between gap-1.5 p-1.5 rounded-sm bg-slate-50 dark:bg-[#15171e] border border-slate-200 dark:border-[#272930] text-xs font-mono group transition-colors hover:border-slate-300 dark:hover:border-zinc-700"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <div className="flex items-center gap-1.5 min-w-0">
+            <div
+              className={`w-5 h-5 rounded-sm flex items-center justify-center shrink-0 ${
+                isImage
+                  ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400'
+                  : 'bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400'
+              }`}
+            >
+              {isImage ? <ImageIcon className="w-3 h-3" /> : <FileCode className="w-3 h-3" />}
+            </div>
+
+            <span
+              className="text-[9px] uppercase px-1 py-0.2 rounded-sm font-semibold shrink-0 bg-slate-200/80 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
+            >
+              {file.file_format}
+            </span>
+
+            <span
+              className="truncate max-w-[130px] sm:max-w-[160px] font-semibold text-zinc-800 dark:text-zinc-200"
+              title={file.original_filename}
+            >
+              {file.original_filename}
+            </span>
           </div>
 
-          <span
-            className="text-[9px] uppercase px-1 py-0.2 rounded-sm font-semibold shrink-0 bg-slate-200/80 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
-          >
-            {file.file_format}
-          </span>
+          <div className="flex items-center gap-1 shrink-0">
+            {/* প্যারামিটার বাটন / ব্যাজ */}
+            {!isImage && (
+              <button
+                type="button"
+                onClick={() => setIsParamModalOpen(true)}
+                className={`flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] rounded-sm transition-colors border ${
+                  isLocked
+                    ? 'border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-500 cursor-pointer'
+                    : hasParams
+                    ? 'border-blue-200 dark:border-blue-900/60 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 hover:border-blue-400'
+                    : 'border-dashed border-zinc-300 dark:border-zinc-700 text-zinc-400 hover:text-blue-500'
+                }`}
+                title={
+                  isLocked
+                    ? 'Locked by Designer (Operator editing disabled)'
+                    : 'Edit Laser Parameters (Power, Speed, Cycle Time)'
+                }
+              >
+                {isLocked ? (
+                  <Lock className="w-2.5 h-2.5 text-amber-500 shrink-0" />
+                ) : (
+                  <SlidersHorizontal className="w-2.5 h-2.5 shrink-0" />
+                )}
+                <span>{hasParams ? `P:${file.power_percentage}%` : 'Params'}</span>
+              </button>
+            )}
 
-          <span
-            className="truncate max-w-[140px] sm:max-w-[190px] font-semibold text-zinc-800 dark:text-zinc-200"
-            title={file.original_filename}
-          >
-            {file.original_filename}
-          </span>
-          <span className="text-[10px] text-zinc-400 shrink-0">
-            ({(file.file_size_bytes / 1024).toFixed(0)}K)
-          </span>
+            {isImage && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onPreviewImage(file)}
+                className="h-5 w-5 p-0 text-blue-600 hover:text-blue-700"
+                title="Preview Image"
+              >
+                <Eye className="w-3 h-3" />
+              </Button>
+            )}
+            {!isLocked && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleDelete}
+                className={`h-5 w-5 p-0 text-rose-500 hover:text-rose-700 ${
+                  isHovered ? 'opacity-100' : 'opacity-0 sm:opacity-100'
+                }`}
+                title="Remove File"
+              >
+                <X className="w-3 h-3" />
+              </Button>
+            )}
+          </div>
         </div>
 
-        <div className="flex items-center gap-1 shrink-0">
-          {isImage && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onPreviewImage(file)}
-              className="h-5 w-5 p-0 text-blue-600 hover:text-blue-700"
-              title="Preview Image"
-            >
-              <Eye className="w-3 h-3" />
-            </Button>
-          )}
-          {!isLocked && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleDelete}
-              className={`h-5 w-5 p-0 text-rose-500 hover:text-rose-700 ${
-                isHovered ? 'opacity-100' : 'opacity-0 sm:opacity-100'
-              }`}
-              title="Remove File"
-            >
-              <X className="w-3 h-3" />
-            </Button>
-          )}
-        </div>
-      </div>
+        {/* প্যারামিটার এডিটিং মডাল */}
+        <FileParametersModal
+          isOpen={isParamModalOpen}
+          designId={designId}
+          file={file}
+          isLocked={isLocked}
+          onClose={() => setIsParamModalOpen(false)}
+          onParametersUpdated={(updated) => onFileUploaded(updated)}
+        />
+      </>
     );
   }
 

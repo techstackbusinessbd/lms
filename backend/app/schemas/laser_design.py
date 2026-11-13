@@ -146,6 +146,53 @@ class RecipeLockRequest(BaseModel):
     )
 
 
+class RecipeUnlockRequest(BaseModel):
+    """
+    রেসিপি আনলক করার রিকোয়েস্ট পে-লোড (Recipe Unlock Request)
+    """
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    confirm_unlock: bool = Field(
+        True,
+        description="আনলক করার সম্মতি ফ্ল্যাগ",
+    )
+    unlock_notes: Optional[str] = Field(
+        None,
+        max_length=500,
+        description="আনলক করার কারণ বা নোট (যেমন: ফ্লোরে অপারেটর প্যারামিটার অ্যাডজাস্টমেন্ট)",
+        examples=["Unlocked for operator laser parameter tuning on wash floor"],
+    )
+
+
+class LaserDesignFileParameterUpdate(BaseModel):
+    """
+    লেজার ফাইলের প্যারামিটার আপডেটের জন্য কঠোর সার্ভার-সাইড স্কিমা (Rule 23)
+    """
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    power_percentage: Optional[float] = Field(
+        None,
+        ge=0.0,
+        le=100.0,
+        description="লেজার পাওয়ার লিমিট (%)",
+        examples=[85.0],
+    )
+    speed_percentage: Optional[float] = Field(
+        None,
+        ge=0.0,
+        le=100.0,
+        description="লেজার স্পিড লিমিট (%)",
+        examples=[90.0],
+    )
+    cycle_time_estimate_sec: Optional[float] = Field(
+        None,
+        ge=0.0,
+        le=3600.0,
+        description="আনুমানিক লেজার সাইকেল টাইম (সেকেন্ডে)",
+        examples=[42.0],
+    )
+
+
 class LaserDesignResponse(BaseModel):
     """
     লেজার ডিজাইন সম্পূর্ণ রেসপন্স মডেল (সংযুক্ত সকল সাইজ ফাইলসহ)
