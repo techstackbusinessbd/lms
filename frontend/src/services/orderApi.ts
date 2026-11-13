@@ -34,7 +34,10 @@ export class OrderApiError extends Error {
  * রিকোয়েস্ট হেডার ও অথেনটিকেশন টোকেন সংগ্রহ
  */
 function getAuthHeaders(): HeadersInit {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+  const token =
+    typeof window !== 'undefined'
+      ? localStorage.getItem('lacs_access_token') || localStorage.getItem('auth_token')
+      : null;
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
   };
