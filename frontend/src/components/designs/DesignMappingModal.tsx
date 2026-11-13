@@ -2,12 +2,12 @@
  * ডেনিম লেজার অটোমেশন ও কন্ট্রোল সিস্টেম (Denim LACS)
  * লেজার ডিজাইন ম্যাপিং ইন্টারঅ্যাক্টিভ মডাল (Design Mapping Modal)
  *
- * নির্দিষ্ট স্টাইলের জন্য সাইজ ম্যাট্রিক্স, বাল্ক অটো-ম্যাচ ড্রপজোন ও রেসিপি লকিং ইন্টারফেস।
+ * ডিজাইনারের চাহিদা অনুযায়ী ডায়নামিক সাইজ অ্যাডিশন ও রেসিপি ম্যাপিং ইন্টারফেস।
  * রুল ১৬ (2px Corner Radius), রুল ২৩ (DataTable) এবং রুল ০৪ (<300 Lines) মেনে প্রস্তুতকৃত।
  */
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Lock, CheckCircle2 } from 'lucide-react';
+import { Lock, CheckCircle2, PlusCircle } from 'lucide-react';
 import { Modal, ModalContent } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { DataTable } from '@/components/ui/DataTable';
@@ -16,11 +16,11 @@ import { LaserDesign, LaserDesignFile } from '@/types/design';
 import { getOrders } from '@/services/orderApi';
 import { getDesignsByOrder, createDesign, createNewVersion } from '@/services/designApi';
 import { getSizeMatrixColumns } from './matrixColumns';
-import { useSizeMatrix, DEFAULT_SIZES } from './useSizeMatrix';
-import { BulkDropzone } from './BulkDropzone';
+import { useSizeMatrix } from './useSizeMatrix';
 import { RecipeLockModal } from './RecipeLockModal';
 import { ImagePreviewModal } from './ImagePreviewModal';
 import { DesignMappingHeader } from './DesignMappingHeader';
+import { DesignSizeToolbar } from './DesignSizeToolbar';
 
 interface DesignMappingModalProps {
   isOpen: boolean;
@@ -38,8 +38,7 @@ export const DesignMappingModal: React.FC<DesignMappingModalProps> = ({
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrderId, setSelectedOrderId] = useState<string>('');
   const [activeDesign, setActiveDesign] = useState<LaserDesign | null>(null);
-  const [extraSizes, setExtraSizes] = useState<string[]>([]);
-  const [newSizeInput, setNewSizeInput] = useState<string>('');
+  const [customSizes, setCustomSizes] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const [isLockModalOpen, setIsLockModalOpen] = useState(false);
@@ -95,6 +94,7 @@ export const DesignMappingModal: React.FC<DesignMappingModalProps> = ({
 
   const handleOrderChange = (orderId: string) => {
     setSelectedOrderId(orderId);
+    setCustomSizes([]);
     const found = orders.find((o) => o.id === orderId);
     if (found) {
       loadOrCreateOrderDesign(found);
@@ -121,24 +121,27 @@ export const DesignMappingModal: React.FC<DesignMappingModalProps> = ({
     onSaved();
   };
 
-  const handleBatchUploaded = (newFiles: LaserDesignFile[]) => {
-    setActiveDesign((prev) => {
-      if (!prev) return null;
-      const ids = new Set(newFiles.map((f) => f.id));
-      return { ...prev, files: [...prev.files.filter((f) => !ids.has(f.id)), ...newFiles] };
+  // ডায়নামিক সাইজ যোগ ও রিমুভ হ্যান্ডলার
+  const handleAddSizes = (inputSizes: string) => {
+    const tokens = inputSizes
+      .split(/[,;\s]+/)
+      .map((s) => s.trim().toUpperCase())
+      .filter(Boolean);
+
+    setCustomSizes((prev) => {
+      const updated = [...prev];
+      for (const t of tokens) {
+        if (!updated.includes(t)) updated.push(t);
+      }
+      return updated;
     });
-    onSaved();
   };
 
-  const handleAddCustomSize = () => {
-    const val = newSizeInput.trim().toUpperCase();
-    if (val && !DEFAULT_SIZES.includes(val) && !extraSizes.includes(val)) {
-      setExtraSizes((p) => [...p, val]);
-      setNewSizeInput('');
-    }
+  const handleRemoveSize = (sizeCode: string) => {
+    setCustomSizes((prev) => prev.filter((s) => s !== sizeCode));
   };
 
-  const matrixRows = useSizeMatrix(activeDesign, extraSizes);
+  const matrixRows = useSizeMatrix(activeDesign, customSizes);
 
   const columns = useMemo(() => {
     if (!activeDesign) return [];
@@ -148,6 +151,7 @@ export const DesignMappingModal: React.FC<DesignMappingModalProps> = ({
       onFileUploaded: handleFileUploaded,
       onFileDeleted: handleFileDeleted,
       onPreviewImage: (f) => setPreviewFile(f),
+      onRemoveSize: handleRemoveSize,
     });
   }, [activeDesign]);
 
@@ -156,7 +160,7 @@ export const DesignMappingModal: React.FC<DesignMappingModalProps> = ({
   return (
     <Modal open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <ModalContent className="max-w-6xl w-[96vw] max-h-[92vh] overflow-hidden flex flex-col p-0 gap-0 border border-slate-200 dark:border-[#272930] bg-white dark:bg-[#121317] rounded-sm shadow-2xl">
-        {/* ১. ডেডিকেটেড ইন্ডাস্ট্রিয়াল হেডার ও স্টাইল সিলেক্টর */}
+        {/* ১. ডেডিকেটেড ইন্ডাস্ট্রিয়াল হেডার ও স্টাইল সিলেক্টর */}
         <DesignMappingHeader
           orders={orders}
           selectedOrderId={selectedOrderId}
@@ -176,15 +180,16 @@ export const DesignMappingModal: React.FC<DesignMappingModalProps> = ({
         {/* ২. স্ক্রোলযোগ্য মডাল বডি */}
         <div className="overflow-y-auto px-6 py-4 space-y-4 flex-1">
           {activeDesign && (
-            <>
-              {/* বাল্ক অটো-ম্যাচ ড্রপজোন */}
-              <BulkDropzone
-                designId={activeDesign.id}
-                isLocked={activeDesign.is_locked}
-                onBatchUploaded={handleBatchUploaded}
-              />
+            <div className="space-y-3">
+              {/* সাইজ কন্ট্রোল ও প্রিসেটস টুলবার */}
+              {!activeDesign.is_locked && (
+                <DesignSizeToolbar
+                  existingSizes={matrixRows.map((r) => r.size_code)}
+                  onAddSizes={handleAddSizes}
+                />
+              )}
 
-              {/* সাইজ ম্যাট্রিক্স টেবিল ও সাইজ অ্যাডার */}
+              {/* সাইজ ম্যাট্রিক্স টেবিল */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs font-mono">
                   <div className="flex items-center gap-2">
@@ -192,41 +197,43 @@ export const DesignMappingModal: React.FC<DesignMappingModalProps> = ({
                       Size-by-Size Recipe Matrix
                     </span>
                     <span className="text-[11px] text-zinc-400">
-                      ({matrixRows.length} Sizes Active)
+                      ({matrixRows.length} Sizes Added)
                     </span>
                   </div>
-
-                  {!activeDesign.is_locked && (
-                    <div className="flex items-center gap-1.5">
-                      <input
-                        type="text"
-                        placeholder="Add Size (e.g. 42)"
-                        value={newSizeInput}
-                        onChange={(e) => setNewSizeInput(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleAddCustomSize()}
-                        className="h-7 px-2.5 text-xs font-mono rounded-sm border border-slate-200 dark:border-[#272930] bg-white dark:bg-[#15171e] w-36 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:border-blue-500"
-                      />
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleAddCustomSize}
-                        className="h-7 px-2.5 text-xs font-mono"
-                      >
-                        + Add Size
-                      </Button>
-                    </div>
-                  )}
                 </div>
 
-                <DataTable
-                  columns={columns}
-                  data={matrixRows}
-                  isLoading={isLoading}
-                  emptyTitle="Loading Matrix..."
-                  emptyDescription="Preparing Jeanologia .jean5 recipe slots for this style."
-                />
+                {matrixRows.length > 0 ? (
+                  <DataTable
+                    columns={columns}
+                    data={matrixRows}
+                    isLoading={isLoading}
+                    emptyTitle="No Sizes Configured"
+                    emptyDescription="Add garment sizes to start mapping."
+                  />
+                ) : (
+                  /* কোনো সাইজ যুক্ত না করা থাকলে এম্পটি স্টেট */
+                  <div className="p-8 text-center rounded-sm border border-dashed border-slate-200 dark:border-zinc-800 bg-slate-50/50 dark:bg-[#15171e]/50 space-y-3">
+                    <PlusCircle className="w-8 h-8 text-blue-500 mx-auto" />
+                    <div>
+                      <p className="text-xs font-bold font-mono text-zinc-800 dark:text-zinc-200">
+                        No Sizes Added for Style {selectedOrder?.style_code || activeDesign.style_code}
+                      </p>
+                      <p className="text-[11px] font-mono text-zinc-400 max-w-sm mx-auto mt-0.5">
+                        Add the required garment sizes above (or click a quick preset) to map .jean5 laser files.
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleAddSizes('28, 30, 32, 34, 36')}
+                      className="h-7 text-xs font-mono text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-900/60"
+                    >
+                      + Add Standard Sizes (28, 30, 32, 34, 36)
+                    </Button>
+                  </div>
+                )}
               </div>
-            </>
+            </div>
           )}
         </div>
 

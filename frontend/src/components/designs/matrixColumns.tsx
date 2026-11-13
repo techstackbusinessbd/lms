@@ -7,6 +7,7 @@
  */
 
 import { ColumnDef } from '@tanstack/react-table';
+import { X } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { DataTableColumnHeader } from '@/components/ui/DataTableColumnHeader';
 import { LaserDesignFile } from '@/types/design';
@@ -26,23 +27,41 @@ interface MatrixColumnOptions {
   onFileUploaded: (file: LaserDesignFile) => void;
   onFileDeleted: (fileId: string) => void;
   onPreviewImage: (file: LaserDesignFile) => void;
+  onRemoveSize?: (sizeCode: string) => void;
 }
 
 export function getSizeMatrixColumns(
   options: MatrixColumnOptions
 ): ColumnDef<SizeMatrixRow>[] {
-  const { designId, isLocked, onFileUploaded, onFileDeleted, onPreviewImage } = options;
+  const { designId, isLocked, onFileUploaded, onFileDeleted, onPreviewImage, onRemoveSize } = options;
 
   return [
     {
       accessorKey: 'size_code',
       header: ({ column }) => <DataTableColumnHeader column={column} title="SIZE" />,
-      size: 70,
-      cell: ({ row }) => (
-        <span className="font-mono font-bold text-xs px-2.5 py-1 rounded-sm bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/60 inline-block min-w-10 text-center shadow-2xs">
-          {row.original.size_code}
-        </span>
-      ),
+      size: 80,
+      cell: ({ row }) => {
+        const hasFiles = Boolean(
+          row.original.front_file || row.original.back_file || row.original.mockup_file
+        );
+        return (
+          <div className="flex items-center gap-1.5 group">
+            <span className="font-mono font-bold text-xs px-2.5 py-1 rounded-sm bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/60 inline-block min-w-10 text-center shadow-2xs">
+              {row.original.size_code}
+            </span>
+            {!isLocked && !hasFiles && onRemoveSize && (
+              <button
+                type="button"
+                onClick={() => onRemoveSize(row.original.size_code)}
+                className="opacity-0 group-hover:opacity-100 text-zinc-400 hover:text-rose-500 transition-opacity p-0.5 rounded-sm"
+                title={`Remove size ${row.original.size_code}`}
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        );
+      },
     },
     {
       id: 'front_body',
