@@ -1,21 +1,38 @@
 /**
  * ডেনিম লেজার অটোমেশন ও কন্ট্রোল সিস্টেম (Denim LACS)
- * অর্ডার ম্যানেজমেন্ট টাইপ ডেফিনিশন (Order Management TypeScript Types)
+ * অর্ডার ম্যানেজমেন্ট টাইপ ডেফিনিশন (Garments Enterprise Order Spec)
  *
- * রুল ১২ মেনে টেকনিক্যাল টার্মস ও টাইপস ইংরেজিতে।
- * রুল ২৩ মেনে Pydantic v2 ব্যাকএন্ড স্কিমার সাথে শতভাগ সঙ্গতিপূর্ণ।
+ * সিটিও স্যারের স্পেসিফিকেশন অনুসারী ১০টি কোর ফিল্ড:
+ * 1. Company
+ * 2. Buyer
+ * 3. Style
+ * 4. Job No.
+ * 5. Brand
+ * 6. Season
+ * 7. Order Qty
+ * 8. UOM
+ * 9. Ship Date
+ * 10. Dealing Merchant
  */
 
 export interface Order {
   id: string; // RFC 9562 UUIDv7
+  company: string;
   buyer_name: string;
-  po_number: string;
   style_code: string;
-  style_name: string | null;
-  fabric_description: string | null;
-  wash_reference: string;
+  job_no: string;
+  brand: string | null;
+  season: string | null;
   total_quantity: number;
-  target_delivery_date: string; // YYYY-MM-DD
+  uom: string;
+  target_delivery_date: string; // Ship Date (YYYY-MM-DD)
+  dealing_merchant: string | null;
+
+  // সহযোগী ফিল্ডসমূহ
+  po_number?: string;
+  style_name?: string | null;
+  fabric_description?: string | null;
+  wash_reference?: string | null;
   priority: 'NORMAL' | 'HIGH' | 'URGENT';
   status: 'PENDING_DESIGN' | 'DESIGN_APPROVED' | 'IN_PRODUCTION' | 'COMPLETED' | 'CANCELLED';
   current_revision: number;
@@ -31,27 +48,41 @@ export interface Order {
 }
 
 export interface OrderCreatePayload {
+  company: string;
   buyer_name: string;
-  po_number: string;
   style_code: string;
+  job_no: string;
+  brand?: string | null;
+  season?: string | null;
+  total_quantity: number;
+  uom?: string;
+  target_delivery_date: string; // Ship Date
+  dealing_merchant?: string | null;
+
+  po_number?: string;
   style_name?: string | null;
   fabric_description?: string | null;
-  wash_reference: string;
-  total_quantity: number;
-  target_delivery_date: string;
+  wash_reference?: string | null;
   priority?: 'NORMAL' | 'HIGH' | 'URGENT';
   notes?: string | null;
 }
 
 export interface OrderUpdatePayload {
+  company?: string;
   buyer_name?: string;
-  po_number?: string;
   style_code?: string;
+  job_no?: string;
+  brand?: string | null;
+  season?: string | null;
+  total_quantity?: number;
+  uom?: string;
+  target_delivery_date?: string;
+  dealing_merchant?: string | null;
+
+  po_number?: string;
   style_name?: string | null;
   fabric_description?: string | null;
-  wash_reference?: string;
-  total_quantity?: number;
-  target_delivery_date?: string;
+  wash_reference?: string | null;
   priority?: 'NORMAL' | 'HIGH' | 'URGENT';
   notes?: string | null;
 }
@@ -69,6 +100,6 @@ export interface OrderFilterParams {
   page_size?: number;
   search?: string;
   status?: string;
-  priority?: string;
+  company?: string;
   buyer?: string;
 }

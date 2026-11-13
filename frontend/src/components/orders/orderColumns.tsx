@@ -1,9 +1,11 @@
 /**
  * ডেনিম লেজার অটোমেশন ও কন্ট্রোল সিস্টেম (Denim LACS)
- * অর্ডার টেবিল কলাম ডেফিনিশন (TanStack Table v8 Columns Definition)
+ * অর্ডার টেবিল কলাম ডেফিনিশন (Garments Enterprise Order Columns)
  *
- * রুল ০৪ (<300 Lines) মেনে কলাম রেন্ডারিং লজিক আলাদা ফাইলে সংরক্ষণ।
- * রুল ১৬ (Executive Aura Badges) মেনে ইউআই উপস্থাপন।
+ * সিটিও স্যারের স্পেসিফিকেশন অনুসারী ১০টি কোর ফিল্ড প্রদর্শন:
+ * Company, Buyer, Style, Job No., Brand, Season, Order Qty, UOM, Ship Date, Dealing Merchant
+ *
+ * রুল ০৪ (<300 Lines) মেনে প্রস্তুতকৃত।
  */
 
 import { ColumnDef } from '@tanstack/react-table';
@@ -28,17 +30,27 @@ export function getOrderColumns(
 ): ColumnDef<Order>[] {
   return [
     {
-      accessorKey: 'po_number',
-      header: 'PO NUMBER',
-      cell: (info) => (
-        <span className="font-mono font-bold text-blue-600 dark:text-blue-400">
-          {String(info.getValue())}
-        </span>
-      ),
+      accessorKey: 'job_no',
+      header: 'JOB NO.',
+      cell: ({ row }) => {
+        const order = row.original;
+        return (
+          <div>
+            <span className="font-mono font-bold text-blue-600 dark:text-blue-400 block">
+              {order.job_no || order.po_number}
+            </span>
+            {order.company && (
+              <span className="text-[10px] text-zinc-400 font-mono block">
+                {order.company}
+              </span>
+            )}
+          </div>
+        );
+      },
     },
     {
       accessorKey: 'buyer_name',
-      header: 'BUYER & STYLE',
+      header: 'BUYER & BRAND',
       cell: ({ row }) => {
         const order = row.original;
         return (
@@ -47,33 +59,44 @@ export function getOrderColumns(
               {order.buyer_name}
             </div>
             <div className="text-xs text-zinc-400 font-mono">
-              {order.style_code} {order.style_name ? `• ${order.style_name}` : ''}
+              {order.brand || 'Main Brand'}
             </div>
           </div>
         );
       },
     },
     {
-      accessorKey: 'wash_reference',
-      header: 'WASH REFERENCE',
-      cell: (info) => (
-        <span className="text-zinc-700 dark:text-zinc-300 font-medium">
-          {String(info.getValue())}
-        </span>
-      ),
+      accessorKey: 'style_code',
+      header: 'STYLE & SEASON',
+      cell: ({ row }) => {
+        const order = row.original;
+        return (
+          <div>
+            <div className="font-semibold text-zinc-900 dark:text-zinc-100 font-mono">
+              {order.style_code}
+            </div>
+            <div className="text-xs text-zinc-400 font-mono">
+              {order.season || 'Standard Season'}
+            </div>
+          </div>
+        );
+      },
     },
     {
       accessorKey: 'total_quantity',
-      header: 'TOTAL UNITS',
-      cell: (info) => (
-        <span className="font-mono text-zinc-900 dark:text-zinc-100 font-semibold">
-          {Number(info.getValue()).toLocaleString()} pcs
-        </span>
-      ),
+      header: 'ORDER QTY',
+      cell: ({ row }) => {
+        const order = row.original;
+        return (
+          <span className="font-mono text-zinc-900 dark:text-zinc-100 font-semibold">
+            {order.total_quantity.toLocaleString()} {order.uom || 'PCS'}
+          </span>
+        );
+      },
     },
     {
       accessorKey: 'target_delivery_date',
-      header: 'DELIVERY DATE',
+      header: 'SHIP DATE',
       cell: (info) => (
         <span className="font-mono text-xs text-zinc-600 dark:text-zinc-400">
           {String(info.getValue())}
@@ -81,20 +104,13 @@ export function getOrderColumns(
       ),
     },
     {
-      accessorKey: 'priority',
-      header: 'PRIORITY',
-      cell: (info) => {
-        const val = String(info.getValue());
-        return (
-          <Badge
-            variant={
-              val === 'URGENT' ? 'danger' : val === 'HIGH' ? 'warning' : 'default'
-            }
-          >
-            {val}
-          </Badge>
-        );
-      },
+      accessorKey: 'dealing_merchant',
+      header: 'DEALING MERCHANT',
+      cell: (info) => (
+        <span className="text-xs text-zinc-700 dark:text-zinc-300 font-medium">
+          {String(info.getValue() || 'Unassigned')}
+        </span>
+      ),
     },
     {
       accessorKey: 'status',

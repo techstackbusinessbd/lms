@@ -1,6 +1,9 @@
 /**
  * ডেনিম লেজার অটোমেশন ও কন্ট্রোল সিস্টেম (Denim LACS)
- * নতুন অর্ডার এন্ট্রি মডাল (Order Create Modal Component)
+ * নতুন অর্ডার এন্ট্রি মডাল (Order Create Modal - Garments Enterprise Spec)
+ *
+ * সিটিও স্যারের স্পেসিফিকেশন অনুসারী ১০টি কোর ফিল্ড:
+ * Company, Buyer, Style, Job No., Brand, Season, Order Qty, UOM, Ship Date, Dealing Merchant
  *
  * রুল ২৩ মেনে Pydantic v2 সার্ভার-সাইড এরর সরাসরি ফিল্ডে প্রদর্শন করে।
  * রুল ১৬ (2px Corner Radius) এবং রুল ০৪ (<300 Lines) মেনে প্রস্তুতকৃত।
@@ -28,15 +31,16 @@ interface OrderCreateModalProps {
 }
 
 const INITIAL_FORM: OrderCreatePayload = {
+  company: 'Denim Solutions Ltd.',
   buyer_name: '',
-  po_number: '',
   style_code: '',
-  style_name: '',
-  fabric_description: '',
-  wash_reference: '',
+  job_no: '',
+  brand: '',
+  season: 'Spring/Summer 2026',
   total_quantity: 0,
+  uom: 'PCS',
   target_delivery_date: '',
-  priority: 'NORMAL',
+  dealing_merchant: '',
   notes: '',
 };
 
@@ -96,10 +100,10 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
         <ModalHeader>
           <ModalTitle className="flex items-center gap-2">
             <PlusCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-            <span>Create Purchase Order (Step 1)</span>
+            <span>Order Entry (Step 1)</span>
           </ModalTitle>
           <ModalDescription>
-            Enter buyer PO details and total quantity for laser production tracking.
+            Register garments purchase order with 10 enterprise tracking fields.
           </ModalDescription>
         </ModalHeader>
 
@@ -110,29 +114,31 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
           </div>
         )}
 
-        <form id="create-order-form" onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+        <form id="create-order-form" onSubmit={handleSubmit} className="space-y-3.5">
+          {/* Row 1: Company & Buyer */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Input
-              label="Buyer Name *"
+              label="Company *"
+              placeholder="e.g. Denim Solutions Ltd."
+              value={formData.company}
+              onChange={(e) => handleChange('company', e.target.value)}
+              error={fieldErrors['company']}
+              required
+            />
+            <Input
+              label="Buyer *"
               placeholder="e.g. Levi Strauss & Co."
               value={formData.buyer_name}
               onChange={(e) => handleChange('buyer_name', e.target.value)}
               error={fieldErrors['buyer_name']}
               required
             />
-            <Input
-              label="PO Number *"
-              placeholder="e.g. PO-884920"
-              value={formData.po_number}
-              onChange={(e) => handleChange('po_number', e.target.value)}
-              error={fieldErrors['po_number']}
-              required
-            />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          {/* Row 2: Style & Job No. */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Input
-              label="Style Code *"
+              label="Style *"
               placeholder="e.g. 511 Slim Fit"
               value={formData.style_code}
               onChange={(e) => handleChange('style_code', e.target.value)}
@@ -140,83 +146,90 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
               required
             />
             <Input
-              label="Style Name / Description"
-              placeholder="e.g. Mens Stretch Selvedge Denim"
-              value={formData.style_name || ''}
-              onChange={(e) => handleChange('style_name', e.target.value)}
-              error={fieldErrors['style_name']}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            <Input
-              label="Wash Reference *"
-              placeholder="e.g. Dark Vintage Whisker (W-104)"
-              value={formData.wash_reference}
-              onChange={(e) => handleChange('wash_reference', e.target.value)}
-              error={fieldErrors['wash_reference']}
+              label="Job No. *"
+              placeholder="e.g. JOB-2026-0042"
+              value={formData.job_no}
+              onChange={(e) => handleChange('job_no', e.target.value)}
+              error={fieldErrors['job_no']}
               required
             />
+          </div>
+
+          {/* Row 3: Brand & Season */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Input
-              label="Fabric Composition"
-              placeholder="e.g. 12.5 Oz Denim, 98% C 2% Sp"
-              value={formData.fabric_description || ''}
-              onChange={(e) => handleChange('fabric_description', e.target.value)}
-              error={fieldErrors['fabric_description']}
+              label="Brand"
+              placeholder="e.g. Levi's Red Tab / Signature"
+              value={formData.brand || ''}
+              onChange={(e) => handleChange('brand', e.target.value)}
+              error={fieldErrors['brand']}
+            />
+            <Input
+              label="Season"
+              placeholder="e.g. Spring/Summer 2026"
+              value={formData.season || ''}
+              onChange={(e) => handleChange('season', e.target.value)}
+              error={fieldErrors['season']}
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+          {/* Row 4: Order Qty, UOM & Ship Date */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <Input
-              label="Total Quantity (Pcs) *"
+              label="Order Qty *"
               type="number"
               min={1}
-              placeholder="5000"
+              placeholder="10000"
               value={formData.total_quantity || ''}
               onChange={(e) => handleChange('total_quantity', Number(e.target.value))}
               error={fieldErrors['total_quantity']}
               required
             />
+            <div className="space-y-1.5 text-left">
+              <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 select-none">
+                UOM *
+              </label>
+              <select
+                value={formData.uom || 'PCS'}
+                onChange={(e) => handleChange('uom', e.target.value)}
+                className="w-full h-11 px-3 rounded-sm bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-blue-600 transition-colors"
+              >
+                <option value="PCS">PCS (Pieces)</option>
+                <option value="DZN">DZN (Dozens)</option>
+                <option value="SET">SET (Sets)</option>
+              </select>
+            </div>
             <Input
-              label="Target Delivery Date *"
+              label="Ship Date *"
               type="date"
               value={formData.target_delivery_date}
               onChange={(e) => handleChange('target_delivery_date', e.target.value)}
               error={fieldErrors['target_delivery_date']}
               required
             />
-            <div className="space-y-1.5 text-left">
-              <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 select-none">
-                Priority Level
-              </label>
-              <select
-                value={formData.priority}
-                onChange={(e) =>
-                  handleChange(
-                    'priority',
-                    e.target.value as OrderCreatePayload['priority']
-                  )
-                }
-                className="w-full h-11 px-3 rounded-sm bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-blue-600 transition-colors"
-              >
-                <option value="NORMAL">Normal</option>
-                <option value="HIGH">High Priority</option>
-                <option value="URGENT">Urgent Rush</option>
-              </select>
-            </div>
           </div>
 
-          <div className="space-y-1.5 text-left">
-            <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 select-none">
-              Production Notes / Merchandising Instructions
-            </label>
-            <textarea
-              rows={2}
-              placeholder="Special requirements, recipe guidelines, or inspection notes..."
-              value={formData.notes || ''}
-              onChange={(e) => handleChange('notes', e.target.value)}
-              className="w-full p-2.5 rounded-sm bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:border-blue-600 transition-colors"
+          {/* Row 5: Dealing Merchant & Production Notes */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Input
+              label="Dealing Merchant"
+              placeholder="e.g. Tanvir Ahmed"
+              value={formData.dealing_merchant || ''}
+              onChange={(e) => handleChange('dealing_merchant', e.target.value)}
+              error={fieldErrors['dealing_merchant']}
             />
+            <div className="space-y-1.5 text-left">
+              <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 select-none">
+                Production Notes
+              </label>
+              <input
+                type="text"
+                placeholder="Special instructions or wash guidance..."
+                value={formData.notes || ''}
+                onChange={(e) => handleChange('notes', e.target.value)}
+                className="w-full h-11 px-3 rounded-sm bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:border-blue-600 transition-colors"
+              />
+            </div>
           </div>
         </form>
 

@@ -81,7 +81,7 @@ export async function getOrders(params?: OrderFilterParams): Promise<OrderListRe
   if (params?.page_size) queryParams.append('page_size', String(params.page_size));
   if (params?.search) queryParams.append('search', params.search.trim());
   if (params?.status) queryParams.append('status', params.status);
-  if (params?.priority) queryParams.append('priority', params.priority);
+  if (params?.company) queryParams.append('company', params.company);
   if (params?.buyer) queryParams.append('buyer', params.buyer);
 
   const url = `${API_BASE}/${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
