@@ -89,7 +89,14 @@ class Order(BaseModel):
     season: Mapped[Optional[str]] = mapped_column(
         String(50),
         nullable=True,
-        doc="প্রোডাকশন সিজন (e.g., Spring/Summer 2026, FW-2026)",
+        doc="প্রোডাকশন সিজন (e.g., Spring/Summer, Autumn/Winter)",
+    )
+
+    # ৬.১ সিজন বছর (Season Year)
+    season_year: Mapped[Optional[int]] = mapped_column(
+        Integer,
+        nullable=True,
+        doc="প্রোডাকশন সিজনের বছর (e.g., 2026, 2027)",
     )
 
     # ৭. মোট অর্ডারের সংখ্যা (Order Qty)

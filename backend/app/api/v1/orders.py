@@ -67,6 +67,7 @@ async def create_order(
         job_no=payload.job_no,
         brand=payload.brand,
         season=payload.season,
+        season_year=payload.season_year,
         total_quantity=payload.total_quantity,
         uom=payload.uom,
         target_delivery_date=payload.target_delivery_date,

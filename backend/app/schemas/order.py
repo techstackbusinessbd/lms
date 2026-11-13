@@ -71,6 +71,13 @@ class OrderBase(BaseModel):
         description="প্রোডাকশন সিজন (Season)",
         examples=["Spring/Summer 2026"],
     )
+    season_year: Optional[int] = Field(
+        default=None,
+        ge=2020,
+        le=2050,
+        description="প্রোডাকশন সিজনের বছর (Season Year)",
+        examples=[2026],
+    )
     total_quantity: int = Field(
         ...,
         gt=0,
@@ -153,6 +160,7 @@ class OrderUpdate(BaseModel):
     job_no: Optional[str] = Field(None, min_length=2, max_length=100)
     brand: Optional[str] = Field(None, max_length=100)
     season: Optional[str] = Field(None, max_length=50)
+    season_year: Optional[int] = Field(None, ge=2020, le=2050)
     total_quantity: Optional[int] = Field(None, gt=0, le=10_000_000)
     uom: Optional[str] = Field(None, min_length=1, max_length=20)
     target_delivery_date: Optional[date] = None

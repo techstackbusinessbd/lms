@@ -23,6 +23,7 @@ export interface Order {
   job_no: string;
   brand: string | null;
   season: string | null;
+  season_year?: number | null;
   total_quantity: number;
   uom: string;
   target_delivery_date: string; // Ship Date (YYYY-MM-DD)
@@ -54,6 +55,7 @@ export interface OrderCreatePayload {
   job_no: string;
   brand?: string | null;
   season?: string | null;
+  season_year?: number | null;
   total_quantity: number;
   uom?: string;
   target_delivery_date: string; // Ship Date
@@ -74,6 +76,7 @@ export interface OrderUpdatePayload {
   job_no?: string;
   brand?: string | null;
   season?: string | null;
+  season_year?: number | null;
   total_quantity?: number;
   uom?: string;
   target_delivery_date?: string;

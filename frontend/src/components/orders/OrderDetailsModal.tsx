@@ -122,7 +122,9 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
           </div>
           <div>
             <span className="text-[10px] text-zinc-400 font-mono uppercase block">Season</span>
-            <span className="text-xs text-zinc-700 dark:text-zinc-300 font-medium">{order.season || 'N/A'}</span>
+            <span className="text-xs text-zinc-700 dark:text-zinc-300 font-medium">
+              {order.season || 'N/A'}{order.season_year ? ` ${order.season_year}` : ''}
+            </span>
           </div>
           <div>
             <span className="text-[10px] text-zinc-400 font-mono uppercase block">Order Qty</span>

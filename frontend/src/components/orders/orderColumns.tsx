@@ -82,7 +82,7 @@ export function getOrderColumns(
               {order.style_code}
             </div>
             <div className="text-[11px] text-zinc-400 dark:text-zinc-500 font-mono">
-              {order.season || 'Standard Season'}
+              {order.season || 'Standard Season'}{order.season_year ? ` ${order.season_year}` : ''}
             </div>
           </div>
         );
