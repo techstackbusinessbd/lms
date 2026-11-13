@@ -187,3 +187,4 @@ class GarmentUnit(BaseModel):
             f"<GarmentUnit(id={self.id}, serial='{self.unit_serial_no}', "
             f"size='{self.size_code}', stage='{self.current_stage}')>"
         )
+
