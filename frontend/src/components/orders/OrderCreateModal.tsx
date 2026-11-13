@@ -120,7 +120,7 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
         )}
 
         <form id="create-order-form" onSubmit={handleSubmit} className="space-y-3.5">
-          {/* Row 1: Company & Buyer Dropdowns */}
+          {/* Row 1: 1. Company & 2. Buyer */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Select
               label="Company *"
@@ -140,15 +140,8 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
             />
           </div>
 
-          {/* Row 2: Brand Dropdown & Style Code */}
+          {/* Row 2: 3. Style & 4. Job No. */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Select
-              label="Brand"
-              options={BRAND_OPTIONS}
-              value={formData.brand || ''}
-              onChange={(e) => handleChange('brand', e.target.value)}
-              error={fieldErrors['brand']}
-            />
             <Input
               label="Style *"
               placeholder="e.g. 511 Slim Fit"
@@ -157,10 +150,6 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
               error={fieldErrors['style_code']}
               required
             />
-          </div>
-
-          {/* Row 3: Job No & Ship Date */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Input
               label="Job No. *"
               placeholder="e.g. JOB-2026-0042"
@@ -169,35 +158,36 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
               error={fieldErrors['job_no']}
               required
             />
-            <Input
-              label="Ship Date *"
-              type="date"
-              value={formData.target_delivery_date}
-              onChange={(e) => handleChange('target_delivery_date', e.target.value)}
-              error={fieldErrors['target_delivery_date']}
-              required
-            />
           </div>
 
-          {/* Row 4: Season Dropdown & Season Year Dropdown */}
+          {/* Row 3: 5. Brand & 6. Season (with Season Year) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Select
-              label="Season"
-              options={SEASON_OPTIONS}
-              value={formData.season || ''}
-              onChange={(e) => handleChange('season', e.target.value)}
-              error={fieldErrors['season']}
+              label="Brand"
+              options={BRAND_OPTIONS}
+              value={formData.brand || ''}
+              onChange={(e) => handleChange('brand', e.target.value)}
+              error={fieldErrors['brand']}
             />
-            <Select
-              label="Season Year"
-              options={SEASON_YEAR_OPTIONS}
-              value={formData.season_year || 2026}
-              onChange={(e) => handleChange('season_year', Number(e.target.value))}
-              error={fieldErrors['season_year']}
-            />
+            <div className="grid grid-cols-2 gap-2">
+              <Select
+                label="Season"
+                options={SEASON_OPTIONS}
+                value={formData.season || ''}
+                onChange={(e) => handleChange('season', e.target.value)}
+                error={fieldErrors['season']}
+              />
+              <Select
+                label="Season Year"
+                options={SEASON_YEAR_OPTIONS}
+                value={formData.season_year || 2026}
+                onChange={(e) => handleChange('season_year', Number(e.target.value))}
+                error={fieldErrors['season_year']}
+              />
+            </div>
           </div>
 
-          {/* Row 5: Order Qty & UOM Dropdown */}
+          {/* Row 4: 7. Order Qty & 8. UOM */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Input
               label="Order Qty *"
@@ -218,8 +208,16 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
             />
           </div>
 
-          {/* Row 6: Dealing Merchant & Notes */}
+          {/* Row 5: 9. Ship Date & 10. Dealing Merchant */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Input
+              label="Ship Date *"
+              type="date"
+              value={formData.target_delivery_date}
+              onChange={(e) => handleChange('target_delivery_date', e.target.value)}
+              error={fieldErrors['target_delivery_date']}
+              required
+            />
             <Input
               label="Dealing Merchant"
               placeholder="Merchant Name"
@@ -227,9 +225,13 @@ export const OrderCreateModal: React.FC<OrderCreateModalProps> = ({
               onChange={(e) => handleChange('dealing_merchant', e.target.value)}
               error={fieldErrors['dealing_merchant']}
             />
+          </div>
+
+          {/* Row 6: Additional Notes */}
+          <div>
             <Input
               label="Notes"
-              placeholder="Optional notes..."
+              placeholder="Optional production or wash notes..."
               value={formData.notes || ''}
               onChange={(e) => handleChange('notes', e.target.value)}
             />
