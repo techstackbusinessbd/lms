@@ -243,18 +243,18 @@ export const Orders: React.FC = () => {
           <span>
             Showing {orders.length} of {totalOrders} orders
           </span>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <Button
               size="sm"
               variant="outline"
               disabled={currentPage <= 1 || isLoading}
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              className="h-7 px-2 text-xs"
+              className="h-7 px-3 text-xs font-mono flex-nowrap whitespace-nowrap"
             >
-              <ChevronLeft className="w-3.5 h-3.5 mr-0.5" />
+              <ChevronLeft className="w-3.5 h-3.5 shrink-0" />
               <span>Previous</span>
             </Button>
-            <span className="font-semibold text-zinc-800 dark:text-zinc-200 px-1">
+            <span className="font-semibold text-zinc-800 dark:text-zinc-200 px-2 font-mono text-xs whitespace-nowrap">
               {currentPage} / {totalPages || 1}
             </span>
             <Button
@@ -262,10 +262,10 @@ export const Orders: React.FC = () => {
               variant="outline"
               disabled={currentPage >= totalPages || isLoading}
               onClick={() => setCurrentPage((p) => p + 1)}
-              className="h-7 px-2 text-xs"
+              className="h-7 px-3 text-xs font-mono flex-nowrap whitespace-nowrap"
             >
               <span>Next</span>
-              <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
+              <ChevronRight className="w-3.5 h-3.5 shrink-0" />
             </Button>
           </div>
         </div>
