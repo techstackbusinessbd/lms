@@ -71,8 +71,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     initializeSession();
 
+    // এপিআই থেকে সেশন মেয়াদোত্তীর্ণ (401) ইভেন্ট ধরা ও লগআউট পরিচালনা
+    const handleSessionExpired = () => {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(USER_STORAGE_KEY);
+      localStorage.removeItem('auth_token');
+      if (isMounted) {
+        setUser(null);
+        setToken(null);
+      }
+    };
+
+    window.addEventListener('lacs_session_expired', handleSessionExpired);
+
     return () => {
       isMounted = false;
+      window.removeEventListener('lacs_session_expired', handleSessionExpired);
     };
   }, []);
 

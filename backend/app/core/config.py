@@ -38,8 +38,8 @@ class Settings(BaseSettings):
 
     # সিকিউরিটি ও ক্রিপ্টোগ্রাফি কনফিগারেশন
     SECRET_KEY: str = "lacs_dev_secret_key_change_in_production_2026"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
-    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # ৭ দিন (সাপ্তাহিক শিফট সেশন)
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 30
 
     # সিওআরএস (CORS) পলিসি কনফিগারেশন
     BACKEND_CORS_ORIGINS: List[str] = [

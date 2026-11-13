@@ -72,6 +72,16 @@ async function handleResponseError(res: Response): Promise<never> {
     message = `Server responded with status ${status}.`;
   }
 
+  // টোকেন মেয়াদোত্তীর্ণ বা অবৈধ হলে (401 Unauthorized), স্টোরেজ ক্লিয়ার ও অথ স্টেট রিসেট করা
+  if (status === 401) {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('lacs_access_token');
+      localStorage.removeItem('lacs_user_profile');
+      localStorage.removeItem('auth_token');
+      window.dispatchEvent(new CustomEvent('lacs_session_expired'));
+    }
+  }
+
   throw new OrderApiError(message, status, fieldErrors);
 }
 
