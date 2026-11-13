@@ -150,3 +150,4 @@ export async function scanLookupUnit(query: string): Promise<GarmentUnit> {
   });
   return handleResponse<GarmentUnit>(res);
 }
+

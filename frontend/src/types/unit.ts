@@ -81,3 +81,4 @@ export interface BatchZplResponse {
   zpl_data: string;
   total_labels: string;
 }
+
